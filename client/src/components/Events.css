@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
+
+.calendar-container {
+    font-family: 'Calistoga', sans-serif;
+    max-width: 1000px;
+    margin: 20px auto;
+    margin-top: 0;
+    padding: 20px;
+    background: #fff;
+  }
+  
+  .calendar-nav button {
+    margin-left: 10px;
+  }
+  
+  .month-navigation button {
+    border-radius: 50%;
+    border: 1px solid #5E5E5E;
+    height: 30px;
+    width: 30px;
+    margin-left: 5px;
+    background-color: white;
+    cursor: pointer;
+  }
+
+  .month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0;
+  }
+  
+  .days-of-week {
+    display: flex;
+    background-color: #FCFFDA;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  
+  .week-day {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 20px;
+    color: #5E5E5E;
+  }
+  
+  .days-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .week-row {
+    display: flex;
+    flex-basis: 100%;
+  }
+
+  .day-number {
+    color: #5E5E5E;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+  
+  .day-cell {
+    flex-grow: 1;
+    flex-basis: calc(100% / 7.5 - 1px);
+    border: 1px solid #ddd;
+    min-height: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .day-cell::before {
+    content: attr(data-day);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-weight: bold;
+  }
+  
+  .event {
+    display: block;
+    margin: 20px 5px 0 5px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .event:hover {
+    cursor: pointer;
+  }
+  
+  .event.green {
+    background-color: #B3FF8F;
+  }
+  
+  .event.red {
+    background-color: #FF7C7C;
+  }
+  
+  .event.blue {
+    background-color: #8FDEFF;
+  }
+  
+  @media (max-width: 768px) {
+    .day-cell {
+      flex-basis: calc(100% / 7);
+    }
+  }
+  

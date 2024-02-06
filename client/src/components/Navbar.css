@@ -7,6 +7,8 @@ a {
 }
   
 nav {
+    margin-left: 10%;
+    margin-right: 10%;
     font-family: 'Calistoga', sans-serif;
     display: flex;
     font-weight: 500;
@@ -15,6 +17,7 @@ nav {
     color: #FFDB5A;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 3px solid #D2D2D2;
 }
   
     nav p {

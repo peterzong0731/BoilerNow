@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
 			if (err) throw err;
 			res.json(result);
 		});
+	console.log(results);
 
 	res.send(results);
 });

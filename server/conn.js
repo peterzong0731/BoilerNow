@@ -11,12 +11,11 @@ let db = null;
 let conn;
 try {
     conn = await client.connect();
-    console.log("Connecting to MongoDB...");
     db = conn.db("boilerNow");
 } catch(e) {
     console.error(e);
 }
 
-console.log("Connected!") 
+console.log("Connected to MongoDB!") 
 
 export default db;

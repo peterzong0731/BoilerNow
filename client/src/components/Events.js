@@ -1,17 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './Events.css';
 
-const year = 2024;
-const month = 2;
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-};
-
-const getFirstDayOfMonth = (year, month) => {
-    return new Date(year, month, 1).getDay();
-};
 
 const eventsData = {
     '1': [{ title: 'AAA Meet and Gr...', color: 'red' }],
@@ -21,37 +11,63 @@ const eventsData = {
     '19': [{ title: 'Random Event', color: 'blue' }],
 };
 
+const getDaysInMonth = (year, month) => {
+    return new Date(year, month + 1, 0).getDate();
+};
+
+const getFirstDayOfMonth = (year, month) => {
+    return new Date(year, month, 1).getDay();
+};
+
 const getLastDayOfMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDay();
 };
     
-const calculateEmptySlotsAfterLastDay = (year, month) => {
-    const lastDayOfWeek = getLastDayOfMonth(year, month);
-
-    return 7 - lastDayOfWeek;
+const calculateEmptySlotsAfterLastDay = (lastDayOfWeek) => {
+    return lastDayOfWeek === 6 ? 0 : 7 - lastDayOfWeek - 1; // Adjust for Sunday being the last day
 };
 
-const handleMonthNext = () => {
-
-}
-
-const handleMonthPrev = () => {
-    
-}
-
 function Events() {
+    const currentDate = new Date();
+    const [year, setYear] = useState(currentDate.getFullYear());
+    const [month, setMonth] = useState(currentDate.getMonth());
+
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = getFirstDayOfMonth(year, month);
-    const daySlots = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    const lastDayOfMonth = getLastDayOfMonth(year, month);
+    const emptySlotsAfterLastDay = calculateEmptySlotsAfterLastDay(lastDayOfMonth);
+
     const emptySlotsAtStart = Array(firstDayOfMonth).fill(null);
-    const emptySlotsAfterLastDay = calculateEmptySlotsAfterLastDay(year, month);
-    const emptySlotsAtEnd = Array(emptySlotsAfterLastDay -1).fill(null);
+    const daySlots = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
+
+    const handleMonthNext = () => {
+        if (month === 11) {
+            setMonth(0);
+            setYear(year + 1);
+        } else {
+            setMonth(month + 1);
+        }
+    };
+
+    const handleMonthPrev = () => {
+        if (month === 0) {
+            setMonth(11);
+            setYear(year - 1);
+        } else {
+            setMonth(month - 1);
+        }
+    };
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
     return (
         <div className="calendar-container">
         <div className="month-view">
             <div className="month-header">
-                <h2>March 2024</h2>
+                <h2>{`${monthNames[month]} ${year}`}</h2>
                 <div className="month-navigation">
                     <button onClick={handleMonthPrev}>←</button>
                     <button onClick={handleMonthNext}>→</button>

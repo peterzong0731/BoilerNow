@@ -3,7 +3,7 @@ import fs from "fs";
 import db from "../conn.js"
 
 
-const emailTemplate = fs.readFileSync("./emails/emailTemplate.html", 'utf8');
+const emailTemplate = fs.readFileSync("./emailNotifications/emailTemplate.html", "utf8");
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -76,32 +76,34 @@ async function checkEvents() {
             }
         }
     ];
-    var results = await db.collection("events").aggregate(pipeline).toArray( (err) => { 
-        if (err) {
-            console.log(err);
-        }
-    });
+
+    var results = await db
+        .collection("events")
+        .aggregate(pipeline)
+        .toArray();
 
     console.log(results);
     
     // Loop through each event
     results.forEach(event => {
-        console.log(event['usersInterested']);
+        console.log(event.usersInterested);
         // Loop through each user interested
-        event['usersInterested'].forEach( user => {
+        event.usersInterested.forEach( user => {
             sendEmail(event, user);
         });
     });
 }
 
 function sendEmail(event, user) {
-    let email = user['email'];
-    let name = user['displayName'];
+    let email = user.email;
+    let name = user.displayName;
     let mailOptions = {
         from: `BoilerNow ${process.env.EMAIL_FROM_USER}`,
         to: process.env.EMAIL_TO_TEST,
-        subject: `${event['orgShorthand']}'s ${event['eventName']} event is coming up!`,
+        subject: `${event.orgShorthand}'s ${event.eventName} event is coming up!`,
         html: emailTemplate.replace("{{name}}", name)
+                           .replace("{{eventName}}", event.eventName)
+                           .replace("{{hostName}}", event.orgName)
                            .replace("{{email}}", email)
     }
     

@@ -1,0 +1,16 @@
+{
+    "activityDateTime": null,
+    "createdDateTime": null,
+    "description": "",
+    "image": "",
+    "visibility": {
+        "type": "",
+        "allowedUsers": []
+    },
+    "belongsToOrg": null,
+    "createdByUser": null,
+    "usersInterested": [],
+    "eventName": "",
+    "capacityLimit": null,
+    "comments": []
+}

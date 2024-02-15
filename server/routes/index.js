@@ -1,7 +1,9 @@
 import express from "express";
 import db from "../conn.js";
+import fs from "fs";
 
 const router = express.Router();
+const newUserTemplate = fs.readFileSync("./routes/newUserTemplate.json", "utf8");
 
 router.get('/', async (req, res) => {
     // test connection to database
@@ -33,12 +35,51 @@ router.get("/register", (req, res) => {
 });
 
 // POST Route for Register
-app.post('/register', function (req, res) {
+router.post('/register', async function (req, res) {
 	console.log(req.body);
+
+	if(req.body.password.length < 6) {
+		console.log("Password length is less than 6!");
+		res.status(500).send('Password length is less than 6!');
+		return;
+	  }
+
+	let jsonObj = JSON.parse(newUserTemplate);
+
+	jsonObj.createdDateTime = new Date();
+	jsonObj.name = req.body.username;
+	jsonObj.email = req.body.email;
+	jsonObj.password = req.body.password;
+
+	try {
+        const user = await db
+            .collection("users")
+            .findOne({email: jsonObj.email});
+        if (user != null) {
+			console.log('User already exists');
+			console.log(user);
+			return;
+		}
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error fetching user");
+    }
+
+	// Insert new document to events collection
+    try {
+        const newUser = await db
+            .collection("users")
+            .insertOne(jsonObj);
+        console.log("Inserted new user with _id: " + newUser['insertedId']);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error creating new user");
+    }
 });
 
 // POST Route for Login
-app.post('/login', function (req, res) {
+router.post('/login', function (req, res) {
 	console.log(req.body);
 });
 

@@ -15,5 +15,8 @@
   "password": {
     "type": "String"
   },
-  "createdDateTime": null
+  "createdDateTime": null,
+  "googleId": {
+    "type": "String"
+  }
 }

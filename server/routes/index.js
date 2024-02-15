@@ -103,6 +103,11 @@ router.post('/login', async function (req, res) {
         console.log(e);
         res.status(500).send("Error fetching user");
     }
+});
+
+// GET Route for /forgotPassword
+router.get("/forgotPassword", function (req, res) {
+	//res.render("forgotPassword");
   });
 
 export default router;

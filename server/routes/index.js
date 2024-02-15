@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../conn.js";
 import fs from "fs";
+import md5 from "md5";
 
 const router = express.Router();
 const newUserTemplate = fs.readFileSync("./routes/newUserTemplate.json", "utf8");
@@ -49,7 +50,7 @@ router.post('/register', async function (req, res) {
 	jsonObj.createdDateTime = new Date();
 	jsonObj.name = req.body.username;
 	jsonObj.email = req.body.email;
-	jsonObj.password = req.body.password;
+	jsonObj.password = md5(req.body.password);
 
 	try {
         const user = await db

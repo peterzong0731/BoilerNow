@@ -57,25 +57,6 @@ router.post('/register', async function (req, res) {
 		return;
 	}
 
-	if (req.body.username.endsWith('@purdue.edu')) {
-		const link = `http://localhost:${process.env.PORT}/verify-user/${req.body.name}/${req.body.username}/${md5(req.body.password)}`;
-		const msg = {
-		  from: '"Team BoilerNow" boilernow2023@gmail.com',
-		  to: req.body.username,
-		  subject: 'BoilerNow Email Verification',
-		  text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
-		}
-		transporter.sendMail(msg, function(error, info){
-		  if (error) {
-			console.log(error);
-		  } else {
-			console.log('Email sent: ' + info.response);
-		  }
-		});
-		// TODO: Render Home Page
-		return;
-	}
-
 	let jsonObj = JSON.parse(newUserTemplate);
 
 	jsonObj.createdDateTime = new Date();
@@ -89,12 +70,30 @@ router.post('/register', async function (req, res) {
 			.findOne({ email: jsonObj.email });
 		if (user != null) {
 			console.log('User already exists');
-			console.log(user);
 			return;
 		}
 	} catch (e) {
 		console.log(e);
 		res.status(500).send("Error fetching user");
+	}
+
+	if (req.body.email.endsWith('@purdue.edu')) {
+		const link = `http://localhost:${process.env.PORT}/verify-user/${req.body.username}/${req.body.email}/${md5(req.body.password)}`;
+		const msg = {
+		  from: '"Team BoilerNow" boilernow2023@gmail.com',
+		  to: req.body.email,
+		  subject: 'BoilerNow Email Verification',
+		  text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
+		}
+		transporter.sendMail(msg, function(error, info){
+		  if (error) {
+			console.log(error);
+		  } else {
+			console.log('Email sent: ' + info.response);
+		  }
+		});
+		// TODO: Render Home Page
+		return;
 	}
 
 	// Insert new document to users collection
@@ -120,6 +119,19 @@ router.get("/verify-user/:name/:email/:password", async function(req, res) {
 	jsonObj.name = name;
 	jsonObj.email = email;
 	jsonObj.password = md5(password);
+
+	try {
+		const user = await db
+			.collection("users")
+			.findOne({ email: jsonObj.email });
+		if (user != null) {
+			console.log('User already exists');
+			return;
+		}
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error fetching user");
+	}
 
 	// Insert new document to users collection
 	try {

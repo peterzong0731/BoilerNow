@@ -2,9 +2,21 @@ import express from "express";
 import db from "../conn.js";
 import fs from "fs";
 import md5 from "md5";
+import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const newUserTemplate = fs.readFileSync("./routes/newUserTemplate.json", "utf8");
+const transporter = nodemailer.createTransport({
+	service: 'gmail',
+	host: 'smtp.gmail.com',
+	port: 465,
+	secure: true,
+	auth: {
+	  user: 'boilernow2023@gmail.com',
+	  pass: process.env.APP_PASS,
+	}
+  });
 
 router.get('/', async (req, res) => {
     // test connection to database
@@ -108,6 +120,52 @@ router.post('/login', async function (req, res) {
 // GET Route for /forgotPassword
 router.get("/forgotPassword", function (req, res) {
 	//res.render("forgotPassword");
-  });
+});
+
+var resetUser;
+
+// POST Route for /forgotPassword
+router.post("/forgotPassword", async function (req, res) {
+	const userEmail = req.body.username;
+	try {
+        const user = await db
+            .collection("users")
+            .findOne({email: userEmail})
+			.then((userExists) => {
+				if (userExists != null) {
+					const secret = process.env.JWT_SECRET + userExists.password;
+					const payload = {
+						email: userEmail
+					};
+					const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+					resetUser = userExists;
+					const link = `http://localhost:${process.env.PORT}/reset-password/${userExists.email}/${token}`;
+					console.log(userEmail);
+					const msg = {
+						from: '"Team BoilerNow" boilernow2023@gmail.com',
+						to: userEmail,
+						subject: 'BoilerNow Password Reset',
+						text: `Hello from BoilerNow! Boiler Up! Please click the link to reset your email:\n${link}.\n The link is only valid for 15 minutes.`
+					}
+					transporter.sendMail(msg, function(error, info){
+						if (error) {
+						console.log(error);
+						} else {
+						console.log('Email sent: ' + info.response);
+						}
+					});
+		  			console.log("Link Sent Successfuly! Check your inbox!");					
+				} else {
+					console.log('User Not Found');
+					res.status(500).send("User Not Found");
+					// redirect
+				}
+			});
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error fetching user");
+		// redirect
+    }
+});
 
 export default router;

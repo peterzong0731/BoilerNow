@@ -32,4 +32,14 @@ router.get("/register", (req, res) => {
 	res.json("register page rendered");
 });
 
+// POST Route for Register
+app.post('/register', function (req, res) {
+	console.log(req.body);
+});
+
+// POST Route for Login
+app.post('/login', function (req, res) {
+	console.log(req.body);
+});
+
 export default router;

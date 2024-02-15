@@ -1,8 +1,10 @@
 import express from "express";
+import bodyParser from "body-parser";
 import cors from "cors";
 import cron from "node-cron";
 import { Worker } from "worker_threads";
 import "./conn.js";
+import path from 'path';
 
 // Routes
 import indexRouter from "./routes/index.js";
@@ -10,6 +12,8 @@ import eventRouter from "./routes/events/events.js";
 import postRouter from "./routes/posts/posts.js";
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
 

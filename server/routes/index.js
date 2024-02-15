@@ -97,7 +97,7 @@ router.post('/register', async function (req, res) {
 		res.status(500).send("Error fetching user");
 	}
 
-	// Insert new document to events collection
+	// Insert new document to users collection
 	try {
 		const newUser = await db
 			.collection("users")
@@ -109,6 +109,30 @@ router.post('/register', async function (req, res) {
 		res.status(500).send("Error creating new user");
 	}
 });
+
+router.get("/verify-user/:name/:email/:password", async function(req, res) {
+	console.log("User Successfully Verified!");
+
+	const { name, email, password } = req.params;
+
+	let jsonObj = JSON.parse(newUserTemplate);
+	jsonObj.createdDateTime = new Date();
+	jsonObj.name = name;
+	jsonObj.email = email;
+	jsonObj.password = md5(password);
+
+	// Insert new document to users collection
+	try {
+		const newUser = await db
+			.collection("users")
+			.insertOne(jsonObj);
+		console.log("Inserted new user with _id: " + newUser['insertedId']);
+
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error creating new user");
+	}
+  });
 
 // POST Route for Login
 router.post('/login', async function (req, res) {

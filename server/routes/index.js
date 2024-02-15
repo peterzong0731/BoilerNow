@@ -177,12 +177,36 @@ router.get("/reset-password/:email/:token", async function (req, res) {
 	try {
 		jwt.verify(token, secret);
 		console.log("Verified");
-		// Render Reset Password with Email
+		// TODO: Render Reset Password with Email
 	} catch (error) {
 		console.log(error);
 		console.log("Verification Failed");
 		res.sendStatus(500);
 	}
+});
+
+router.post("/reset-password", async function (req, res) {
+	if (req.body.password.length < 6) {
+		console.log("Password length is less than 6!");
+		res.status(500).send('Password length is less than 6!');
+		return;
+	}
+	const update = {
+		"$set": {
+			password: md5(req.body.password)
+		}
+	};
+	const filter = {
+		email: req.body.email
+	}
+	await db.collection("users").findOneAndUpdate(filter, update)
+		.then(updatedUser => {
+			console.log('Updated Password');
+			// Render Login Page
+		})
+		.catch(err => {
+			console.error(`Failed to update password: ${err}`);
+		});
 });
 
 export default router;

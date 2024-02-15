@@ -80,8 +80,29 @@ router.post('/register', async function (req, res) {
 });
 
 // POST Route for Login
-router.post('/login', function (req, res) {
-	console.log(req.body);
-});
+router.post('/login', async function (req, res) {
+	var username = req.body.username;
+	var userPass = md5(req.body.password);
+
+	try {
+        const user = await db
+            .collection("users")
+            .findOne({email: username})
+			.then((existingUser) => {
+				if (existingUser != null) {
+					if (existingUser.password == userPass) {
+						console.log('Successfully Logged in');
+					} else {
+						console.log('Incorrect Password');
+					}
+				} else {
+					console.log('User Not Found');
+				}
+			});
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error fetching user");
+    }
+  });
 
 export default router;

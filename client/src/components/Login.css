@@ -1,0 +1,52 @@
+.login-container {
+    width: 400px;
+    margin: 3% auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+  }
+  
+  .login-form {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  h2 {
+    color: #FFDB5A;
+    font-style: bold;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 95%; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 6px;
+    width: 95%; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  button.google-login {
+    background-color: #db4437;
+  }
+  

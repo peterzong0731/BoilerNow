@@ -26,4 +26,10 @@ router.get("/login", (req, res) => {
 	res.json("login page rendered");
 });
 
+router.get("/register", (req, res) => {
+	// render register page
+	console.log("register page rendered");
+	res.json("register page rendered");
+});
+
 export default router;

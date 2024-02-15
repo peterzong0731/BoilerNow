@@ -90,7 +90,11 @@ router.get('/delete/:eventId', async (req, res) => {
             });
         
         console.log(results);
-        res.status(200).send("Event deleted");
+        
+        if (results.deletedCount == 1) {
+            res.status(200).send("Event deleted");
+        }
+        
     } catch (e) {
         console.log(e);
         res.status(500).send("Internal Server Error.");

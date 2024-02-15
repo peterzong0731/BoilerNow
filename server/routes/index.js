@@ -20,4 +20,10 @@ router.get('/', async (req, res) => {
 	}
 });
 
+router.get("/login", (req, res) => {
+	// render login page
+	console.log("login page rendered");
+	res.json("login page rendered");
+});
+
 export default router;

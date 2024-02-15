@@ -13,13 +13,13 @@ const transporter = nodemailer.createTransport({
 	port: 465,
 	secure: true,
 	auth: {
-	  user: 'boilernow2023@gmail.com',
-	  pass: process.env.APP_PASS,
+		user: 'boilernow2023@gmail.com',
+		pass: process.env.APP_PASS,
 	}
-  });
+});
 
 router.get('/', async (req, res) => {
-    // test connection to database
+	// test connection to database
 	try {
 		var results = await db
 			.collection("users")
@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 
 		console.log(results);
 		res.json(results);
-		
+
 	} catch (e) {
 		console.log(e);
 		res.status(500).send("Internal Server Error");
@@ -51,11 +51,11 @@ router.get("/register", (req, res) => {
 router.post('/register', async function (req, res) {
 	console.log(req.body);
 
-	if(req.body.password.length < 6) {
+	if (req.body.password.length < 6) {
 		console.log("Password length is less than 6!");
 		res.status(500).send('Password length is less than 6!');
 		return;
-	  }
+	}
 
 	let jsonObj = JSON.parse(newUserTemplate);
 
@@ -65,30 +65,30 @@ router.post('/register', async function (req, res) {
 	jsonObj.password = md5(req.body.password);
 
 	try {
-        const user = await db
-            .collection("users")
-            .findOne({email: jsonObj.email});
-        if (user != null) {
+		const user = await db
+			.collection("users")
+			.findOne({ email: jsonObj.email });
+		if (user != null) {
 			console.log('User already exists');
 			console.log(user);
 			return;
 		}
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Error fetching user");
-    }
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error fetching user");
+	}
 
 	// Insert new document to events collection
-    try {
-        const newUser = await db
-            .collection("users")
-            .insertOne(jsonObj);
-        console.log("Inserted new user with _id: " + newUser['insertedId']);
+	try {
+		const newUser = await db
+			.collection("users")
+			.insertOne(jsonObj);
+		console.log("Inserted new user with _id: " + newUser['insertedId']);
 
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Error creating new user");
-    }
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error creating new user");
+	}
 });
 
 // POST Route for Login
@@ -97,9 +97,9 @@ router.post('/login', async function (req, res) {
 	var userPass = md5(req.body.password);
 
 	try {
-        const user = await db
-            .collection("users")
-            .findOne({email: username})
+		const user = await db
+			.collection("users")
+			.findOne({ email: username })
 			.then((existingUser) => {
 				if (existingUser != null) {
 					if (existingUser.password == userPass) {
@@ -111,10 +111,10 @@ router.post('/login', async function (req, res) {
 					console.log('User Not Found');
 				}
 			});
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Error fetching user");
-    }
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error fetching user");
+	}
 });
 
 // GET Route for /forgotPassword
@@ -122,15 +122,13 @@ router.get("/forgotPassword", function (req, res) {
 	//res.render("forgotPassword");
 });
 
-var resetUser;
-
 // POST Route for /forgotPassword
 router.post("/forgotPassword", async function (req, res) {
 	const userEmail = req.body.username;
 	try {
-        const user = await db
-            .collection("users")
-            .findOne({email: userEmail})
+		const user = await db
+			.collection("users")
+			.findOne({ email: userEmail })
 			.then((userExists) => {
 				if (userExists != null) {
 					const secret = process.env.JWT_SECRET + userExists.password;
@@ -138,7 +136,6 @@ router.post("/forgotPassword", async function (req, res) {
 						email: userEmail
 					};
 					const token = jwt.sign(payload, secret, { expiresIn: '15m' });
-					resetUser = userExists;
 					const link = `http://localhost:${process.env.PORT}/reset-password/${userExists.email}/${token}`;
 					console.log(userEmail);
 					const msg = {
@@ -147,25 +144,45 @@ router.post("/forgotPassword", async function (req, res) {
 						subject: 'BoilerNow Password Reset',
 						text: `Hello from BoilerNow! Boiler Up! Please click the link to reset your email:\n${link}.\n The link is only valid for 15 minutes.`
 					}
-					transporter.sendMail(msg, function(error, info){
+					transporter.sendMail(msg, function (error, info) {
 						if (error) {
-						console.log(error);
+							console.log(error);
 						} else {
-						console.log('Email sent: ' + info.response);
+							console.log('Email sent: ' + info.response);
 						}
 					});
-		  			console.log("Link Sent Successfuly! Check your inbox!");					
+					console.log("Link Sent Successfuly! Check your inbox!");
 				} else {
 					console.log('User Not Found');
 					res.status(500).send("User Not Found");
 					// redirect
 				}
 			});
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Error fetching user");
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Error fetching user");
 		// redirect
-    }
+	}
+});
+
+router.get("/reset-password/:email/:token", async function (req, res) {
+	const { email, token } = req.params;
+	const user = await db.collection("users").findOne({ email: email });
+	if (user == null) {
+		console.log('Invalid Link');
+		console.log("Verification Failed");
+		res.sendStatus(500);
+	}
+	const secret = process.env.JWT_SECRET + user.password;
+	try {
+		jwt.verify(token, secret);
+		console.log("Verified");
+		// Render Reset Password with Email
+	} catch (error) {
+		console.log(error);
+		console.log("Verification Failed");
+		res.sendStatus(500);
+	}
 });
 
 export default router;

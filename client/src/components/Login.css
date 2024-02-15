@@ -17,25 +17,25 @@
     text-align: left;
   }
   
-  label {
+  .login-container label {
     display: block;
     margin-bottom: 5px;
   }
 
-  h2 {
+  .login-container h2 {
     color: #FFDB5A;
     font-style: bold;
   }
   
-  input[type="text"],
-  input[type="password"] {
+  .login-container input[type="text"],
+  .login-container input[type="password"] {
     width: 95%; 
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 3px;
   }
   
-  button {
+  .login-container button {
     background-color: #007bff;
     color: #fff;
     cursor: pointer;
@@ -46,7 +46,7 @@
     border-radius: 3px;
   }
   
-  button.google-login {
+  .login-container button.google-login {
     background-color: #db4437;
   }
   

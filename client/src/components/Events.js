@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import './Events.css';
+import { Link } from 'react-router-dom';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const eventsData = {
-    '1': [{ title: 'AAA Meet and Gr...', color: 'red' }],
-    '2': [{ title: 'Hello World Info.', color: 'green' }],
-    '12': [{ title: 'Bowling Club', color: 'red' }],
-    '17': [{ title: 'CSUB Resume W...', color: 'green' }],
-    '19': [{ title: 'Random Event', color: 'blue' }],
+    '1': [{ title: 'AAA Meet and Gr...', color: 'red', _id: 1 }],
+    '2': [{ title: 'Hello World Info.', color: 'green', _id: 2 }],
+    '12': [{ title: 'Bowling Club', color: 'red', _id: 12 }],
+    '17': [{ title: 'CSUB Resume W...', color: 'green', _id: 17 }],
+    '19': [{ title: 'Random Event', color: 'blue', _id: 19 }],
 };
 
 const getDaysInMonth = (year, month) => {
@@ -83,7 +84,9 @@ function Events() {
                     <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                         {day && <div className="day-number">{day}</div>}
                         {day && eventsData[day] && eventsData[day].map((event, idx) => (
-                            <div key={idx} className={`event ${event.color}`}>{event.title}</div>
+                            <Link key={event._id} to={`/event/${event._id}`}>
+                                <div key={idx} className={`event ${event.color}`}>{event.title}</div>
+                            </Link>
                         ))}
                     </div>
                 ))}

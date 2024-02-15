@@ -19,6 +19,7 @@ const App = () => {
         <Route path="/events" element={<Events />} />
         <Route path="/create-event" element={<CreateEventForm />} />
         <Route path="/event" element={<Event />}/>
+        <Route exact path="/event/:id" element={<Event />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>

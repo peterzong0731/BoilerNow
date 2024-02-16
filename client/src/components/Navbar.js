@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 function Navbar() {
   return (
-    <nav>
+    <nav className='nav'>
       <p><a href='/'>BoilerNow</a></p>
       <ul>
         <li><a href="/posts">Posts</a></li>

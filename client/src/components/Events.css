@@ -95,13 +95,31 @@
   .event.green {
     background-color: #B3FF8F;
   }
+
+  .event.green:hover {
+    background-color: #74ff34;
+  }
   
   .event.red {
     background-color: #FF7C7C;
   }
+
+  .event.red:hover {
+    background-color: #ff4e4e;
+  }
   
   .event.blue {
     background-color: #8FDEFF;
+  }
+
+  .event.blue:hover {
+    background-color: #45c7ff;
+  }
+
+  .days-grid a {
+    text-decoration: none;
+    color: black;
+    font-family: 'Calistoga', sans-serif;
   }
   
   @media (max-width: 768px) {

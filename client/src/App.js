@@ -5,6 +5,8 @@ import Events from './components/Events';
 import Navbar from './components/Navbar';
 import CreateEventForm from './components/CreateEventForm';
 import CreatePostForm from './components/CreatePostForm';
+import Event from './components/Event';
+import Login from './components/Login';
 
 const App = () => {
   return (
@@ -16,6 +18,9 @@ const App = () => {
         <Route path="/create-post" element={<CreatePostForm />} />
         <Route path="/events" element={<Events />} />
         <Route path="/create-event" element={<CreateEventForm />} />
+        <Route path="/event" element={<Event />}/>
+        <Route exact path="/event/:id" element={<Event />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );

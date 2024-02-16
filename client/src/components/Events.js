@@ -1,18 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import './Events.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const eventsData = {
-    '1': [{ title: 'AAA Meet and Gr...', color: 'red', _id: 1, category: 'social' }],
-    '2': [{ title: 'Hello World Info.', color: 'green', _id: 2, category: 'academic' }],
-    '12': [{ title: 'Bowling Club', color: 'red', _id: 12, category: 'social' }],
-    '17': [{ title: 'CSUB Resume W...', color: 'green', _id: 17, category: 'academic' }],
-    '19': [{ title: 'Random Event', color: 'blue', _id: 19, category: 'other' }],
-};
-
-const categories = ['all', 'social', 'academic', 'other'];
+const categories = ['all', 'Social', 'Academic', 'Other'];
 
 const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -34,13 +27,10 @@ function Events() {
     const currentDate = new Date();
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth());
-    const [selectedCategory, setSelectedCategory] = useState('all');
-
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = getFirstDayOfMonth(year, month);
     const lastDayOfMonth = getLastDayOfMonth(year, month);
     const emptySlotsAfterLastDay = calculateEmptySlotsAfterLastDay(lastDayOfMonth);
-
     const emptySlotsAtStart = Array(firstDayOfMonth).fill(null);
     const daySlots = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
@@ -63,13 +53,41 @@ function Events() {
         }
     };
 
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+ 
+    const [eventsData, setEventsData] = useState({});
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
     };
 
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/events', {
+                    params: { year, month }
+                });
+                const events = response.data;
+                const eventsMappedByDay = {};
+
+                events.forEach(event => {
+                    const dayOfMonth = new Date(event.startDate).getDate();
+                    if (!eventsMappedByDay[dayOfMonth]) {
+                        eventsMappedByDay[dayOfMonth] = [];
+                    }
+                    eventsMappedByDay[dayOfMonth].push(event);
+                });
+
+                setEventsData(eventsMappedByDay);
+            } catch (error) {
+                console.error('Error fetching events', error);
+            }
+        };
+        fetchEvents();
+    }, [year, month]);
 
     return (
         <div className="calendar-container">
@@ -106,7 +124,7 @@ function Events() {
                             {day && <div className="day-number">{day}</div>}
                             {day && eventsData[day] && eventsData[day].filter((event) => selectedCategory === 'all' || event.category === selectedCategory).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
-                                    <div key={idx} className={`event ${event.color}`}>{event.title}</div>
+                                    <div className={`event ${event.category}`}>{event.title}</div>
                                 </Link>
                             ))}
                         </div>

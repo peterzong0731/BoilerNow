@@ -16,16 +16,6 @@
     margin: 0;
     color: #333333;
     font-size: 24px;
-  }
-  
-.event-category-tag {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #007BFF;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
 }
   
 .event-organizer {
@@ -78,6 +68,36 @@
     color: #444444;
     font-size: 16px;
     line-height: 1.6;
+}
+
+.event-category.Academic {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #B3FF8F;
+}
+  
+.event-category.Social {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #FF7C7C;
+}
+  
+.event-category.Other {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #8FDEFF;
 }
   
 @media (max-width: 768px) {

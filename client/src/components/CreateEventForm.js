@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './CreateEventForm.css';
+import axios from 'axios';
 
 function CreateEventForm() {
   const [eventData, setEventData] = useState({
@@ -7,7 +8,8 @@ function CreateEventForm() {
     description: '',
     startDate: '',
     endDate: '',
-    category: ''
+    category: '',
+    location: ''
   });
 
   const handleInputChange = (e) => {
@@ -15,10 +17,14 @@ function CreateEventForm() {
     setEventData({ ...eventData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log(eventData);
-    // TODO: send eventData to backend
+    try {
+      const response = await axios.post('http://localhost:8000/events/create', eventData);
+      console.log('Successfully created the event', response.data);
+    } catch (error) {
+      console.error('Error during event creation', error);
+    }
   };
 
   return (
@@ -34,7 +40,6 @@ function CreateEventForm() {
             onChange={handleInputChange}
           />
         </label>
-
         <label>
           description
           <textarea
@@ -43,7 +48,6 @@ function CreateEventForm() {
             onChange={handleInputChange}
           />
         </label>
-
         <label>
           start date
           <input
@@ -53,7 +57,6 @@ function CreateEventForm() {
             onChange={handleInputChange}
           />
         </label>
-
         <label>
           end date
           <input
@@ -63,15 +66,23 @@ function CreateEventForm() {
             onChange={handleInputChange}
           />
         </label>
-
+        <label>
+          location
+          <input
+            type="text"
+            name="location"
+            value={eventData.location}
+            onChange={handleInputChange}
+          />
+        </label>
         <div className='category-container'>
           category
           <label>
             <input
               type="radio"
               name="category"
-              value="academic"
-              checked={eventData.category === 'academic'}
+              value="Academic"
+              checked={eventData.category === 'Academic'}
               onChange={handleInputChange}
             />
             academic
@@ -80,8 +91,8 @@ function CreateEventForm() {
             <input
               type="radio"
               name="category"
-              value="social"
-              checked={eventData.category === 'social'}
+              value="Social"
+              checked={eventData.category === 'Social'}
               onChange={handleInputChange}
             />
             social
@@ -90,8 +101,8 @@ function CreateEventForm() {
             <input
               type="radio"
               name="category"
-              value="other"
-              checked={eventData.category === 'other'}
+              value="Other"
+              checked={eventData.category === 'Other'}
               onChange={handleInputChange}
             />
             other

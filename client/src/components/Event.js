@@ -11,6 +11,8 @@ function Event() {
   const [dateRange, setDateRange] = useState('')
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
+  const [capacity, setCapacity] = useState(0)
+  const [status, setStatus] = useState('')
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -31,7 +33,7 @@ function Event() {
     async function fetchEvent() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
-        const { _id, category, createdDateTime, description, endDate, startDate, title, location } = response.data;
+        const { _id, category, createdDateTime, description, endDate, startDate, title, location, capacity, status } = response.data;
         console.log(response.data)
         setCategory(category)
         setCreatedDateTime(createdDateTime)
@@ -40,6 +42,8 @@ function Event() {
         console.log(dateRange)
         setTitle(title)
         setLocation(location)
+        setCapacity(capacity)
+        setStatus(status)
       } catch (error) {
         console.error(error);
       }
@@ -47,12 +51,14 @@ function Event() {
     fetchEvent();
   }, [id]);
 
-
   return (
     <div className="event-container">
         <h1 className="event-title">{title}</h1>
         <div className={`event-category ${category}`}>{category}</div>
         <h2 className="event-organizer">by User | Club</h2>
+        {capacity !== '0' && (
+          <div className={`event-capacity ${category}`}>Capacity: {capacity}</div>
+        )}
         <button className="event-join-button">Join</button>
         <div className="event-dates">
             <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>

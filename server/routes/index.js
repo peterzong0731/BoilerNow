@@ -185,13 +185,13 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 
 // POST Route for Login
 router.post('/login', async function (req, res) {
-	var username = req.body.username;
+	var email = req.body.email;
 	var userPass = md5(req.body.password);
 
 	try {
 		const user = await db
 			.collection("users")
-			.findOne({ email: username })
+			.findOne({ email: email })
 			.then((existingUser) => {
 				if (existingUser != null) {
 					if (existingUser.password == userPass) {

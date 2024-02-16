@@ -51,10 +51,15 @@
   .category-container {
     display: flex;
     flex-direction: column;
+    margin-right: 20px;
   }
 
   .category-container label {
     display: flex;
     align-content: center;
     margin-left: -5px;
+  }
+
+  .last-row-container {
+    display: flex;
   }

@@ -9,7 +9,9 @@ function CreateEventForm() {
     startDate: '',
     endDate: '',
     category: '',
-    location: ''
+    location: '',
+    capacity: 0,
+    status: ''
   });
 
   const handleInputChange = (e) => {
@@ -75,40 +77,76 @@ function CreateEventForm() {
             onChange={handleInputChange}
           />
         </label>
-        <div className='category-container'>
-          category
-          <label>
-            <input
-              type="radio"
-              name="category"
-              value="Academic"
-              checked={eventData.category === 'Academic'}
-              onChange={handleInputChange}
-            />
-            academic
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="category"
-              value="Social"
-              checked={eventData.category === 'Social'}
-              onChange={handleInputChange}
-            />
-            social
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="category"
-              value="Other"
-              checked={eventData.category === 'Other'}
-              onChange={handleInputChange}
-            />
-            other
-          </label>
+        <div className='last-row-container'>
+          <div className='category-container'>
+            category
+            <label>
+              <input
+                type="radio"
+                name="category"
+                value="Academic"
+                checked={eventData.category === 'Academic'}
+                onChange={handleInputChange}
+              />
+              academic
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="category"
+                value="Social"
+                checked={eventData.category === 'Social'}
+                onChange={handleInputChange}
+              />
+              social
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="category"
+                value="Other"
+                checked={eventData.category === 'Other'}
+                onChange={handleInputChange}
+              />
+              other
+            </label>
+          </div>
+          <div className='category-container'>
+            capacity
+            <label>
+              <input
+                type="number"
+                name="capacity"
+                value={eventData.capacity}
+                onChange={handleInputChange}
+              />
+            </label>
+          </div>
+          <div className='category-container'>
+            status
+            <label>
+              <input
+                type="radio"
+                name="status"
+                value="public"
+                checked={eventData.status === 'public'}
+                onChange={handleInputChange}
+              />
+              public
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="status"
+                value="private"
+                checked={eventData.status === 'private'}
+                onChange={handleInputChange}
+              />
+              private
+            </label>
+          </div>
         </div>
-
+        
         <button type="submit" className="submit-button">submit</button>
       </form>
     </div>

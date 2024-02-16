@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
 
-.login-container {
+.signup-container {
   font-family: 'Calistoga', sans-serif;
   max-width: 600px;
   margin: auto;
@@ -11,14 +11,14 @@
   position: relative;
 }
 
-.login-container h1 {
+.signup-container h1 {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.login-container input[type="text"],
-.login-container input[type="password"] {
+.signup-container input[type="text"],
+.signup-container input[type="password"] {
   width: 97%;
   padding: 8px;
   margin-bottom: 20px;
@@ -28,12 +28,26 @@
   border-radius: 4px;
 }
 
-.login-buttons-container {
+.sign-up-buttons-container {
   display: flex;
   flex-direction: row-reverse;
 }
 
-.login-container .sign-up-button {
+.signup-container .sign-up-button {
+  padding: 10px;
+  font-family: 'Calistoga', sans-serif;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.signup-container .sign-up-button:hover {
+  background-color: #45a049;
+}
+
+.signup-container .login-button {
   padding: 10px;
   font-family: 'Calistoga', sans-serif;
   background-color: #f05656;
@@ -44,20 +58,6 @@
   margin-right: 10px;
 }
 
-.login-container .sign-up-button:hover {
+.signup-container .login-button:hover {
   background-color: #d84c4c;
-}
-
-.login-container .login-button {
-  padding: 10px;
-  font-family: 'Calistoga', sans-serif;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-container .login-button:hover {
-  background-color: #45a049;
 }

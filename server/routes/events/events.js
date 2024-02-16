@@ -28,35 +28,19 @@ router.get('/', async (req, res) => {
 
 // Create newly created event
 //router.post('/create', async (req, res) => {
-router.get('/create', async (req, res) => {
+router.post('/create', async (req, res) => {
     console.log("Create new event route called.");
-    console.log();
+    const eventData = req.body;
+    eventData.createdDateTime = new Date();
 
-    // Parse template to JavaScript object
-    let jsonObj = JSON.parse(newEventTemplate);
-
-    // Modify values
-    console.log(req.body);
-    jsonObj.createdDateTime = new Date();
-
-    // Insert new document to events collection
     try {
-        const results = await db
-            .collection("events")
-            .insertOne(jsonObj);
-        console.log("Inserted new event with _id: " + results['insertedId']);
-        res.status(200).send("Successfully created the new event.");
-
+        const results = await db.collection("events").insertOne(eventData);
+        console.log("Inserted new event with _id: " + results.insertedId);
+        res.status(201).send("Successfully created the new event.");
     } catch (e) {
         console.log(e);
         res.status(500).send("Error creating new event");
     }
-
-
-    // Change back to formatted JSON string for printing
-    const printedJson = JSON.stringify(jsonObj, null, 2);
-
-    console.log(printedJson);
 });
 
 // Modify existing event
@@ -103,7 +87,7 @@ router.get('/delete/:eventId', async (req, res) => {
 
 
 // Retrieve specific event
-router.get('/get/:eventId', async (req, res) => {
+router.get('/:eventId', async (req, res) => {
     console.log("Get specific event route called.");
     console.log();
 

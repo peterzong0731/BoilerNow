@@ -80,7 +80,7 @@
   
   .event {
     display: block;
-    margin: 20px 5px 0 5px;
+    margin: 5px 5px 0 5px;
     padding: 4px 8px;
     border-radius: 10px;
     font-size: 0.8em;
@@ -92,27 +92,27 @@
     cursor: pointer;
   }
   
-  .event.green {
+  .event.Academic {
     background-color: #B3FF8F;
   }
 
-  .event.green:hover {
+  .event.Academic:hover {
     background-color: #74ff34;
   }
   
-  .event.red {
+  .event.Social {
     background-color: #FF7C7C;
   }
 
-  .event.red:hover {
+  .event.Social:hover {
     background-color: #ff4e4e;
   }
   
-  .event.blue {
+  .event.Other {
     background-color: #8FDEFF;
   }
 
-  .event.blue:hover {
+  .event.Other:hover {
     background-color: #45c7ff;
   }
 

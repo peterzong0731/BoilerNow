@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './Event.css'
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
+import { getUserInfo } from './authUtils';
 
 function Event() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ function Event() {
   const [location, setLocation] = useState('')
   const [capacity, setCapacity] = useState(0)
   const [status, setStatus] = useState('')
+  const userInfo = getUserInfo();
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -53,19 +55,19 @@ function Event() {
 
   return (
     <div className="event-container">
-        <h1 className="event-title">{title}</h1>
-        <div className={`event-category ${category}`}>{category}</div>
-        <h2 className="event-organizer">by User | Club</h2>
-        {capacity !== '0' && (
-          <div className={`event-capacity ${category}`}>Capacity: {capacity}</div>
-        )}
-        <button className="event-join-button">Join</button>
-        <div className="event-dates">
-            <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>
-        </div>
-        <div className="event-location">{'\u{1F4CD}'} {location}</div>
-        <h2 className="event-description-title">Description:</h2>
-        <p className="event-description"> {description} </p>
+      <h1 className="event-title">{title}</h1>
+      <div className={`event-category ${category}`}>{category}</div>
+      <h2 className="event-organizer">by User | Club</h2>
+      {capacity !== '0' && (
+        <div className={`event-capacity ${category}`}>Capacity: {capacity}</div>
+      )}
+      <button className="event-join-button">Join</button>
+      <div className="event-dates">
+        <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>
+      </div>
+      <div className="event-location">{'\u{1F4CD}'} {location}</div>
+      <h2 className="event-description-title">Description:</h2>
+      <p className="event-description"> {description} </p>
     </div>
   )
 }

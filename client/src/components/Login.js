@@ -11,19 +11,34 @@ function Login() {
       alert('Please fill in all fields');
       return;
     }
-
+  
     try {
       const response = await axios.post('http://localhost:8000/login', {
         email,
         password
       });
       console.log('Login response:', response.data);
-      setEmail('');
-      setPassword('');
-      alert('Login successful!');
+  
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setEmail('');
+        setPassword('');
+        alert('Login successful!');
+      } else {
+        alert('Incorrect email or password');
+      }
     } catch (error) {
-      console.error('Error signing up:', error);
+      console.error('Error logging in:', error);
       alert('Failed to log in. Please try again later.');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/auth/google');
+      console.log('Google login initiated:', response.data);
+    } catch (error) {
+      console.error('Error initiating Google login:', error);
     }
   };
 
@@ -50,6 +65,7 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
+      <button className='google-button' onClick={handleGoogleLogin}>Sign in with Google</button>
       <div className='login-buttons-container'>
         <button className='login-button' onClick={handleLogin}>login</button>
         <button className='sign-up-button' onClick={handleSignUpRedirect}>sign up</button>

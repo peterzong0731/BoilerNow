@@ -86,7 +86,7 @@ router.get("/register", (req, res) => {
 
 // POST Route for Register
 router.post('/register', async function (req, res) {
-	console.log(req.body);
+	console.log("Req body: " + req.body);
 
 	if (req.body.password.length < 6) {
 		console.log("Password length is less than 6!");
@@ -97,7 +97,7 @@ router.post('/register', async function (req, res) {
 	let jsonObj = JSON.parse(newUserTemplate);
 
 	jsonObj.createdDateTime = new Date();
-	jsonObj.name = req.body.username;
+	jsonObj.name = req.body.name;
 	jsonObj.email = req.body.email;
 	jsonObj.password = md5(req.body.password);
 
@@ -115,7 +115,7 @@ router.post('/register', async function (req, res) {
 	}
 
 	if (req.body.email.endsWith('@purdue.edu')) {
-		const link = `http://localhost:${process.env.PORT}/verify-user/${req.body.username}/${req.body.email}/${md5(req.body.password)}`;
+		const link = `http://localhost:${process.env.PORT}/verify-user/${req.body.name}/${req.body.email}/${md5(req.body.password)}`;
 		const msg = {
 			from: '"Team BoilerNow" boilernow2023@gmail.com',
 			to: req.body.email,
@@ -185,27 +185,27 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 
 // POST Route for Login
 router.post('/login', async function (req, res) {
-	var email = req.body.email;
-	var userPass = md5(req.body.password);
-
 	try {
-		const user = await db
-			.collection("users")
-			.findOne({ email: email })
-			.then((existingUser) => {
-				if (existingUser != null) {
-					if (existingUser.password == userPass) {
-						console.log('Successfully Logged in');
-					} else {
-						console.log('Incorrect Password');
-					}
-				} else {
-					console.log('User Not Found');
-				}
-			});
+		const { email, password } = req.body;
+
+		const existingUser = await db.collection("users").findOne({ email });
+
+		if (!existingUser) {
+			console.log('User Not Found');
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		if (existingUser.password !== md5(password)) {
+			console.log('Incorrect Password');
+			return res.status(401).json({ error: 'Incorrect password' });
+		}
+
+		console.log('Successfully Logged in');
+		console.log(email);
+		res.status(200).json({ user: existingUser });
 	} catch (e) {
-		console.log(e);
-		res.status(500).send("Error fetching user");
+		console.error(e);
+		res.status(500).json({ error: 'Internal server error' });
 	}
 });
 
@@ -348,6 +348,23 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser((user, cb) => {
 	cb(null, user);
+});
+
+// Route to fetch authenticated user's information
+router.get('/user', (req, res) => {
+  // Check if user is authenticated
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'User not authenticated' });
+  }
+
+  // Extract user information
+  const userInfo = {
+    name: req.user.name || req.user.name,
+    email: req.user.email && req.user.email[0] && req.user.email[0].value
+  };
+
+  // Return user information
+  res.json(userInfo);
 });
 
 export default router;

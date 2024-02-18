@@ -1,22 +1,17 @@
-{
-  "name": {
-    "type": "String",
-    "required": true
-  },
-  "email": {
-    "type": "String",
-    "lowercase": true,
-    "unique": true,
-    "required": [
-      true,
-      "User email required"
-    ]
-  },
-  "password": {
-    "type": "String"
-  },
-  "createdDateTime": null,
-  "googleId": {
-    "type": "String"
-  }
+{    
+    "login": {
+        "email": "",
+        "password": "",
+        "googleId": ""
+    },
+    "name": "",
+    "bio": "",
+    "emailNotifs": {
+        "orgAlerts": false,
+        "upcomingEvents": false
+    },
+    "createdDateTime": null,
+    "followingOrgs": [],
+    "prevInterestedEvents": [],
+    "posts": []
 }

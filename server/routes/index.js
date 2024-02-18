@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import passport from 'passport';
 import OAuth from 'passport-google-oauth20';
 import session from "express-session";
+import { ObjectId } from 'mongodb'
 
 const router = express.Router();
 const GoogleStrategy = OAuth.Strategy;
@@ -84,6 +85,30 @@ router.get("/register", (req, res) => {
 	res.json("register page rendered");
 });
 
+router.get('/user/:id', async (req, res) => {
+	console.log("here")
+    try {
+        const usersCollection = db.collection('users');
+
+        const { id } = req.params;
+		console.log(id)
+
+		// Later in your code
+		const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+		console.log(user)
+
+        if (user) {
+			console.log(user)
+            res.status(200).json(user);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching user');
+    }
+});
+
 // POST Route for Register
 router.post('/register', async function (req, res) {
 	console.log("Req body: " + req.body);
@@ -98,13 +123,13 @@ router.post('/register', async function (req, res) {
 
 	jsonObj.createdDateTime = new Date();
 	jsonObj.name = req.body.name;
-	jsonObj.email = req.body.email;
-	jsonObj.password = md5(req.body.password);
+	jsonObj.login.email = req.body.email;
+	jsonObj.login.password = md5(req.body.password);
 
 	try {
 		const user = await db
 			.collection("users")
-			.findOne({ email: jsonObj.email });
+			.findOne({ email: jsonObj.login.email });
 		if (user != null) {
 			console.log('User already exists');
 			return;
@@ -154,8 +179,8 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 	let jsonObj = JSON.parse(newUserTemplate);
 	jsonObj.createdDateTime = new Date();
 	jsonObj.name = name;
-	jsonObj.email = email;
-	jsonObj.password = md5(password);
+	jsonObj.login.email = email;
+	jsonObj.login.password = md5(password);
 
 	try {
 		const user = await db
@@ -188,14 +213,16 @@ router.post('/login', async function (req, res) {
 	try {
 		const { email, password } = req.body;
 
-		const existingUser = await db.collection("users").findOne({ email });
+		const existingUser = await db.collection("users").findOne({ "login.email": email });
 
 		if (!existingUser) {
 			console.log('User Not Found');
 			return res.status(404).json({ error: 'User not found' });
 		}
 
-		if (existingUser.password !== md5(password)) {
+		console.log(existingUser)
+
+		if (existingUser.login.password !== md5(password)) {
 			console.log('Incorrect Password');
 			return res.status(401).json({ error: 'Incorrect password' });
 		}
@@ -316,8 +343,8 @@ passport.use(
 				let jsonObj = JSON.parse(newUserTemplate);
 				jsonObj.createdDateTime = new Date();
 				jsonObj.name = profile.displayName;
-				jsonObj.email = profile.emails[0].value;
-				jsonObj.googleId = profile.id;
+				jsonObj.login.email = profile.emails[0].value;
+				jsonObj.login.googleId = profile.id;
 				console.log(jsonObj);
 
 				const user = await db

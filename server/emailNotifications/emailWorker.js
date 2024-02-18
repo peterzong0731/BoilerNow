@@ -42,7 +42,7 @@ async function checkEvents() {
         },
         {   // Keep users that have event reminder email notifications on
             $match: {
-                'joinedData.emailNotifications.eventReminders': true
+                'joinedData.emailNotifs.eventReminders': true
             }
         },
         {

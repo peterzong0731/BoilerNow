@@ -98,8 +98,8 @@ router.post('/register', async function (req, res) {
 
 	jsonObj.createdDateTime = new Date();
 	jsonObj.name = req.body.name;
-	jsonObj.email = req.body.email;
-	jsonObj.password = md5(req.body.password);
+	jsonObj.login.email = req.body.email;
+	jsonObj.login.password = md5(req.body.password);
 
 	try {
 		const user = await db
@@ -154,8 +154,8 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 	let jsonObj = JSON.parse(newUserTemplate);
 	jsonObj.createdDateTime = new Date();
 	jsonObj.name = name;
-	jsonObj.email = email;
-	jsonObj.password = md5(password);
+	jsonObj.login.email = email;
+	jsonObj.login.password = md5(password);
 
 	try {
 		const user = await db
@@ -316,8 +316,8 @@ passport.use(
 				let jsonObj = JSON.parse(newUserTemplate);
 				jsonObj.createdDateTime = new Date();
 				jsonObj.name = profile.displayName;
-				jsonObj.email = profile.emails[0].value;
-				jsonObj.googleId = profile.id;
+				jsonObj.login.email = profile.emails[0].value;
+				jsonObj.login.googleId = profile.id;
 				console.log(jsonObj);
 
 				const user = await db

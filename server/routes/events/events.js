@@ -4,7 +4,7 @@ import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 
 const router = express.Router();
-const newEventTemplate = fs.readFileSync("./routes/events/dbTemplates/newEventTemplate.json", "utf8");
+const newEventTemplate = JSON.parse(fs.readFileSync("./routes/events/dbTemplates/newEventTemplate.json", "utf8"));
 
 // All events
 router.get('/', async (req, res) => {
@@ -27,7 +27,6 @@ router.get('/', async (req, res) => {
 });
 
 // Create newly created event
-//router.post('/create', async (req, res) => {
 router.post('/create', async (req, res) => {
     console.log("Create new event route called.");
     const eventData = req.body;
@@ -38,8 +37,15 @@ router.post('/create', async (req, res) => {
         console.log("Inserted new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event.");
     } catch (e) {
-        console.log(e);
-        res.status(500).send("Error creating new event");
+        if (e.name === "MongoServerError" && e.code === 121) {
+            console.log("Document failed validation.");
+            console.log(e.errInfo);
+            res.status(500).json(e.errInfo);
+        } else {
+            console.log(e);
+            res.status(500).send("Error creating new event.");
+        }
+        
     }
 });
 
@@ -91,23 +97,49 @@ router.get('/:eventId', async (req, res) => {
     console.log("Get specific event route called.");
     console.log();
 
+    const userId = req.query.userId;
     const eventId = req.params.eventId;
-    // Verify id is a valid mongodb ObjectId
+
+    // Verify userId is a valid mongodb ObjectId
+    if (!ObjectId.isValid(userId)) {
+        console.log("Invalid userId");
+        res.status(500).send("Invalid user id.");
+        return;
+    }
+
+    // Verify eventId is a valid mongodb ObjectId
     if (!ObjectId.isValid(eventId)) {
         console.log("Invalid eventId");
         res.status(500).send("Invalid event id.");
         return;
     }
 
+    console.log(userId)
+
     try {
         var results = await db
             .collection("events")
             .findOne({
-                _id: new ObjectId(eventId)
+                _id: new ObjectId(eventId),
+                $or: [
+                    {
+                        "visibility.type": "Public",
+                    },
+                    {
+                        "visibility.type": "Private",
+                        "visibility.allowedUsers": new ObjectId(userId)
+                    }
+                ]
             });
-        
+
         console.log(results);
-        res.status(200).json(results);
+
+        if (results.length == 0) {
+            res.status(404).send("Event not found.");
+        } else {
+            res.status(200).json(results);
+        }
+        
     } catch (e) {
         console.log(e);
         res.status(500).send("Internal Server Error.");

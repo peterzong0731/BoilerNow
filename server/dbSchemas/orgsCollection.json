@@ -1,0 +1,84 @@
+{
+    "title": "orgsSchema",
+    "bsonType": "object",
+    "properties": {
+        "_id": {
+            "bsonType": "objectId"
+        },
+        "name": {
+            "bsonType": "string"
+        },
+        "shorthand": {
+            "bsonType": "string"
+        },
+        "image": {
+            "bsonType": "string"
+        },
+        "bio": {
+            "bsonType": "string"
+        },
+        "contactInfo": {
+            "bsonType": "object",
+            "properties": {
+                "email": {
+                    "bsonType": "string"
+                },
+                "twitter": {
+                    "bsonType": "string"
+                },
+                "discord": {
+                    "bsonType": "string"
+                },
+                "whatsapp": {
+                    "bsonType": "string"
+                },
+                "phoneNumber": {
+                    "bsonType": "string"
+                }
+            },
+            "required": [
+                "email"
+            ]
+        },
+        "rating": {
+            "bsonType": "double"
+        },
+        "owner": {
+            "bsonType": "objectId"
+        },
+        "contributors": {
+            "bsonType": "array",
+            "items": {
+                "bsonType": "objectId"
+            }
+        },
+        "lastActive": {
+            "bsonType": "date"
+        },
+        "followerIds": {
+            "bsonType": "array",
+            "items": {
+                "bsonType": "objectId"
+            }
+        },
+        "events": {
+            "bsonType": "array",
+            "items": {
+                "bsonType": "objectId"
+            }
+        }
+    },
+    "required": [
+        "_id",
+        "name",
+        "shorthand",
+        "bio",
+        "contactInfo",
+        "rating",
+        "owner",
+        "contributors",
+        "lastActive",
+        "followerIds",
+        "events"
+    ]
+}

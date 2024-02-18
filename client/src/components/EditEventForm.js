@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-function CreateEventForm() {
+function EditEventForm() {
+  const { id } = useParams();
   const userStr = localStorage.getItem('user');
   var userId;
   
@@ -25,6 +27,31 @@ function CreateEventForm() {
     createdBy: userId
   });
 
+  useEffect(() => {
+    async function fetchEvent() {
+      try {
+        const response = await axios.get(`http://localhost:8000/events/${id}`);
+        const { _id, category, createdDateTime, description, endDate, startDate, title, location, capacity, status, createdBy } = response.data;
+        console.log(response.data)
+        setEventData({
+            ...eventData,
+            title,
+            description,
+            startDate: startDate,
+            endDate: endDate,
+            category,
+            location,
+            capacity,
+            status,
+            createdBy
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchEvent();
+  }, [id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEventData({ ...eventData, [name]: value });
@@ -33,16 +60,16 @@ function CreateEventForm() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/events/create', eventData);
-      console.log('Successfully created the event', response.data);
+      const response = await axios.patch(`http://localhost:8000/events/update/${id}`, eventData);
+      console.log('Successfully updated the event', response.data);
     } catch (error) {
-      console.error('Error during event creation', error);
+      console.error('Error during event update', error);
     }
   };
 
   return (
     <div className="create-event-form-container">
-      <h1>Create Event</h1>
+      <h1>Edit Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
           event title
@@ -164,4 +191,4 @@ function CreateEventForm() {
   );
 }
 
-export default CreateEventForm;
+export default EditEventForm;

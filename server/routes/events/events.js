@@ -34,6 +34,21 @@ router.post('/create', async (req, res) => {
 
     try {
         const results = await db.collection("events").insertOne(eventData);
+
+        const userId = eventData.createdBy;
+
+        const userResult = await db.collection("users").updateOne(
+            { _id: new ObjectId(userId) },
+            { $push: { hostedEvents: results.insertedId } }
+        );
+
+        if (userResult.matchedCount === 0) {
+            throw new Error('Host user not found.');
+        }
+        if (userResult.modifiedCount === 0) {
+            throw new Error('Failed to update user with the new event.');
+        }
+
         console.log("Inserted new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event.");
     } catch (e) {
@@ -49,19 +64,143 @@ router.post('/create', async (req, res) => {
     }
 });
 
+// get events created by a user
+router.get('/user-events/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log(userId)
+        const events = await db.collection('events').find({ createdBy: userId }).toArray();
+        console.log(events)
+        res.status(200).json(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).send('Error fetching events');
+    }
+});
+
 // Modify existing event
 //router.patch('/update', async (req, res) => {
-router.get('/update', async (req, res) => {
-    console.log("Edit existing event route called.");
-    res.send("Edit existing event route called.");
-    console.log();
+router.patch('/update/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id)
+        const eventData = req.body;
+
+        console.log(eventData)
+    
+        const updateResult = await db.collection('events').updateOne(
+            { _id: new ObjectId(id) },
+            { $set: eventData }
+        );
+    
+        if (updateResult.matchedCount === 0) {
+            return res.status(404).send('Event not found');
+        }
+    
+        if (updateResult.modifiedCount === 0) {
+            return res.status(400).send('Event not updated');
+        }
+    
+        res.status(200).send('Event updated successfully');
+    } catch (error) {
+        console.error('Error updating event:', error);
+        res.status(500).send('Error updating event');
+    }
 });
+    
 
 
 // Delete existing event
 //router.delete('/delete', async (req, res) => {
-router.get('/delete/:eventId', async (req, res) => {
+router.delete('/delete/:eventId', async (req, res) => {
     console.log("Delete existing event route called.");
+    
+    const eventId = req.params.eventId;
+        
+    // Verify id is a valid mongodb ObjectId
+    if (!ObjectId.isValid(eventId)) {
+        console.log("Invalid eventId");
+        return res.status(400).send("Invalid event id."); // 400 Bad Request for client error
+    }
+    
+    try {
+        var results = await db
+            .collection("events")
+            .deleteOne({
+                _id: new ObjectId(eventId) // Convert string to ObjectId
+            });
+            
+        console.log(results);
+            
+        if (results.deletedCount === 1) {
+            res.status(200).send("Event deleted");
+        } else {
+            res.status(404).send("Event not found."); // 404 Not Found if nothing was deleted
+        }
+            
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Internal Server Error.");
+    }    
+});
+
+
+// Retrieve specific event
+// router.get('/:eventId', async (req, res) => {
+//     console.log("Get specific event route called.");
+//     console.log();
+
+//     const userId = req.query.userId;
+//     const eventId = req.params.eventId;
+
+//     //Verify userId is a valid mongodb ObjectId
+//     if (!ObjectId.isValid(userId)) {
+//         console.log("Invalid userId");
+//         res.status(500).send("Invalid user id.");
+//         return;
+//     }
+
+//     //Verify eventId is a valid mongodb ObjectId
+//     if (!ObjectId.isValid(eventId)) {
+//         console.log("Invalid eventId");
+//         res.status(500).send("Invalid event id.");
+//         return;
+//     }
+
+//     console.log(userId)
+
+//     try {
+//         var results = await db
+//             .collection("events")
+//             .findOne({
+//                 _id: new ObjectId(eventId),
+//                 $or: [
+//                     {
+//                         "visibility.type": "Public",
+//                     },
+//                     {
+//                         "visibility.type": "Private",
+//                         "visibility.allowedUsers": new ObjectId(userId)
+//                     }
+//                 ]
+//             });
+
+//         console.log(results);
+
+//         if (results.length == 0) {
+//             res.status(404).send("Event not found.");
+//         } else {
+//             res.status(200).json(results);
+//         }
+        
+//     } catch (e) {
+//         console.log(e);
+//         res.status(500).send("Internal Server Error.");
+//     }
+// })
+
+router.get('/:eventId', async (req, res) => {
+    console.log("Get specific event route called.");
     console.log();
 
     const eventId = req.params.eventId;
@@ -75,71 +214,12 @@ router.get('/delete/:eventId', async (req, res) => {
     try {
         var results = await db
             .collection("events")
-            .deleteOne({
+            .findOne({
                 _id: new ObjectId(eventId)
             });
         
         console.log(results);
-        
-        if (results.deletedCount == 1) {
-            res.status(200).send("Event deleted");
-        }
-        
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Internal Server Error.");
-    }    
-});
-
-
-// Retrieve specific event
-router.get('/:eventId', async (req, res) => {
-    console.log("Get specific event route called.");
-    console.log();
-
-    const userId = req.query.userId;
-    const eventId = req.params.eventId;
-
-    // Verify userId is a valid mongodb ObjectId
-    if (!ObjectId.isValid(userId)) {
-        console.log("Invalid userId");
-        res.status(500).send("Invalid user id.");
-        return;
-    }
-
-    // Verify eventId is a valid mongodb ObjectId
-    if (!ObjectId.isValid(eventId)) {
-        console.log("Invalid eventId");
-        res.status(500).send("Invalid event id.");
-        return;
-    }
-
-    console.log(userId)
-
-    try {
-        var results = await db
-            .collection("events")
-            .findOne({
-                _id: new ObjectId(eventId),
-                $or: [
-                    {
-                        "visibility.type": "Public",
-                    },
-                    {
-                        "visibility.type": "Private",
-                        "visibility.allowedUsers": new ObjectId(userId)
-                    }
-                ]
-            });
-
-        console.log(results);
-
-        if (results.length == 0) {
-            res.status(404).send("Event not found.");
-        } else {
-            res.status(200).json(results);
-        }
-        
+        res.status(200).json(results);
     } catch (e) {
         console.log(e);
         res.status(500).send("Internal Server Error.");

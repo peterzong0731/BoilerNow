@@ -10,7 +10,7 @@
         "orgAlerts": false,
         "upcomingEvents": false
     },
-    "createdDatetime": null,
+    "createdDateTime": null,
     "followingOrgs": [],
     "prevInterestedEvents": [],
     "posts": []

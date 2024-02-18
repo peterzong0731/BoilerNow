@@ -4,9 +4,9 @@ import fs from "fs";
 // NOTE: Indexes are used to ensure uniqueness of fields. To view, add, and drop indexes, you can do so on the Atlas dashboard
 
 // Booleans to control which schema to update
-const updateEventsSchema = false;
-const updateOrgsSchema = false;
-const updateUsersSchema = false;
+const updateEventsSchema = true;
+const updateOrgsSchema = true;
+const updateUsersSchema = true;
 
 
 // Update schema for "events" collection
@@ -17,7 +17,8 @@ if (updateEventsSchema) {
             collMod: "events",
             validator: {
                 $jsonSchema: eventsSchema
-            }
+            },
+            validationLevel: "off"
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -34,7 +35,8 @@ if (updateOrgsSchema) {
             collMod: "orgs",
             validator: {
                 $jsonSchema: orgsSchema
-            }
+            },
+            validationLevel: "off"
         });
         console.log("Successfully updated \"orgs\" collection schema.");
     } catch (e) {
@@ -51,7 +53,8 @@ if (updateUsersSchema) {
             collMod: "users",
             validator: {
                 $jsonSchema: usersSchema
-            }
+            },
+            validationLevel: "off"
         });
         console.log("Successfully updated \"users\" collection schema.");
     } catch (e) {

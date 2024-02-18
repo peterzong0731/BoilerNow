@@ -1,7 +1,7 @@
 import './Navbar.css';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getUserInfo, signOut } from './authUtils';
+import { getUserInfo } from './authUtils';
 
 function Navbar() {
   const [loggedIn, setLoggedIn] = useState(!!getUserInfo());
@@ -9,11 +9,6 @@ function Navbar() {
   useEffect(() => {
     setLoggedIn(!!getUserInfo());
   }, []);
-
-  const handleSignOut = () => {
-    signOut();
-    setLoggedIn(false);
-  };
 
   return (
     <nav className='nav'>
@@ -24,7 +19,7 @@ function Navbar() {
       </ul>
       <div className='nav-buttons'>
         {loggedIn ? (
-          <button className="login" onClick={handleSignOut}>Sign Out</button>
+          <Link to="/profile"><button className="login">Profile</button></Link>
         ) : (
           <Link to="/login"><button className="login">Login</button></Link>
         )}

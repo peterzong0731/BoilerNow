@@ -8,6 +8,8 @@ import CreatePostForm from './components/CreatePostForm';
 import Event from './components/Event';
 import Login from './components/Login';
 import SignUp from './components/SignUp'
+import Profile from './components/Profile';
+import EditEventForm from './components/EditEventForm';
 
 const App = () => {
   return (
@@ -21,8 +23,10 @@ const App = () => {
         <Route path="/create-event" element={<CreateEventForm />} />
         <Route path="/event" element={<Event />}/>
         <Route exact path="/event/:id" element={<Event />} />
+        <Route exact path="/edit-event/:id" element={<EditEventForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

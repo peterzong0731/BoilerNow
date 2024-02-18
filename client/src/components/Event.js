@@ -34,11 +34,7 @@ function Event() {
   useEffect(() => {
     async function fetchEvent() {
       try {
-        const response = await axios.get(`http://localhost:8000/events/${id}`, {
-          params: {
-            userId: userInfo._id
-          }
-        });
+        const response = await axios.get(`http://localhost:8000/events/${id}`);
         const { _id, category, createdDateTime, description, endDate, startDate, title, location, capacity, status } = response.data;
         console.log(response.data)
         setCategory(category)

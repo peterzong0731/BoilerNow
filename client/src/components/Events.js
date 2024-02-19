@@ -71,6 +71,7 @@ function Events() {
                     params: { year: year, month: month }
                 });
                 const events = response.data;
+                console.log(events)
                 const eventsMappedByDay = {};
 
                 events.forEach(event => {
@@ -119,12 +120,13 @@ function Events() {
                     ))}
                 </div>
                 <div className="days-grid">
+                    {console.log(eventsData)}
                     {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                         <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                             {day && <div className="day-number">{day}</div>}
                             {day && eventsData[day] && eventsData[day].filter((event) => selectedCategory === 'all' || event.category === selectedCategory).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
-                                    <div className={`event ${event.category}`}>{event.name}</div>
+                                    <div className={`event ${event.category}`}>{event.title}</div>
                                 </Link>
                             ))}
                         </div>

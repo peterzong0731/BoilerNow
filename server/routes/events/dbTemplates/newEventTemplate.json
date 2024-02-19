@@ -1,16 +1,18 @@
 {
-    "activityDateTime": null,
-    "createdDateTime": null,
+    "name": "",
     "description": "",
-    "image": "",
+    "category": "",
+    "location": "",
+    "eventStartDatetime": null,
+    "eventEndDatetime": null,
+    "capacityLimit": 0,
+    "usersInterested": [],
     "visibility": {
         "type": "",
         "allowedUsers": []
     },
     "belongsToOrg": null,
     "createdByUser": null,
-    "usersInterested": [],
-    "eventName": "",
-    "capacityLimit": null,
+    "createdDatetime": null,
     "comments": []
 }

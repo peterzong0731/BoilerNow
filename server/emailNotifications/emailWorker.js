@@ -15,17 +15,16 @@ const transporter = nodemailer.createTransport({
 
 async function checkEvents() {
     // Emails set to send 1 day +- 5 minutes before event starts. Milliseconds and seconds are ignored
-    const currentDateTime = new Date();
-    currentDateTime.setSeconds(0, 0);
-    currentDateTime.setDate(currentDateTime.getDate() + 1);
-    console.log(currentDateTime);
+    const currentDatetime = new Date();
+    currentDatetime.setSeconds(0, 0);
+    currentDatetime.setDate(currentDatetime.getDate() + 1);
 
     const pipeline = [
         {   // Filter events to only those occuring in the next ~ 1 day
             $match: {
-                'activityDateTime': {
-                    $lte: new Date(currentDateTime.getTime() + (5 * 60000)),
-                    $gt: new Date(currentDateTime.getTime() - (5 * 60000))
+                'eventDatetime': {
+                    $lte: new Date(currentDatetime.getTime() + (5 * 60000)),
+                    $gt: new Date(currentDatetime.getTime() - (5 * 60000))
                 }
             }
         },
@@ -42,7 +41,7 @@ async function checkEvents() {
         },
         {   // Keep users that have event reminder email notifications on
             $match: {
-                'joinedData.emailNotifications.eventReminders': true
+                'joinedData.emailNotifs.eventReminders': true
             }
         },
         {

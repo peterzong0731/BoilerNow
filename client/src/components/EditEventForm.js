@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-function CreateEventForm() {
+function EditEventForm() {
+  const { id } = useParams();
   const userStr = localStorage.getItem('user');
   var userId;
   
@@ -18,12 +20,48 @@ function CreateEventForm() {
     description: '',
     startDate: '',
     endDate: '',
-    category: 'Academic',
+    category: '',
     location: '',
     capacity: 0,
-    status: 'Public',
+    status: '',
     createdBy: userId
   });
+
+  useEffect(() => {
+    async function fetchEvent() {
+      try {
+        const response = await axios.get(`http://localhost:8000/events/${id}`);
+        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, name, location, capacityLimit, visibility, createdByUser } = response.data;
+       
+        const convertUTCtoLocal = (datetime) => {
+          let dateObj = new Date(datetime);
+          dateObj.setMinutes(dateObj.getMinutes() - dateObj.getTimezoneOffset());
+          dateObj = dateObj.toISOString().slice(0, 16);
+          return dateObj;
+        }
+
+        let startDatetime = convertUTCtoLocal(eventStartDatetime);
+        let endDatetime = convertUTCtoLocal(eventEndDatetime);
+        
+        console.log(response.data)
+        setEventData({
+            ...eventData,
+            title: name,
+            description,
+            startDate: startDatetime,
+            endDate: endDatetime,
+            category,
+            location,
+            capacity: capacityLimit,
+            status: visibility.type,
+            createdBy: createdByUser
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchEvent();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,16 +71,16 @@ function CreateEventForm() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/events/create', eventData);
-      console.log('Successfully created the event', response.data);
+      const response = await axios.patch(`http://localhost:8000/events/update/${id}`, eventData);
+      console.log('Successfully updated the event', response.data);
     } catch (error) {
-      console.error('Error during event creation', error);
+      console.error('Error during event update', error);
     }
   };
 
   return (
     <div className="create-event-form-container">
-      <h1>Create Event</h1>
+      <h1>Edit Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Event Title
@@ -128,9 +166,9 @@ function CreateEventForm() {
               <input
                 type="number"
                 name="capacity"
-                value={eventData.capacity}
                 min="0"
                 max="999999"
+                value={eventData.capacity}
                 onChange={handleInputChange}
               />
             </label>
@@ -166,4 +204,4 @@ function CreateEventForm() {
   );
 }
 
-export default CreateEventForm;
+export default EditEventForm;

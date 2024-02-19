@@ -63,16 +63,24 @@ function Profile() {
             <div className='hosted-events'>
                 {userEvents ? (
                     userEvents.map(event => (
-                        <>
-                            <Link key={event._id} to={`/event/${event._id}`}>
-                                <div className={`event ${event.category}`}>{event.name}</div>
-                            </Link>
-                            <Link to={`/edit-event/${event._id}`}>
-                                EDIT
-                            </Link>
-                            {console.log(event._id)}
-                            <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
-                        </>
+                        <div className='user-event-row'>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <Link to={`/event/${event._id}`} style={{ marginRight: '10px' }}>
+                                    <div className={`event ${event.category}`} style={{ marginRight: '10px' }}>{event.title}</div>
+                                </Link>
+                                <Link to={`/edit-event/${event._id}`} style={{ marginRight: '10px' }}>
+                                    EDIT
+                                </Link>
+                                <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
+                            </div>
+                            <div className='attendants'>
+                                Users attending:
+                                {event.usersInterestedNames.map(name => (
+                                    <p>{name}</p>
+                                ))}
+                            </div>
+                        </div>
+
                     ))
                 ) : (
                     <p>No events hosted.</p>

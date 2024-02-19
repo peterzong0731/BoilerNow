@@ -18,8 +18,8 @@ function EditEventForm() {
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
-    startDate: '',
-    endDate: '',
+    eventStartDatetime: '',
+    eventEndDatetime: '',
     category: '',
     location: '',
     capacity: 0,
@@ -31,7 +31,8 @@ function EditEventForm() {
     async function fetchEvent() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
-        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, name, location, capacityLimit, visibility, createdByUser } = response.data;
+        console.log(response.data)
+        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, createdByUser } = response.data;
        
         const convertUTCtoLocal = (datetime) => {
           let dateObj = new Date(datetime);
@@ -46,14 +47,14 @@ function EditEventForm() {
         console.log(response.data)
         setEventData({
             ...eventData,
-            title: name,
+            title: title,
             description,
-            startDate: startDatetime,
-            endDate: endDatetime,
+            eventStartDatetime,
+            eventEndDatetime,
             category,
             location,
-            capacity: capacityLimit,
-            status: visibility.type,
+            capacity,
+            status,
             createdBy: createdByUser
         });
       } catch (error) {
@@ -103,8 +104,8 @@ function EditEventForm() {
           Start Date
           <input
             type="datetime-local"
-            name="startDate"
-            value={eventData.startDate}
+            name="eventStartDatetime"
+            value={eventData.eventStartDatetime}
             onChange={handleInputChange}
           />
         </label>
@@ -113,7 +114,7 @@ function EditEventForm() {
           <input
             type="datetime-local"
             name="endDate"
-            value={eventData.endDate}
+            value={eventData.eventEndDatetime}
             onChange={handleInputChange}
           />
         </label>
@@ -179,8 +180,8 @@ function EditEventForm() {
               <input
                 type="radio"
                 name="status"
-                value="Public"
-                checked={eventData.status === 'Public'}
+                value="public"
+                checked={eventData.status === 'public'}
                 onChange={handleInputChange}
               />
               Public
@@ -189,8 +190,8 @@ function EditEventForm() {
               <input
                 type="radio"
                 name="status"
-                value="Private"
-                checked={eventData.status === 'Private'}
+                value="public"
+                checked={eventData.status === 'private'}
                 onChange={handleInputChange}
               />
               Private

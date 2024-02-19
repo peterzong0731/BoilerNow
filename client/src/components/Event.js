@@ -39,8 +39,9 @@ function Event() {
     async function fetchEvent() {
       try {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
+          console.log(response.data)
           const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
-          capacity, usersInterested, visibility, belongsToOrg, createdBy, createdDatetime, comments} = response.data;
+          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments} = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
 
@@ -52,7 +53,7 @@ function Event() {
           setTitle(title)
           setLocation(location)
           setCapacity(capacity)
-          setStatus(visibility.type)
+          setStatus(status)
           setUsersInterested(usersInterested)
 
           console.log(usersInterested)
@@ -98,7 +99,7 @@ function Event() {
       <div className={`event-category ${category}`}>{category}</div>
       <h2 className="event-organizer">by {eventCreatedByUser.name} | Club</h2>
       {capacity !== '0' && (
-        <div className={`event-capacity ${category}`}>Capacity: {capacity-usersInterested.length} / {capacity}</div>
+        <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}
       {currentUser ? (
         hasJoined ? (

@@ -39,7 +39,36 @@
 .event-join-button:hover {
     background-color: #45a049;
 }
+
+.event-join-button-disabled {
+    font-family: 'Calistoga', sans-serif;
+    background-color: #949494;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+    pointer-events: all !important;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.event-unregister-button {
+    font-family: 'Calistoga', sans-serif;
+    background-color: #FF7C7C;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 10px 0 0 5px;
+}
   
+.event-unregister-button:hover {
+    background-color: #ff4343;
+}
+
 .event-dates {
     background-color: #f8f8f8;
     padding: 10px;

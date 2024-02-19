@@ -11,7 +11,7 @@ import { ObjectId } from 'mongodb'
 
 const router = express.Router();
 const GoogleStrategy = OAuth.Strategy;
-const newUserTemplate = fs.readFileSync("./routes/newUserTemplate.json", "utf8");
+
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
 	host: 'smtp.gmail.com',
@@ -44,9 +44,11 @@ router.get("/home", (req, res) => {
 	}
 });
 
+
 router.get("/auth/google",
 	passport.authenticate('google', { scope: ["profile", "email"] })
 );
+
 
 router.get("/auth/google/boilernow",
 	passport.authenticate('google', { failureRedirect: "http://localhost:8000/login" }),
@@ -56,22 +58,6 @@ router.get("/auth/google/boilernow",
 		res.redirect("http://localhost:8000/home");
 	});
 
-router.get('/', async (req, res) => {
-	// test connection to database
-	try {
-		var results = await db
-			.collection("users")
-			.find({})
-			.toArray();
-
-		console.log(results);
-		res.json(results);
-
-	} catch (e) {
-		console.log(e);
-		res.status(500).send("Internal Server Error");
-	}
-});
 
 router.get("/login", (req, res) => {
 	// render login page
@@ -79,23 +65,23 @@ router.get("/login", (req, res) => {
 	res.json("login page rendered");
 });
 
+
 router.get("/register", (req, res) => {
 	// render register page
 	console.log("register page rendered");
 	res.json("register page rendered");
 });
 
+
 router.get('/user/:id', async (req, res) => {
 	console.log("here")
     try {
-        const usersCollection = db.collection('users');
-
         const { id } = req.params;
-		console.log(id)
+		console.log(id);
 
 		// Later in your code
-		const user = await usersCollection.findOne({ _id: new ObjectId(id) });
-		console.log(user)
+		const user = await db.collection('users').findOne({ _id: new ObjectId(id) });
+		console.log(user);
 
         if (user) {
 			console.log(user)
@@ -111,25 +97,28 @@ router.get('/user/:id', async (req, res) => {
 
 // POST Route for Register
 router.post('/register', async function (req, res) {
-	console.log("Req body: " + req.body);
+	const userData = req.body;
+	console.log(userData);
 
-	if (req.body.password.length < 6) {
+	if (userData.password.length < 6) {
 		console.log("Password length is less than 6!");
 		res.status(500).send('Password length is less than 6!');
 		return;
 	}
 
-	let jsonObj = JSON.parse(newUserTemplate);
+	const newUserObj = JSON.parse(fs.readFileSync("./routes/newUserTemplate.json", "utf8"));
 
-	jsonObj.createdDateTime = new Date();
-	jsonObj.name = req.body.name;
-	jsonObj.login.email = req.body.email;
-	jsonObj.login.password = md5(req.body.password);
+	// Set user details
+	newUserObj.login.email = userData.email;
+	newUserObj.login.password = md5(userData.password);
+	newUserObj.name = userData.name;
+	newUserObj.createdDatetime = new Date();
 
+	// Check if email already exists
 	try {
 		const user = await db
 			.collection("users")
-			.findOne({ email: jsonObj.login.email });
+			.findOne({ "login.email": newUserObj.login.email });
 		if (user != null) {
 			console.log('User already exists');
 			return;
@@ -139,11 +128,12 @@ router.post('/register', async function (req, res) {
 		res.status(500).send("Error fetching user");
 	}
 
-	if (req.body.email.endsWith('@purdue.edu')) {
-		const link = `http://localhost:${process.env.PORT}/verify-user/${req.body.name}/${req.body.email}/${md5(req.body.password)}`;
+	// If email is a purdue.edu email, send them an email verification
+	if (userData.email.endsWith('@purdue.edu')) {
+		const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
 		const msg = {
 			from: '"Team BoilerNow" boilernow2023@gmail.com',
-			to: req.body.email,
+			to: userData.email,
 			subject: 'BoilerNow Email Verification',
 			text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
 		}
@@ -160,32 +150,41 @@ router.post('/register', async function (req, res) {
 
 	// Insert new document to users collection
 	try {
-		const newUser = await db
-			.collection("users")
-			.insertOne(jsonObj);
-		console.log("Inserted new user with _id: " + newUser['insertedId']);
+		const result = await db.collection("users").insertOne(newUserObj);
+		console.log("Inserted new user with _id: " + result.insertedId);
+		res.status(200).send("Successfully created new user");
 
 	} catch (e) {
-		console.log(e);
-		res.status(500).send("Error creating new user");
+		if (e.name === "MongoServerError" && e.code === 121) {
+            console.log("Document failed validation.");
+            console.log(e.errInfo);
+            res.status(500).send("Document failed validation.");
+        } else {
+			console.log(e);
+			res.status(500).send("Error creating new user");
+		}
 	}
 });
+
 
 router.get("/verify-user/:name/:email/:password", async function (req, res) {
 	console.log("User Successfully Verified!");
 
 	const { name, email, password } = req.params;
 
-	let jsonObj = JSON.parse(newUserTemplate);
-	jsonObj.createdDateTime = new Date();
-	jsonObj.name = name;
-	jsonObj.login.email = email;
-	jsonObj.login.password = md5(password);
+	const newUserObj = JSON.parse(fs.readFileSync("./routes/newUserTemplate.json", "utf8"));
 
+	// Set user details
+	newUserObj.login.email = email;
+	newUserObj.login.password = md5(password);
+	newUserObj.name = name;
+	newUserObj.createdDatetime = new Date();
+
+	// Check if email already exists
 	try {
 		const user = await db
 			.collection("users")
-			.findOne({ email: jsonObj.email });
+			.findOne({ "login.email": newUserObj.login.email });
 		if (user != null) {
 			console.log('User already exists');
 			return;
@@ -197,16 +196,22 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 
 	// Insert new document to users collection
 	try {
-		const newUser = await db
-			.collection("users")
-			.insertOne(jsonObj);
-		console.log("Inserted new user with _id: " + newUser['insertedId']);
+		const result = await db.collection("users").insertOne(newUserObj);
+		console.log("Inserted new user with _id: " + result.insertedId);
+		res.status(200).send("Successfully created new user");
 
 	} catch (e) {
-		console.log(e);
-		res.status(500).send("Error creating new user");
+		if (e.name === "MongoServerError" && e.code === 121) {
+            console.log("Document failed validation.");
+            console.log(e.errInfo);
+            res.status(500).send("Document failed validation.");
+        } else {
+			console.log(e);
+			res.status(500).send("Error creating new user");
+		}
 	}
 });
+
 
 // POST Route for Login
 router.post('/login', async function (req, res) {
@@ -216,19 +221,18 @@ router.post('/login', async function (req, res) {
 		const existingUser = await db.collection("users").findOne({ "login.email": email });
 
 		if (!existingUser) {
-			console.log('User Not Found');
-			return res.status(404).json({ error: 'User not found' });
+			console.log("User with email `" + email + "`Not Found");
+			return res.status(404).json({ error: "User not found" });
 		}
 
 		console.log(existingUser)
 
 		if (existingUser.login.password !== md5(password)) {
-			console.log('Incorrect Password');
-			return res.status(401).json({ error: 'Incorrect password' });
+			console.log("Incorrect Password");
+			return res.status(401).json({ error: "Incorrect password" });
 		}
 
-		console.log('Successfully Logged in');
-		console.log(email);
+		console.log("Successfully logged in to email: " + email);
 		res.status(200).json({ user: existingUser });
 	} catch (e) {
 		console.error(e);
@@ -236,18 +240,20 @@ router.post('/login', async function (req, res) {
 	}
 });
 
+
 // GET Route for /forgotPassword
 router.get("/forgotPassword", function (req, res) {
 	//res.render("forgotPassword");
 });
 
+
 // POST Route for /forgotPassword
 router.post("/forgotPassword", async function (req, res) {
-	const userEmail = req.body.username;
+	const userEmail = req.body.email;
 	try {
 		const user = await db
 			.collection("users")
-			.findOne({ email: userEmail })
+			.findOne({ "login.email": userEmail })
 			.then((userExists) => {
 				if (userExists != null) {
 					const secret = process.env.JWT_SECRET + userExists.password;
@@ -284,9 +290,10 @@ router.post("/forgotPassword", async function (req, res) {
 	}
 });
 
+
 router.get("/reset-password/:email/:token", async function (req, res) {
 	const { email, token } = req.params;
-	const user = await db.collection("users").findOne({ email: email });
+	const user = await db.collection("users").findOne({ "login.email": email });
 	if (user == null) {
 		console.log('Invalid Link');
 		console.log("Verification Failed");
@@ -305,21 +312,17 @@ router.get("/reset-password/:email/:token", async function (req, res) {
 });
 
 router.post("/reset-password", async function (req, res) {
-	if (req.body.password.length < 6) {
+	const userData = req.body;
+	if (userData.password.length < 6) {
 		console.log("Password length is less than 6!");
 		res.status(500).send('Password length is less than 6!');
 		return;
 	}
-	const update = {
-		"$set": {
-			password: md5(req.body.password)
-		}
-	};
-	const filter = {
-		email: req.body.email
-	}
-	await db.collection("users").findOneAndUpdate(filter, update)
-		.then(updatedUser => {
+
+	await db.collection("users").updateOne(
+		{ "login.email": userData.email },
+		{ "$set": { "login.password": md5(userData.password) } }
+		).then(updatedUser => {
 			console.log('Updated Password');
 			// Render Login Page
 		})
@@ -340,26 +343,24 @@ passport.use(
 		async (accessToken, refreshToken, profile, cb) => {
 			try {
 				console.log(profile);
-				let jsonObj = JSON.parse(newUserTemplate);
-				jsonObj.createdDateTime = new Date();
-				jsonObj.name = profile.displayName;
-				jsonObj.login.email = profile.emails[0].value;
-				jsonObj.login.googleId = profile.id;
-				console.log(jsonObj);
+				const newUserObj = JSON.parse(fs.readFileSync("./routes/newUserTemplate.json", "utf8"));
 
-				const user = await db
-					.collection("users")
-					.findOne({ email: jsonObj.email });
-				if (user != null) {
+				// Set user details
+				newUserObj.login.email = profile.emails[0].value;
+				newUserObj.login.googleId = profile.id;
+				newUserObj.name = profile.displayName;
+				newUserObj.createdDatetime = new Date();
+				console.log(newUserObj);
+
+				const user = await db.collection("users").findOne({ "login.email": jsonObj.email });
+				if (user) {
 					console.log('User already exists');
 					return cb(null, user);
 				}
 
 				// Insert new document to users collection
-				const newUser = await db
-					.collection("users")
-					.insertOne(jsonObj);
-				console.log("Inserted new user with _id: " + newUser['insertedId']);
+				const newUser = await db.collection("users").insertOne(newUserObj);
+				console.log("Inserted new user with _id: " + newUser.insertedId);
 
 				return cb(null, newUser);
 			} catch (err) {

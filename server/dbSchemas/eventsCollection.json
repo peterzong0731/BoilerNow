@@ -44,7 +44,8 @@
             "bsonType": "object",
             "properties": {
                 "type": {
-                    "bsonType": "string"
+                    "bsonType": "string",
+                    "enum": ["Public", "Private"]
                 },
                 "allowedUsers": {
                     "bsonType": "array",

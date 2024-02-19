@@ -41,7 +41,7 @@
                 }
             },
             "required": [
-                "followingOrgAlerts",
+                "orgAlerts",
                 "upcomingEvents"
             ]
         },
@@ -55,6 +55,12 @@
             }
         },
         "prevInterestedEvents": {
+            "bsonType": "array",
+            "items": {
+                "bsonType": "objectId"
+            }
+        },
+        "hostedEvents": {
             "bsonType": "array",
             "items": {
                 "bsonType": "objectId"
@@ -140,6 +146,7 @@
         "createdDatetime",
         "followingOrgs",
         "prevInterestedEvents",
+        "hostedEvents",
         "posts"
     ]
 }

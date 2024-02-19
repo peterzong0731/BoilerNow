@@ -55,7 +55,7 @@ function Profile() {
     };
       
 
-    const { name, bio, emailNotifs, createdDateTime, followingOrgs, prevInterestedEvents, posts } = user;
+    const { name, bio, emailNotifs, createdDatetime, followingOrgs, prevInterestedEvents, posts } = user;
 
     return (
         <div>
@@ -65,7 +65,7 @@ function Profile() {
                     userEvents.map(event => (
                         <>
                             <Link key={event._id} to={`/event/${event._id}`}>
-                                <div className={`event ${event.category}`}>{event.title}</div>
+                                <div className={`event ${event.category}`}>{event.name}</div>
                             </Link>
                             <Link to={`/edit-event/${event._id}`}>
                                 EDIT
@@ -78,7 +78,7 @@ function Profile() {
                     <p>No events hosted.</p>
                 )}
             </div>
-            <button onClick={() => handleSignOut}>sign out</button>
+            <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )
 }

@@ -31,19 +31,30 @@ function EditEventForm() {
     async function fetchEvent() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
-        const { _id, category, createdDateTime, description, endDate, startDate, title, location, capacity, status, createdBy } = response.data;
+        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, name, location, capacityLimit, visibility, createdByUser } = response.data;
+       
+        const convertUTCtoLocal = (datetime) => {
+          let dateObj = new Date(datetime);
+          dateObj.setMinutes(dateObj.getMinutes() - dateObj.getTimezoneOffset());
+          dateObj = dateObj.toISOString().slice(0, 16);
+          return dateObj;
+        }
+
+        let startDatetime = convertUTCtoLocal(eventStartDatetime);
+        let endDatetime = convertUTCtoLocal(eventEndDatetime);
+        
         console.log(response.data)
         setEventData({
             ...eventData,
-            title,
+            title: name,
             description,
-            startDate: startDate,
-            endDate: endDate,
+            startDate: startDatetime,
+            endDate: endDatetime,
             category,
             location,
-            capacity,
-            status,
-            createdBy
+            capacity: capacityLimit,
+            status: visibility.type,
+            createdBy: createdByUser
         });
       } catch (error) {
         console.error(error);
@@ -72,7 +83,7 @@ function EditEventForm() {
       <h1>Edit Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          event title
+          Event Title
           <input
             type="text"
             name="title"
@@ -81,7 +92,7 @@ function EditEventForm() {
           />
         </label>
         <label>
-          description
+          Description
           <textarea
             name="description"
             value={eventData.description}
@@ -89,7 +100,7 @@ function EditEventForm() {
           />
         </label>
         <label>
-          start date
+          Start Date
           <input
             type="datetime-local"
             name="startDate"
@@ -98,7 +109,7 @@ function EditEventForm() {
           />
         </label>
         <label>
-          end date
+          End Date
           <input
             type="datetime-local"
             name="endDate"
@@ -107,7 +118,7 @@ function EditEventForm() {
           />
         </label>
         <label>
-          location
+          Location
           <input
             type="text"
             name="location"
@@ -117,7 +128,7 @@ function EditEventForm() {
         </label>
         <div className='last-row-container'>
           <div className='category-container'>
-            category
+            Category
             <label>
               <input
                 type="radio"
@@ -126,7 +137,7 @@ function EditEventForm() {
                 checked={eventData.category === 'Academic'}
                 onChange={handleInputChange}
               />
-              academic
+              Academic
             </label>
             <label>
               <input
@@ -136,7 +147,7 @@ function EditEventForm() {
                 checked={eventData.category === 'Social'}
                 onChange={handleInputChange}
               />
-              social
+              Social
             </label>
             <label>
               <input
@@ -146,41 +157,43 @@ function EditEventForm() {
                 checked={eventData.category === 'Other'}
                 onChange={handleInputChange}
               />
-              other
+              Other
             </label>
           </div>
           <div className='category-container'>
-            capacity
+            Capacity
             <label>
               <input
                 type="number"
                 name="capacity"
+                min="0"
+                max="999999"
                 value={eventData.capacity}
                 onChange={handleInputChange}
               />
             </label>
           </div>
           <div className='category-container'>
-            status
+            Status
             <label>
               <input
                 type="radio"
                 name="status"
-                value="public"
-                checked={eventData.status === 'public'}
+                value="Public"
+                checked={eventData.status === 'Public'}
                 onChange={handleInputChange}
               />
-              public
+              Public
             </label>
             <label>
               <input
                 type="radio"
                 name="status"
-                value="private"
-                checked={eventData.status === 'private'}
+                value="Private"
+                checked={eventData.status === 'Private'}
                 onChange={handleInputChange}
               />
-              private
+              Private
             </label>
           </div>
         </div>

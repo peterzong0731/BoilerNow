@@ -7,7 +7,7 @@ import { getUserInfo } from './authUtils';
 function Event() {
   const { id } = useParams();
   const [category, setCategory] = useState('')
-  const [createdDateTime, setCreatedDateTime] = useState('')
+  const [createdDatetime, setCreatedDatetime] = useState('')
   const [description, setDescription] = useState('')
   const [dateRange, setDateRange] = useState('')
   const [title, setTitle] = useState('')
@@ -35,17 +35,19 @@ function Event() {
     async function fetchEvent() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
-        const { _id, category, createdDateTime, description, endDate, startDate, title, location, capacity, status } = response.data;
+        const { _id, name, description, category, location, eventStartDatetime, eventEndDatetime, 
+          capacityLimit, usersInterested, visibility, belongsToOrg, createdByUser, createdDatetime, comments} = response.data;
+
         console.log(response.data)
         setCategory(category)
-        setCreatedDateTime(createdDateTime)
+        setCreatedDatetime(createdDatetime)
         setDescription(description)
-        setDateRange(formatDateRange(startDate, endDate))
+        setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
         console.log(dateRange)
-        setTitle(title)
+        setTitle(name)
         setLocation(location)
-        setCapacity(capacity)
-        setStatus(status)
+        setCapacity(capacityLimit)
+        setStatus(visibility.type)
       } catch (error) {
         console.error(error);
       }

@@ -8,7 +8,7 @@
     "capacityLimit": 0,
     "usersInterested": [],
     "visibility": {
-        "type": "Public",
+        "type": "",
         "allowedUsers": []
     },
     "belongsToOrg": null,

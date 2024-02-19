@@ -34,6 +34,7 @@ function Events() {
     const emptySlotsAtStart = Array(firstDayOfMonth).fill(null);
     const daySlots = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
+    const userStr = localStorage.getItem('user');
 
     const handleMonthNext = () => {
         if (month === 11) {
@@ -124,7 +125,7 @@ function Events() {
                     {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                         <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                             {day && <div className="day-number">{day}</div>}
-                            {day && eventsData[day] && eventsData[day].filter((event) => selectedCategory === 'all' || event.category === selectedCategory).map((event, idx) => (
+                            {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && (event.status == 'public') || userStr).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
                                     <div className={`event ${event.category}`}>{event.title}</div>
                                 </Link>

@@ -4,27 +4,17 @@ import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 
 const router = express.Router();
-
+const newEventTemplate = JSON.parse(fs.readFileSync("./routes/events/dbTemplates/newEventTemplate.json", "utf8"));
 
 // All events
 router.get('/', async (req, res) => {
-    console.log("Get all events.");
-    
-    console.log(req.query);
-    const filterYear = +req.query.year;
-    const filterMonth = +req.query.month + 1;
+    console.log("All events route called.");
+    console.log();
 
     try {
         var results = await db
             .collection("events")
-            .find({
-                $expr: {
-                    $and: [
-                        { $eq: [{ $year: "$eventStartDatetime"}, filterYear]},
-                        { $eq: [{ $month: "$eventStartDatetime"}, filterMonth]}
-                    ]
-                }
-            })
+            .find({})
             .toArray();
 
         console.log(results);
@@ -39,31 +29,16 @@ router.get('/', async (req, res) => {
 // Create newly created event
 router.post('/create', async (req, res) => {
     console.log("Create new event route called.");
-    console.log(req.body)
-
     const eventData = req.body;
-    const newEventObj = JSON.parse(fs.readFileSync("./routes/events/dbTemplates/newEventTemplate.json", "utf8"));
-    const userId = new ObjectId(eventData.createdBy);
-
-    // Set event details
-    newEventObj.name = eventData.title;
-    newEventObj.description = eventData.description;
-    newEventObj.category = eventData.category;
-    newEventObj.location = eventData.location;
-    newEventObj.eventStartDatetime = new Date(eventData.startDate);
-    newEventObj.eventEndDatetime = new Date(eventData.endDate);
-    newEventObj.capacityLimit = +eventData.capacity;
-    newEventObj.usersInterested = [userId];
-    newEventObj.visibility.type = eventData.status;
-    newEventObj.belongsToOrg = new ObjectId();
-    newEventObj.createdByUser = userId;
-    newEventObj.createdDatetime = new Date()
+    eventData.createdDateTime = new Date();
 
     try {
-        const results = await db.collection("events").insertOne(newEventObj);
+        const results = await db.collection("events").insertOne(eventData);
+
+        const userId = eventData.createdBy;
 
         const userResult = await db.collection("users").updateOne(
-            { _id: userId },
+            { _id: new ObjectId(userId) },
             { $push: { hostedEvents: results.insertedId } }
         );
 
@@ -94,7 +69,7 @@ router.get('/user-events/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
         console.log(userId)
-        const events = await db.collection('events').find({ createdByUser: new ObjectId(userId) }).toArray();
+        const events = await db.collection('events').find({ createdBy: userId }).toArray();
         console.log(events)
         res.status(200).json(events);
     } catch (error) {
@@ -104,77 +79,63 @@ router.get('/user-events/:userId', async (req, res) => {
 });
 
 // Modify existing event
-router.patch('/update/:eventid', async (req, res) => {
+//router.patch('/update', async (req, res) => {
+router.patch('/update/:id', async (req, res) => {
     try {
-        const { eventid } = req.params;
-        console.log(eventid)
-
+        const { id } = req.params;
+        console.log(id)
         const eventData = req.body;
-        console.log(eventData)
 
-        // Set event details
-        const updatedEvent = {
-            "name": eventData.title,
-            "description": eventData.description,
-            "category": eventData.category,
-            "location": eventData.location,
-            "eventStartDatetime": new Date(eventData.startDate),
-            "eventEndDatetime": new Date(eventData.endDate),
-            "capacityLimit": +eventData.capacity,
-            "visibility.type": eventData.status
-        }       
+        console.log(eventData)
     
         const updateResult = await db.collection('events').updateOne(
-            { _id: new ObjectId(eventid) },
-            { $set: updatedEvent }
+            { _id: new ObjectId(id) },
+            { $set: eventData }
         );
     
         if (updateResult.matchedCount === 0) {
-            console.log("Event not found");
             return res.status(404).send('Event not found');
         }
     
         if (updateResult.modifiedCount === 0) {
-            console.log("No data was changed from before.");
             return res.status(400).send('Event not updated');
         }
     
         res.status(200).send('Event updated successfully');
-        console.log("Successfully updated event.")
     } catch (error) {
         console.error('Error updating event:', error);
-        //res.status(500).send('Error updating event');
-        res.status(500).json(error)
+        res.status(500).send('Error updating event');
     }
 });
+    
+
 
 // Delete existing event
+//router.delete('/delete', async (req, res) => {
 router.delete('/delete/:eventId', async (req, res) => {
     console.log("Delete existing event route called.");
     
-    const { eventId } = req.params;
+    const eventId = req.params.eventId;
         
     // Verify id is a valid mongodb ObjectId
     if (!ObjectId.isValid(eventId)) {
         console.log("Invalid eventId");
-        return res.status(400).send("Invalid event id."); // 400 Bad Request for client error
+        return res.status(400).send("Invalid event id.");
     }
     
     try {
         var results = await db
             .collection("events")
             .deleteOne({
-                _id: new ObjectId(eventId) // Convert string to ObjectId
+                _id: new ObjectId(eventId)
             });
             
         console.log(results);
             
         if (results.deletedCount === 1) {
-            console.log("Event deleted.")
             res.status(200).send("Event deleted");
         } else {
-            console.log("Event not found.");
-            res.status(404).send("Event not found."); // 404 Not Found if nothing was deleted
+            res.status(404).send("Event not found.");
         }
             
     } catch (e) {
@@ -184,6 +145,59 @@ router.delete('/delete/:eventId', async (req, res) => {
 });
 
 // Retrieve specific event
+// router.get('/:eventId', async (req, res) => {
+//     console.log("Get specific event route called.");
+//     console.log();
+
+//     const userId = req.query.userId;
+//     const eventId = req.params.eventId;
+
+//     //Verify userId is a valid mongodb ObjectId
+//     if (!ObjectId.isValid(userId)) {
+//         console.log("Invalid userId");
+//         res.status(500).send("Invalid user id.");
+//         return;
+//     }
+
+//     //Verify eventId is a valid mongodb ObjectId
+//     if (!ObjectId.isValid(eventId)) {
+//         console.log("Invalid eventId");
+//         res.status(500).send("Invalid event id.");
+//         return;
+//     }
+
+//     console.log(userId)
+
+//     try {
+//         var results = await db
+//             .collection("events")
+//             .findOne({
+//                 _id: new ObjectId(eventId),
+//                 $or: [
+//                     {
+//                         "visibility.type": "Public",
+//                     },
+//                     {
+//                         "visibility.type": "Private",
+//                         "visibility.allowedUsers": new ObjectId(userId)
+//                     }
+//                 ]
+//             });
+
+//         console.log(results);
+
+//         if (results.length == 0) {
+//             res.status(404).send("Event not found.");
+//         } else {
+//             res.status(200).json(results);
+//         }
+        
+//     } catch (e) {
+//         console.log(e);
+//         res.status(500).send("Internal Server Error.");
+//     }
+// })
+
 router.get('/:eventId', async (req, res) => {
     console.log("Get specific event route called.");
     console.log();
@@ -202,28 +216,75 @@ router.get('/:eventId', async (req, res) => {
             .findOne({
                 _id: new ObjectId(eventId)
             });
-
-        console.log(results);
-
-        if (results) {
-            const eventVisibilityType = results.visibility.type;
-            if (eventVisibilityType == "Private" ) { // &&userNotLoggedIn) {
-                console.log("This event is set to Private. User must be logged in to view.");
-                res.status(400).send("This event is set to Private. User must be logged in to view.");
-                return;
-            }
-            console.log("Event found.");
-            res.status(200).json(results);
-        } else {
-            console.log("Event with id `" + eventId + "` not found.");
-            res.status(404).send("Event not found.");
-        }        
         
+       // console.log(results);
+        res.status(200).json(results);
     } catch (e) {
         console.log(e);
         res.status(500).send("Internal Server Error.");
     }
 })
+
+// joining an event
+router.patch('/join/:eventId/:userId', async (req, res) => {
+    const { eventId } = req.params;
+    const { userId } = req.params;
+
+    if (!ObjectId.isValid(eventId) || !ObjectId.isValid(userId)) {
+        return res.status(400).send("Invalid ID provided.");
+    }
+
+    try {
+        const result = await db.collection('events').updateOne(
+            { _id: new ObjectId(eventId) },
+            { $addToSet: { usersInterested: new ObjectId(userId) } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).send('Event not found');
+        }
+
+        if (result.modifiedCount === 0) {
+            return res.status(200).send('User already interested or not updated');
+        }
+
+        res.status(200).send('User added to the interested list');
+    } catch (error) {
+        console.error('Error joining event:', error);
+        res.status(500).send('Error joining event');
+    }
+});
+
+// unregister from event
+router.patch('/unregister/:eventId/:userId', async (req, res) => {
+    console.log("here")
+    const { eventId } = req.params;
+    const { userId } = req.params;
+
+    if (!ObjectId.isValid(eventId) || !ObjectId.isValid(userId)) {
+        return res.status(400).send("Invalid ID provided.");
+    }
+
+    try {
+        const result = await db.collection('events').updateOne(
+            { _id: new ObjectId(eventId) },
+            { $pull: { usersInterested: new ObjectId(userId) } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).send('Event not found');
+        }
+
+        if (result.modifiedCount === 0) {
+            return res.status(200).send('User was not interested or removal not needed');
+        }
+
+        res.status(200).send('User removed from the interested list');
+    } catch (error) {
+        console.error('Error unregistering from event:', error);
+        res.status(500).send('Error unregistering from event');
+    }
+});
 
 
 export default router;

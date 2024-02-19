@@ -14,7 +14,11 @@ function Event() {
   const [location, setLocation] = useState('')
   const [capacity, setCapacity] = useState(0)
   const [status, setStatus] = useState('')
-  const userInfo = getUserInfo();
+  const [usersInterested, setUsersInterested] = useState([])
+  const [eventCreatedByUser, setEventCreatedByUser] = useState({})
+  const [hasJoined, setHasJoined] = useState(false);
+  const currentUserFromStorage = localStorage.getItem('user');
+  const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -34,20 +38,27 @@ function Event() {
   useEffect(() => {
     async function fetchEvent() {
       try {
-        const response = await axios.get(`http://localhost:8000/events/${id}`);
-        const { _id, name, description, category, location, eventStartDatetime, eventEndDatetime, 
+          const response = await axios.get(`http://localhost:8000/events/${id}`);
+          const { _id, name, description, category, location, eventStartDatetime, eventEndDatetime, 
           capacityLimit, usersInterested, visibility, belongsToOrg, createdByUser, createdDatetime, comments} = response.data;
 
-        console.log(response.data)
-        setCategory(category)
-        setCreatedDatetime(createdDatetime)
-        setDescription(description)
-        setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
-        console.log(dateRange)
-        setTitle(name)
-        setLocation(location)
-        setCapacity(capacityLimit)
-        setStatus(visibility.type)
+          const userOfEvent = await axios.get(`http://localhost:8000/user/${createdByUser}`);
+
+          setEventCreatedByUser(userOfEvent.data)
+          setCategory(category)
+          setCreatedDatetime(createdDatetime)
+          setDescription(description)
+          setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
+          setTitle(name)
+          setLocation(location)
+          setCapacity(capacityLimit)
+          setStatus(visibility.type)
+          setUsersInterested(usersInterested)
+
+          console.log(usersInterested)
+          const isInterested = usersInterested.includes(currentUser._id);
+          setHasJoined(isInterested);
+
       } catch (error) {
         console.error(error);
       }
@@ -55,15 +66,52 @@ function Event() {
     fetchEvent();
   }, [id]);
 
+  const handleJoin = async () => {
+    try {
+        const response = await axios.patch(`http://localhost:8000/events/join/${id}/${currentUser._id}`);
+        
+        setUsersInterested(prevUsers => [...prevUsers, currentUser._id]);
+        setHasJoined(true); 
+        
+        console.log("Successfully joined")
+    } catch (error) {
+        console.error('Error joining event:', error);
+    }
+  }
+
+  const handleUnregister = async () => {  
+    try {
+        const response = await axios.patch(`http://localhost:8000/events/unregister/${id}/${currentUser._id}`);
+        
+        setUsersInterested(prevUsers => prevUsers.filter(userId => userId !== currentUser._id));
+        setHasJoined(false);
+        
+        console.log("Successfully unregistered");
+    } catch (error) {
+        console.error('Error unregistering from event:', error);
+    }
+  };
+
   return (
     <div className="event-container">
       <h1 className="event-title">{title}</h1>
       <div className={`event-category ${category}`}>{category}</div>
-      <h2 className="event-organizer">by User | Club</h2>
+      <h2 className="event-organizer">by {eventCreatedByUser.name} | Club</h2>
       {capacity !== '0' && (
-        <div className={`event-capacity ${category}`}>Capacity: {capacity}</div>
+        <div className={`event-capacity ${category}`}>Capacity: {capacity-usersInterested.length} / {capacity}</div>
       )}
-      <button className="event-join-button">Join</button>
+      {currentUser ? (
+        hasJoined ? (
+          <>
+            <button className="event-join-button-disabled" disabled>Joined</button>
+            <button className="event-unregister-button" onClick={handleUnregister}>Unregister</button>
+          </>
+        ) : (
+          <button className="event-join-button" onClick={handleJoin}>Join</button>
+        )
+      ) : (
+        <button className="event-join-button-disabled" disabled>Log in to join</button>
+      )}
       <div className="event-dates">
         <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>
       </div>

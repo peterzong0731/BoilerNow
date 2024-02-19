@@ -75,7 +75,7 @@ function Events() {
                 const eventsMappedByDay = {};
 
                 events.forEach(event => {
-                    const dayOfMonth = new Date(event.startDate).getDate();
+                    const dayOfMonth = new Date(event.eventStartDatetime).getDate();
                     if (!eventsMappedByDay[dayOfMonth]) {
                         eventsMappedByDay[dayOfMonth] = [];
                     }
@@ -126,7 +126,7 @@ function Events() {
                             {day && <div className="day-number">{day}</div>}
                             {day && eventsData[day] && eventsData[day].filter((event) => selectedCategory === 'all' || event.category === selectedCategory).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
-                                    <div className={`event ${event.category}`}>{event.name}</div>
+                                    <div className={`event ${event.category}`}>{event.title}</div>
                                 </Link>
                             ))}
                         </div>

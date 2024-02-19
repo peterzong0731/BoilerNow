@@ -16,8 +16,8 @@ function CreateEventForm() {
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
-    startDate: '',
-    endDate: '',
+    eventStartDatetime: '',
+    eventEndDatetime: '',
     category: '',
     location: '',
     capacity: 0,
@@ -65,8 +65,8 @@ function CreateEventForm() {
           start date
           <input
             type="datetime-local"
-            name="startDate"
-            value={eventData.startDate}
+            name="eventStartDatetime"
+            value={eventData.eventStartDatetime}
             onChange={handleInputChange}
           />
         </label>
@@ -74,8 +74,8 @@ function CreateEventForm() {
           end date
           <input
             type="datetime-local"
-            name="endDate"
-            value={eventData.endDate}
+            name="eventEndDatetime"
+            value={eventData.eventEndDatetime}
             onChange={handleInputChange}
           />
         </label>

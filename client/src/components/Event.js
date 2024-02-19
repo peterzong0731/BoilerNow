@@ -39,19 +39,19 @@ function Event() {
     async function fetchEvent() {
       try {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
-          const { _id, name, description, category, location, eventStartDatetime, eventEndDatetime, 
-          capacityLimit, usersInterested, visibility, belongsToOrg, createdByUser, createdDatetime, comments} = response.data;
+          const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
+          capacity, usersInterested, visibility, belongsToOrg, createdBy, createdDatetime, comments} = response.data;
 
-          const userOfEvent = await axios.get(`http://localhost:8000/user/${createdByUser}`);
+          const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
 
           setEventCreatedByUser(userOfEvent.data)
           setCategory(category)
           setCreatedDatetime(createdDatetime)
           setDescription(description)
           setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
-          setTitle(name)
+          setTitle(title)
           setLocation(location)
-          setCapacity(capacityLimit)
+          setCapacity(capacity)
           setStatus(visibility.type)
           setUsersInterested(usersInterested)
 

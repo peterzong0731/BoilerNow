@@ -18,10 +18,10 @@ function CreateEventForm() {
     description: '',
     startDate: '',
     endDate: '',
-    category: 'Academic',
+    category: '',
     location: '',
     capacity: 0,
-    status: 'Public',
+    status: '',
     createdBy: userId
   });
 
@@ -45,7 +45,7 @@ function CreateEventForm() {
       <h1>Create Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Event Title
+          event title
           <input
             type="text"
             name="title"
@@ -54,7 +54,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          Description
+          description
           <textarea
             name="description"
             value={eventData.description}
@@ -62,7 +62,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          Start Date
+          start date
           <input
             type="datetime-local"
             name="startDate"
@@ -71,7 +71,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          End Date
+          end date
           <input
             type="datetime-local"
             name="endDate"
@@ -80,7 +80,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          Location
+          location
           <input
             type="text"
             name="location"
@@ -90,7 +90,7 @@ function CreateEventForm() {
         </label>
         <div className='last-row-container'>
           <div className='category-container'>
-            Category
+            category
             <label>
               <input
                 type="radio"
@@ -99,7 +99,7 @@ function CreateEventForm() {
                 checked={eventData.category === 'Academic'}
                 onChange={handleInputChange}
               />
-              Academic
+              academic
             </label>
             <label>
               <input
@@ -109,7 +109,7 @@ function CreateEventForm() {
                 checked={eventData.category === 'Social'}
                 onChange={handleInputChange}
               />
-              Social
+              social
             </label>
             <label>
               <input
@@ -119,43 +119,41 @@ function CreateEventForm() {
                 checked={eventData.category === 'Other'}
                 onChange={handleInputChange}
               />
-              Other
+              other
             </label>
           </div>
           <div className='category-container'>
-            Capacity
+            capacity
             <label>
               <input
                 type="number"
                 name="capacity"
                 value={eventData.capacity}
-                min="0"
-                max="999999"
                 onChange={handleInputChange}
               />
             </label>
           </div>
           <div className='category-container'>
-            Status
+            status
             <label>
               <input
                 type="radio"
                 name="status"
-                value="Public"
-                checked={eventData.status === 'Public'}
+                value="public"
+                checked={eventData.status === 'public'}
                 onChange={handleInputChange}
               />
-              Public
+              public
             </label>
             <label>
               <input
                 type="radio"
                 name="status"
-                value="Private"
-                checked={eventData.status === 'Private'}
+                value="private"
+                checked={eventData.status === 'private'}
                 onChange={handleInputChange}
               />
-              Private
+              private
             </label>
           </div>
         </div>

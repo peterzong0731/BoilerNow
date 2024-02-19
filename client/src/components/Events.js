@@ -71,10 +71,11 @@ function Events() {
                     params: { year: year, month: month }
                 });
                 const events = response.data;
+                console.log(events)
                 const eventsMappedByDay = {};
 
                 events.forEach(event => {
-                    const dayOfMonth = new Date(event.eventStartDatetime).getDate();
+                    const dayOfMonth = new Date(event.startDate).getDate();
                     if (!eventsMappedByDay[dayOfMonth]) {
                         eventsMappedByDay[dayOfMonth] = [];
                     }
@@ -119,6 +120,7 @@ function Events() {
                     ))}
                 </div>
                 <div className="days-grid">
+                    {console.log(eventsData)}
                     {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                         <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                             {day && <div className="day-number">{day}</div>}

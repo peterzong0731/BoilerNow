@@ -1,3 +1,39 @@
-.hosted-event {
-    display: flex;
+.profile {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+}
+
+.profile {
+    width: 100%;
+    padding: 20px;
+}
+
+.buttons button {
+  background-color: #B3FF8F;
+  border: none;
+  color: black;
+  padding: 8px 28px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.buttons button:hover {
+    background-color: #88fd52;
+}
+
+.signout {
+    background-color: #B3FF8F;
+  border: none;
+  color: black;
+  padding: 8px 28px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.signout:hover {
+    background-color: #88fd52;
 }

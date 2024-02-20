@@ -352,7 +352,7 @@ passport.use(
 				newUserObj.createdDatetime = new Date();
 				console.log(newUserObj);
 
-				const user = await db.collection("users").findOne({ "login.email": jsonObj.email });
+				const user = await db.collection("users").findOne({ "login.email": newUserObj.login.email });
 				if (user) {
 					console.log('User already exists');
 					return cb(null, user);

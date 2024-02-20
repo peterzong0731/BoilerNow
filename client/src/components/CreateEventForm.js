@@ -22,7 +22,9 @@ function CreateEventForm() {
     location: '',
     capacity: 0,
     status: '',
-    createdBy: userId
+    createdBy: userId,
+    usersInterested: [],
+    usersInterestedNames: []
   });
 
   const handleInputChange = (e) => {

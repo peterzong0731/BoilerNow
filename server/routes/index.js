@@ -261,7 +261,7 @@ router.post("/forgotPassword", async function (req, res) {
 						email: userEmail
 					};
 					const token = jwt.sign(payload, secret, { expiresIn: '15m' });
-					const link = `http://localhost:${process.env.PORT}/reset-password/${userExists.email}/${token}`;
+					const link = `http://localhost:3000/reset-password?email=${encodeURIComponent(userEmail)}&token=${encodeURIComponent(token)}`;
 					console.log(userEmail);
 					const msg = {
 						from: '"Team BoilerNow" boilernow2023@gmail.com',
@@ -304,6 +304,8 @@ router.get("/reset-password/:email/:token", async function (req, res) {
 		jwt.verify(token, secret);
 		console.log("Verified");
 		// TODO: Render Reset Password with Email
+		res.redirect(`http://localhost:3000/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`);
+
 	} catch (error) {
 		console.log(error);
 		console.log("Verification Failed");
@@ -312,24 +314,32 @@ router.get("/reset-password/:email/:token", async function (req, res) {
 });
 
 router.post("/reset-password", async function (req, res) {
-	const userData = req.body;
-	if (userData.password.length < 6) {
-		console.log("Password length is less than 6!");
-		res.status(500).send('Password length is less than 6!');
-		return;
-	}
+    const { email, password } = req.body;
+    
+    if (password.length < 6) {
+        console.log("Password length is less than 6!");
+        res.status(400).send('Password length is less than 6!');
+        return;
+    }
 
-	await db.collection("users").updateOne(
-		{ "login.email": userData.email },
-		{ "$set": { "login.password": md5(userData.password) } }
-		).then(updatedUser => {
-			console.log('Updated Password');
-			// Render Login Page
-		})
-		.catch(err => {
-			console.error(`Failed to update password: ${err}`);
-		});
+    try {
+        const updateResult = await db.collection("users").updateOne(
+            { "login.email": email },
+            { "$set": { "login.password": md5(password) } }
+        );
+
+        if (updateResult.matchedCount === 0) {
+            res.status(404).send('User not found');
+        } else {
+            console.log('Updated Password');
+			res.status(200)        
+		}
+    } catch (err) {
+        console.error(`Failed to update password: ${err}`);
+        res.status(500).send('Failed to update password');
+    }
 });
+
 
 passport.use(
 	"google",

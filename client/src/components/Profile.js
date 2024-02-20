@@ -3,8 +3,10 @@ import axios from 'axios'
 import { signOut } from './authUtils';
 import './Profile.css'
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
+    const navigate = useNavigate();
     const userStr = localStorage.getItem('user');
     var userId;
     
@@ -42,6 +44,7 @@ function Profile() {
 
     const handleSignOut = () => {
         signOut();
+        navigate('/');
     };
 
     const handleDeleteEvent = async (eventId) => {
@@ -86,6 +89,7 @@ function Profile() {
                     <p>No events hosted.</p>
                 )}
             </div>
+            <Link to={`/create-event`}>Create Event</Link>
             <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )

@@ -13,10 +13,12 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
         [
             {
                 "postId": ObjectId,
+                "postTitle": string
                 "content": string,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Objects]
+                "replies": [Objects],
+                "eventId": string
             }
         ]
     On Success:
@@ -67,9 +69,10 @@ router.get('/', async (req, res) => {
 */
 router.post('/create/:userId', async (req, res) => {
     console.log("Create new post route called.");
-
     const userId = req.params.userId;
+    const title = req.body.title;
     const content = req.body.content;
+    const eventId = req.body.eventId;
 
     if (!ObjectId.isValid(userId)) {
         return res.status(400).send("Invalid ID provided.");
@@ -78,7 +81,9 @@ router.post('/create/:userId', async (req, res) => {
     // Fill in data to post object
     const newPostObj = JSON.parse(newPostTemplate);
     newPostObj.postId = new ObjectId();
+    newPostObj.title = title;
     newPostObj.content = content;
+    newPostObj.eventId = eventId;
     newPostObj.postedDatetime = new Date();
 
     // TODO: If image:

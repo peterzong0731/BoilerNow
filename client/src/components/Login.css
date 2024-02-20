@@ -21,7 +21,7 @@
 .login-container input[type="password"] {
   width: 97%;
   padding: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-right: 20px;
   margin-top: 5px;
   border: 1px solid #ccc;
@@ -81,4 +81,10 @@
 
 .google-button:hover {
   background-color: #45a049;
+}
+
+.login-container a {
+  font-size: 12px;
+  margin: 0;
+  margin-top: -20px;
 }

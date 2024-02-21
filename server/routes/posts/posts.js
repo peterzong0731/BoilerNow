@@ -113,7 +113,7 @@ router.get('/:userId', async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    "posts.postsId": 1,
+                    "posts.postId": 1,
                     "posts.title": 1,
                     "posts.content": 1,
                     "posts.postedDatetime": 1,

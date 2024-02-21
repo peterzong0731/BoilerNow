@@ -19,6 +19,7 @@ function Profile() {
 
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
+    const [userPosts, setUserPosts] = useState([])
 
     useEffect(() => {
         async function fetchUser() {
@@ -29,6 +30,10 @@ function Profile() {
 
                 const eventsResponse = await axios.get(`http://localhost:8000/events/user-events/${userId}`);
                 setUserEvents(eventsResponse.data);
+
+                const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
+                setUserPosts(postsResponse.data);
+                console.log(userPosts)
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
@@ -56,6 +61,17 @@ function Profile() {
             console.error('Error deleting event:', error);
         }
     };
+
+    const handleDeletePost = async (postId) => {
+        console.log(postId)
+        try {
+            const response = await axios.delete(`http://localhost:8000/posts/delete/${userId}/${postId}`);
+            console.log('Post deleted successfully:', response.data);
+          } catch (error) {
+            console.error('Error deleting event:', error);
+        }
+    };
+      
       
 
     const { name, bio, emailNotifs, createdDatetime, followingOrgs, prevInterestedEvents, posts } = user;
@@ -91,7 +107,23 @@ function Profile() {
                     <p>No events hosted.</p>
                 )}
             </div>
+            <div className='hosted-events'>
+                {userPosts ? (
+                    userPosts.map(post => (
+                        <div className='user-event-row'>
+                            <div className='buttons' style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <div style={{ marginRight: '10px'}}>{post.title}</div>
+                                <button onClick={() => handleDeletePost(post.postId)}>Delete</button>
+                            </div>
+                        </div>
+
+                    ))
+                ) : (
+                    <p>No posts created.</p>
+                )}
+            </div>
             <Link to={`/create-event`}>Create Event</Link>
+            <Link to={`/create-post`}>Create Post</Link>
             <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )

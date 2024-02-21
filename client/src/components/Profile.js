@@ -3,8 +3,10 @@ import axios from 'axios'
 import { signOut } from './authUtils';
 import './Profile.css'
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
+    const navigate = useNavigate();
     const userStr = localStorage.getItem('user');
     var userId;
     
@@ -42,6 +44,7 @@ function Profile() {
 
     const handleSignOut = () => {
         signOut();
+        navigate('/');
     };
 
     const handleDeleteEvent = async (eventId) => {
@@ -58,27 +61,29 @@ function Profile() {
     const { name, bio, emailNotifs, createdDatetime, followingOrgs, prevInterestedEvents, posts } = user;
 
     return (
-        <div>
+        <div className="profile">
             <h1>Profile: {name}</h1>
             <div className='hosted-events'>
                 {userEvents ? (
                     userEvents.map(event => (
                         <div className='user-event-row'>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <div className='buttons' style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                                 <Link to={`/event/${event._id}`} style={{ marginRight: '10px' }}>
-                                    <div className={`event ${event.category}`} style={{ marginRight: '10px' }}>{event.title}</div>
+                                    <div className={`event ${event.category}`} style={{ marginRight: '10px'}}>{event.title}</div>
                                 </Link>
                                 <Link to={`/edit-event/${event._id}`} style={{ marginRight: '10px' }}>
-                                    EDIT
+                                    <button>EDIT</button>
                                 </Link>
                                 <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
                             </div>
-                            <div className='attendants'>
-                                Users attending:
+                            {<div className='attendants'>
+                                {event.usersInterestedNames.length ? (
+                                    <div>Users attending:</div>
+                                ) :(<div></div>)}
                                 {event.usersInterestedNames.map(name => (
                                     <p>{name}</p>
                                 ))}
-                            </div>
+                                </div>}
                         </div>
 
                     ))
@@ -86,6 +91,7 @@ function Profile() {
                     <p>No events hosted.</p>
                 )}
             </div>
+            <Link to={`/create-event`}>Create Event</Link>
             <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )

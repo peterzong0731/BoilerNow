@@ -74,11 +74,17 @@
                     "postId": {
                         "bsonType": "objectId"
                     },
+                    "title": {
+                        "bsonType": "string"
+                    },
                     "content": {
                         "bsonType": "string"
                     },
                     "image": {
                         "bsonType": "string"
+                    },
+                    "eventId": {
+                        "bsonType" : "objectId"
                     },
                     "postedDatetime": {
                         "bsonType": "date"
@@ -129,7 +135,9 @@
                 },
                 "required": [
                     "postId",
+                    "title",
                     "content",
+                    "eventId",
                     "postedDatetime",
                     "likedBy",
                     "replies"

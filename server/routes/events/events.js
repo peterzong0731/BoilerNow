@@ -235,9 +235,20 @@ router.patch('/join/:eventId/:userId', async (req, res) => {
     }
 
     try {
+        const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const userName = user.name;
+
         const result = await db.collection('events').updateOne(
             { _id: new ObjectId(eventId) },
-            { $addToSet: { usersInterested: new ObjectId(userId) } }
+            {
+                $addToSet: {
+                    usersInterested: new ObjectId(userId),
+                    usersInterestedNames: userName
+                }
+            }
         );
 
         if (result.matchedCount === 0) {
@@ -266,9 +277,20 @@ router.patch('/unregister/:eventId/:userId', async (req, res) => {
     }
 
     try {
+        const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const userName = user.name;
+
         const result = await db.collection('events').updateOne(
             { _id: new ObjectId(eventId) },
-            { $pull: { usersInterested: new ObjectId(userId) } }
+            {
+                $pull: {
+                    usersInterested: new ObjectId(userId),
+                    usersInterestedNames: userName
+                }
+            }
         );
 
         if (result.matchedCount === 0) {

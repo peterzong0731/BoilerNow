@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css'
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,6 +26,7 @@ function Login() {
         setEmail('');
         setPassword('');
         alert('Login successful!');
+        navigate('/profile');
       } else {
         alert('Incorrect email or password');
       }
@@ -65,6 +68,7 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
+      <a href='/forgot-password'>forgot password</a>
       <button className='google-button' onClick={handleGoogleLogin}>Sign in with Google</button>
       <div className='login-buttons-container'>
         <button className='login-button' onClick={handleLogin}>login</button>

@@ -54,7 +54,7 @@ if (updateUsersSchema) {
             validator: {
                 $jsonSchema: usersSchema
             },
-            validationLevel: "strict"
+            validationLevel: "off"
         });
         console.log("Successfully updated \"users\" collection schema.");
     } catch (e) {

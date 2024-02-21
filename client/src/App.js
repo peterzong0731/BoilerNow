@@ -10,6 +10,8 @@ import Login from './components/Login';
 import SignUp from './components/SignUp'
 import Profile from './components/Profile';
 import EditEventForm from './components/EditEventForm';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword'
 
 const App = () => {
   return (
@@ -27,6 +29,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:email/:token" element={<ResetPassword />} />
+
       </Routes>
     </BrowserRouter>
   );

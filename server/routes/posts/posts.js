@@ -13,12 +13,12 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
         [
             {
                 "postId": ObjectId,
-                "postTitle": string
+                "title": string
                 "content": string,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
                 "replies": [Objects],
-                "eventId": string
+                "event": Object
             }
         ]
     On Success:
@@ -32,15 +32,106 @@ router.get('/', async (req, res) => {
     try {
         const results = await db.collection("users").aggregate([
             { $unwind: "$posts" },
-            {
-                $group: {
-                    _id: 0,
-                    allPosts: { $addToSet: "$posts" }
+            { 
+                $lookup: {
+                    from: "events",
+                    localField: "posts.eventId",
+                    foreignField: "_id",
+                    as: "event"
                 }
-            }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "posts.postsId": 1,
+                    "posts.title": 1,
+                    "posts.content": 1,
+                    "posts.postedDatetime": 1,
+                    "posts.likedBy": 1,
+                    "posts.replies": 1,
+                    "posts.event": { $first: "$event" }
+                }
+            },
+            { $replaceWith: "$posts" }
         ]).toArray();
 
-        res.status(200).json(results[0].allPosts);
+        res.status(200).json(results);
+
+    } catch (e) {
+        console.log("Get all posts error:");
+        console.log(e);
+        res.status(500).send("Error retrieving all posts.");
+    }
+});
+
+
+/*  
+    Description: Get all posts by one userId
+    Incoming data:
+        params:
+            userId: string | ObjectId
+    Outgoing data: 
+        [
+            {
+                "postId": ObjectId,
+                "title": string
+                "content": string,
+                "postedDatetime": UTC Date,
+                "likedBy": [ObjectId],
+                "replies": [Objects],
+                "event": Object
+            }
+        ]
+    On Success:
+        - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : Invalid ID provided. -> The userId is not a valid ObjectId.
+        - 404 : The given userId has no posts. -> Either the userID does not match an existing user or the user has no posts.
+        - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.    
+*/
+router.get('/:userId', async (req, res) => {
+    console.log("All posts route called.");
+
+    const userId = req.params.userId;
+
+    if (!ObjectId.isValid(userId)) {
+        return res.status(400).send("Invalid ID provided.");
+    }
+
+    try {
+        const results = await db.collection("users").aggregate([
+            { $match: { _id: new ObjectId(userId) } },
+            { $unwind: "$posts" },
+            { 
+                $lookup: {
+                    from: "events",
+                    localField: "posts.eventId",
+                    foreignField: "_id",
+                    as: "event"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "posts.postsId": 1,
+                    "posts.title": 1,
+                    "posts.content": 1,
+                    "posts.postedDatetime": 1,
+                    "posts.likedBy": 1,
+                    "posts.replies": 1,
+                    "posts.event": { $first: "$event" }
+                }
+            },
+            { $replaceWith: "$posts" }
+         ]).toArray();
+
+        console.log(results);
+
+        if (results[0]) {
+            res.status(200).json(results);
+        } else {
+            res.status(404).send("The given userId has no posts.");
+        }
 
     } catch (e) {
         console.log("Get all posts error:");
@@ -56,13 +147,15 @@ router.get('/', async (req, res) => {
         params: 
             userId: string | ObjectId
         body: {
+            title: string,
             content: string,
+            eventId: ObjectId
         }
     Outgoing data: None
     On Success:
         - 200 : Post published successfully. -> Post was inserted into the user's document.
     On Error:
-        - 400 : Invalid ID provided. -> The userId is not a valid ObjectId.
+        - 400 : Invalid ID provided. -> The userId or eventId is not a valid ObjectId.
         - 400 : UserId does not match an existing user. -> The userId is not found in the db.
         - 400 : Post was not published. -> No user document was modified to insert the post.
         - 500 : Error publishing post. -> There was a db error when trying to insert the post.    
@@ -74,7 +167,7 @@ router.post('/create/:userId', async (req, res) => {
     const content = req.body.content;
     const eventId = req.body.eventId;
 
-    if (!ObjectId.isValid(userId)) {
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(eventId)) {
         return res.status(400).send("Invalid ID provided.");
     }
 
@@ -83,7 +176,7 @@ router.post('/create/:userId', async (req, res) => {
     newPostObj.postId = new ObjectId();
     newPostObj.title = title;
     newPostObj.content = content;
-    newPostObj.eventId = eventId;
+    newPostObj.eventId = new ObjectId(eventId);
     newPostObj.postedDatetime = new Date();
 
     // TODO: If image:

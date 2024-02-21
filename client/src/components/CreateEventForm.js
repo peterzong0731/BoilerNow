@@ -36,6 +36,8 @@ function CreateEventForm() {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:8000/events/create', eventData);
+      window.alert('Event created successfully!');
+      window.location.href = '/events';
       console.log('Successfully created the event', response.data);
     } catch (error) {
       console.error('Error during event creation', error);

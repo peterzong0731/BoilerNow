@@ -3,6 +3,7 @@ import './Event.css'
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
 import { getUserInfo } from './authUtils';
+import checkmark from './images/yellow_checkmark.png'
 
 function Event() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ function Event() {
   const [hasJoined, setHasJoined] = useState(false);
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
+  const [purdueEmail, setPurdueEmail] = useState(false)
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -55,6 +57,8 @@ function Event() {
           setCapacity(capacity)
           setStatus(status)
           setUsersInterested(usersInterested)
+
+          if (userOfEvent.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
           console.log(usersInterested)
           const isInterested = usersInterested.includes(currentUser._id);
@@ -97,7 +101,7 @@ function Event() {
     <div className="event-container">
       <h1 className="event-title">{title}</h1>
       <div className={`event-category ${category}`}>{category}</div>
-      <h2 className="event-organizer">by {eventCreatedByUser.name} | Club</h2>
+      <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}

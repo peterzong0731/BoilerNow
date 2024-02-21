@@ -129,24 +129,24 @@ router.post('/register', async function (req, res) {
 	}
 
 	// If email is a purdue.edu email, send them an email verification
-	if (userData.email.endsWith('@purdue.edu')) {
-		const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
-		const msg = {
-			from: '"Team BoilerNow" boilernow2023@gmail.com',
-			to: userData.email,
-			subject: 'BoilerNow Email Verification',
-			text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
-		}
-		transporter.sendMail(msg, function (error, info) {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log('Email sent: ' + info.response);
-			}
-		});
-		// TODO: Render Home Page
-		return;
-	}
+	// if (userData.email.endsWith('@purdue.edu')) {
+	// 	const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
+	// 	const msg = {
+	// 		from: '"Team BoilerNow" boilernow2023@gmail.com',
+	// 		to: userData.email,
+	// 		subject: 'BoilerNow Email Verification',
+	// 		text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
+	// 	}
+	// 	transporter.sendMail(msg, function (error, info) {
+	// 		if (error) {
+	// 			console.log(error);
+	// 		} else {
+	// 			console.log('Email sent: ' + info.response);
+	// 		}
+	// 	});
+	// 	// TODO: Render Home Page
+	// 	return;
+	// }
 
 	// Insert new document to users collection
 	try {

@@ -127,6 +127,10 @@ router.post('/register', async function (req, res) {
 		console.log(e);
 		res.status(500).send("Error fetching user");
 	}
+	
+	if (userData.email.endsWith('@purdue.edu')) {
+		newUserObj.isPurdueEmail = true
+	}
 
 	// If email is a purdue.edu email, send them an email verification
 	// if (userData.email.endsWith('@purdue.edu')) {

@@ -18,7 +18,7 @@ if (updateEventsSchema) {
             validator: {
                 $jsonSchema: eventsSchema
             },
-            validationLevel: "strict"
+            validationLevel: "off"
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -61,6 +61,5 @@ if (updateUsersSchema) {
         console.log(e);
     }
 }
-
 
 process.exit(1);

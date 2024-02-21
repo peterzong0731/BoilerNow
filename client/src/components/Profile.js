@@ -24,7 +24,6 @@ function Profile() {
     useEffect(() => {
         async function fetchUser() {
             try {
-                console.log(userId)
                 const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
                 setUser(userResponse.data);
 
@@ -33,7 +32,6 @@ function Profile() {
 
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
                 setUserPosts(postsResponse.data);
-                console.log(userPosts)
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
@@ -53,7 +51,6 @@ function Profile() {
     };
 
     const handleDeleteEvent = async (eventId) => {
-        console.log(eventId)
         try {
             const response = await axios.delete(`http://localhost:8000/events/delete/${eventId}`);
             console.log('Event deleted successfully:', response.data);
@@ -63,7 +60,6 @@ function Profile() {
     };
 
     const handleDeletePost = async (postId) => {
-        console.log(postId)
         try {
             const response = await axios.delete(`http://localhost:8000/posts/delete/${userId}/${postId}`);
             console.log('Post deleted successfully:', response.data);

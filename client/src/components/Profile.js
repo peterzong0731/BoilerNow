@@ -8,14 +8,34 @@ import checkmark from './images/yellow_checkmark.png'
 
 function Profile() {
     const navigate = useNavigate();
-    const userStr = localStorage.getItem('user');
     var userId;
-    
+
+    // Google sing in
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userIdValue = urlParams.get('user');
+        if (userIdValue) {
+            userId = userIdValue;
+            async function fetchUser() {
+                try {
+                    const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
+                    console.log("Testing " + userResponse)
+                    localStorage.setItem('user', JSON.stringify(userResponse.data));
+                } catch (error) {
+                    console.error('Error fetching profile:', error);
+                }
+            }
+            fetchUser();
+        } else {
+            console.log("User ID not found in URL parameters.");
+        }
+    }, []);
+
+    const userStr = localStorage.getItem('user');
+
     if (userStr) {
         const userObj = JSON.parse(userStr);
         userId = userObj._id;
-    } else {
-        console.log("User not found in localStorage.");
     }
 
     const [user, setUser] = useState(null);

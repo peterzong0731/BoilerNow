@@ -53,9 +53,9 @@ router.get("/auth/google",
 router.get("/auth/google/boilernow",
 	passport.authenticate('google', { failureRedirect: "http://localhost:8000/login" }),
 	function (req, res, err) {
-		console.log("google login")
-		res.redirect("http://localhost:3000/profile");
-	});
+		const user = req.user;
+		res.redirect("http://localhost:3000/profile?user=" + user._id);
+});
 
 
 router.get("/login", (req, res) => {
@@ -356,7 +356,7 @@ passport.use(
 		},
 		async (accessToken, refreshToken, profile, cb) => {
 			try {
-				console.log(profile);
+				console.log("Google login: " + profile);
 				const newUserObj = JSON.parse(fs.readFileSync("./routes/newUserTemplate.json", "utf8"));
 
 				// Set user details
@@ -377,6 +377,7 @@ passport.use(
 				const newUser = await db.collection("users").insertOne(newUserObj);
 				console.log("Inserted new user with _id: " + newUser.insertedId);
 				currentUser = user;
+				console.log("Current user test: " + currentUser)
 				return cb(null, newUser);
 			} catch (err) {
 				return cb(err);

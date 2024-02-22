@@ -38,9 +38,9 @@ function Login() {
 
   const handleGoogleLogin = async () => {
     try {
-      // const response = await axios.get('http://localhost:8000/auth/google');
+      // const response = await window.open('http://localhost:8000/auth/google');
       // console.log('Google login initiated:', response.data);
-      window.open('http://localhost:8000/auth/google', '_blank');
+      window.open('http://localhost:8000/auth/google');
     } catch (error) {
       console.error('Error initiating Google login:', error);
     }

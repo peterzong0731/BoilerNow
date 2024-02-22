@@ -54,8 +54,7 @@ router.get("/auth/google/boilernow",
 	passport.authenticate('google', { failureRedirect: "http://localhost:8000/login" }),
 	function (req, res, err) {
 		console.log("google login")
-		console.log(res.data)
-		res.redirect("http://localhost:8000/home");
+		res.redirect("http://localhost:3000/");
 	});
 
 

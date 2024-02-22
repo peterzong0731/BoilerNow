@@ -29,8 +29,12 @@ function CreateEventForm() {
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEventData({ ...eventData, [name]: value });
+    const { name, value, files } = e.target;
+    if (files) {
+      setEventData({ ...eventData, images: [...files] });
+    } else {
+      setEventData({ ...eventData, [name]: value });
+    }
   };
 
   const handleFileInputChange = (e) => {
@@ -46,8 +50,26 @@ function CreateEventForm() {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    const formData = new FormData();
+    Object.keys(eventData).forEach(key => {
+      if (key === 'images') {
+        [...eventData.images].forEach(file => {
+          formData.append('images', file);
+        });
+      } else if (Array.isArray(eventData[key]) || typeof eventData[key] === 'object') {
+        formData.append(key, JSON.stringify(eventData[key]));
+      } else {
+        formData.append(key, eventData[key]);
+      }
+    });
     try {
-      const response = await axios.post('http://localhost:8000/events/create', eventData);
+      const response = await axios.post('http://localhost:8000/events/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      window.alert('Event created successfully!');
+      window.location.href = '/events';
       console.log('Successfully created the event', response.data);
     } catch (error) {
       console.error('Error during event creation', error);
@@ -100,6 +122,16 @@ function CreateEventForm() {
             name="location"
             value={eventData.location}
             onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          Event Image
+          <input
+            type="file"
+            name="images"
+            onChange={handleInputChange}
+            multiple
+            accept="image/*"
           />
         </label>
         <div className='last-row-container'>

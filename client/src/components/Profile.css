@@ -37,3 +37,15 @@
 .signout:hover {
     background-color: #88fd52;
 }
+
+.profile-name-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.verified-checkmark {
+    margin-left: 10px;
+    height: 30px;
+    width: 30px;
+}

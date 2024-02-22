@@ -4,6 +4,7 @@ import { signOut } from './authUtils';
 import './Profile.css'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import checkmark from './images/yellow_checkmark.png'
 
 function Profile() {
     const navigate = useNavigate();
@@ -20,12 +21,17 @@ function Profile() {
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
     const [userPosts, setUserPosts] = useState([])
+    const [purdueEmail, setPurdueEmail] = useState(false)
 
     useEffect(() => {
         async function fetchUser() {
             try {
+                console.log(userId)
+
                 const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
                 setUser(userResponse.data);
+
+                if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
                 const eventsResponse = await axios.get(`http://localhost:8000/events/user-events/${userId}`);
                 setUserEvents(eventsResponse.data);
@@ -53,6 +59,7 @@ function Profile() {
     const handleDeleteEvent = async (eventId) => {
         try {
             const response = await axios.delete(`http://localhost:8000/events/delete/${eventId}`);
+            alert("Event deleted")
             console.log('Event deleted successfully:', response.data);
           } catch (error) {
             console.error('Error deleting event:', error);
@@ -74,7 +81,10 @@ function Profile() {
 
     return (
         <div className="profile">
-            <h1>Profile: {name}</h1>
+            <div className='profile-name-container'>
+                <h1>{name}</h1>
+                {purdueEmail ? (<img className="verified-checkmark" src={checkmark} />)  : <></>}  
+            </div>
             <div className='hosted-events'>
                 {userEvents ? (
                     userEvents.map(event => (

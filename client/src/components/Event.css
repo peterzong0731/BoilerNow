@@ -22,6 +22,8 @@
     color: #666666;
     font-size: 18px;
     margin-top: 5px;
+    display: flex;
+    align-items: center;
 }
   
 .event-join-button {
@@ -129,16 +131,25 @@
     background-color: #8FDEFF;
 }
 
-.event-capacity.Academic {
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: #B3FF8F;
+.verified-checkmark-event {
+    margin-left: 5px;
+    margin-right: 5px;
+    height: 18px;
+    width: 18px;
 }
   
+.event-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .event-image {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+}
+
 @media (max-width: 768px) {
     .event-container {
       padding: 15px;

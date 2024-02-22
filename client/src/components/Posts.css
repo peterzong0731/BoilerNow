@@ -1,11 +1,11 @@
 .posts-outer-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.posts-inner-container {
-  display: flex;
-  flex-direction: column;
-}
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .posts-inner-container {
+    display: flex;
+    flex-direction: column;
+  }

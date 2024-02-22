@@ -16,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
 
 // Connect routes
 app.use('/', indexRouter);
@@ -29,8 +31,8 @@ app.listen(port, () => {
 });
 
 // Schedule email task to check and send emails every 5 minutes. Occurs on separate thread to prevent server from slowing down
-//cron.schedule('*/10 * * * * *', () => {
-	const worker = new Worker('./emailNotifications/emailWorker.js');
-//});
+cron.schedule('*/5 * * * * *', () => {
+ 	const worker = new Worker('./emailNotifications/emailWorker.js');
+});
 
 

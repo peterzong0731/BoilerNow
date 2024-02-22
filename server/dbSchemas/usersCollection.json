@@ -16,12 +16,16 @@
                 },
                 "googleId": {
                     "bsonType": "string"
+                },
+                "isPurdueEmail": {
+                    "bsonType": "bool"
                 }
             },
             "required": [
                 "email",
                 "password",
-                "googleId"
+                "googleId",
+                "isPurdueEmail"
             ]
         },
         "name": {

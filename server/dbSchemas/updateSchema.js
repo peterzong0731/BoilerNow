@@ -18,7 +18,10 @@ if (updateEventsSchema) {
             validator: {
                 $jsonSchema: eventsSchema
             },
-            validationLevel: "off"
+
+            validationLevel: "off",
+            additionalProperties: false
+
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -34,7 +37,8 @@ if (updateOrgsSchema) {
         await db.command({
             collMod: "orgs",
             validator: {
-                $jsonSchema: orgsSchema
+                $jsonSchema: orgsSchema,
+                additionalProperties: false
             },
             validationLevel: "off"
         });
@@ -52,7 +56,8 @@ if (updateUsersSchema) {
         await db.command({
             collMod: "users",
             validator: {
-                $jsonSchema: usersSchema
+                $jsonSchema: usersSchema,
+                additionalProperties: false
             },
             validationLevel: "off"
         });

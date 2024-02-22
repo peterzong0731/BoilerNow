@@ -54,8 +54,7 @@ router.get("/auth/google/boilernow",
 	passport.authenticate('google', { failureRedirect: "http://localhost:8000/login" }),
 	function (req, res, err) {
 		console.log("google login")
-		console.log(res.data)
-		res.redirect("http://localhost:8000/home");
+		res.redirect("http://localhost:3000/profile");
 	});
 
 
@@ -127,26 +126,30 @@ router.post('/register', async function (req, res) {
 		console.log(e);
 		res.status(500).send("Error fetching user");
 	}
+	
+	if (userData.email.endsWith('@purdue.edu')) {
+		newUserObj.isPurdueEmail = true
+	}
 
 	// If email is a purdue.edu email, send them an email verification
-	if (userData.email.endsWith('@purdue.edu')) {
-		const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
-		const msg = {
-			from: '"Team BoilerNow" boilernow2023@gmail.com',
-			to: userData.email,
-			subject: 'BoilerNow Email Verification',
-			text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
-		}
-		transporter.sendMail(msg, function (error, info) {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log('Email sent: ' + info.response);
-			}
-		});
-		// TODO: Render Home Page
-		return;
-	}
+	// if (userData.email.endsWith('@purdue.edu')) {
+	// 	const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
+	// 	const msg = {
+	// 		from: '"Team BoilerNow" boilernow2023@gmail.com',
+	// 		to: userData.email,
+	// 		subject: 'BoilerNow Email Verification',
+	// 		text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
+	// 	}
+	// 	transporter.sendMail(msg, function (error, info) {
+	// 		if (error) {
+	// 			console.log(error);
+	// 		} else {
+	// 			console.log('Email sent: ' + info.response);
+	// 		}
+	// 	});
+	// 	// TODO: Render Home Page
+	// 	return;
+	// }
 
 	// Insert new document to users collection
 	try {
@@ -340,6 +343,7 @@ router.post("/reset-password", async function (req, res) {
     }
 });
 
+let currentUser = null;
 
 passport.use(
 	"google",
@@ -365,13 +369,14 @@ passport.use(
 				const user = await db.collection("users").findOne({ "login.email": newUserObj.login.email });
 				if (user) {
 					console.log('User already exists');
+					currentUser = user;
 					return cb(null, user);
 				}
 
 				// Insert new document to users collection
 				const newUser = await db.collection("users").insertOne(newUserObj);
 				console.log("Inserted new user with _id: " + newUser.insertedId);
-
+				currentUser = user;
 				return cb(null, newUser);
 			} catch (err) {
 				return cb(err);

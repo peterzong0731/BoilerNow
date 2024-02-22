@@ -2,7 +2,8 @@ import express from "express";
 import fs from "fs";
 import db from "../../conn.js";
 import { ObjectId } from "mongodb";
-
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 const newEventTemplate = JSON.parse(fs.readFileSync("./routes/events/dbTemplates/newEventTemplate.json", "utf8"));
 
@@ -27,10 +28,32 @@ router.get('/', async (req, res) => {
 });
 
 // Create newly created event
-router.post('/create', async (req, res) => {
+router.post('/create', upload.array('images'), async (req, res) => {
     console.log("Create new event route called.");
     const eventData = req.body;
     eventData.createdDateTime = new Date();
+
+    if (req.files) {
+        eventData.images = req.files.map(file => {
+            return file.path;
+        });
+    }
+
+    if (eventData.usersInterested && typeof eventData.usersInterested === 'string') {
+        try {
+            eventData.usersInterested = JSON.parse(eventData.usersInterested);
+        } catch (error) {
+            return res.status(400).send("Invalid usersInterested format.");
+        }
+    }
+
+    if (eventData.usersInterestedNames && typeof eventData.usersInterestedNames === 'string') {
+        try {
+            eventData.usersInterestedNames = JSON.parse(eventData.usersInterestedNames);
+        } catch (error) {
+            return res.status(400).send("Invalid usersInterestedNames format.");
+        }
+    }
 
     try {
         const results = await db.collection("events").insertOne(eventData);
@@ -216,6 +239,10 @@ router.get('/:eventId', async (req, res) => {
             .findOne({
                 _id: new ObjectId(eventId)
             });
+
+        if (results && results.images) {
+            results.images.map(image => `http://localhost:8000/uploads/${image.replace('uploads\\', '')}`);
+        }
         
        // console.log(results);
         res.status(200).json(results);

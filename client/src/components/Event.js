@@ -3,6 +3,7 @@ import './Event.css'
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
 import { getUserInfo } from './authUtils';
+import checkmark from './images/yellow_checkmark.png'
 
 function Event() {
   const { id } = useParams();
@@ -21,6 +22,8 @@ function Event() {
 
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
+  const [purdueEmail, setPurdueEmail] = useState(false)
+  const [images, setImages] = useState([]);
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -57,8 +60,9 @@ function Event() {
           setCapacity(capacity)
           setStatus(status)
           setUsersInterested(usersInterested)
-          setImages(images)
-          console.log(images)
+          setImages(images.map(image => `http://localhost:8000/${image}`));
+          
+          if (userOfEvent.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
           console.log(usersInterested)
           const isInterested = usersInterested.includes(currentUser._id);
@@ -101,7 +105,7 @@ function Event() {
     <div className="event-container">
       <h1 className="event-title">{title}</h1>
       <div className={`event-category ${category}`}>{category}</div>
-      <h2 className="event-organizer">by {eventCreatedByUser.name} | Club</h2>
+      <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}
@@ -125,7 +129,7 @@ function Event() {
       <p className="event-description"> {description} </p>
       <div className="event-images">
         {images.map((image, index) => (
-          <img key={index} src={image.url} alt={`Event Image ${index}`} className="event-image" />
+          <img key={index} src={image} alt={`Event Image ${index + 1}`} className="event-image" />
         ))}
       </div>
     </div>

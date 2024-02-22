@@ -31,7 +31,7 @@ app.listen(port, () => {
 });
 
 // Schedule email task to check and send emails every 5 minutes. Occurs on separate thread to prevent server from slowing down
-cron.schedule('*/5 * * * * *', () => {
+cron.schedule('* */5 * * * *', () => {
  	const worker = new Worker('./emailNotifications/emailWorker.js');
 });
 

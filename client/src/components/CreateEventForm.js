@@ -37,6 +37,17 @@ function CreateEventForm() {
     }
   };
 
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files);
+    setEventData({ ...eventData, images: [...eventData.images, ...files] });
+  };
+
+  const removeImage = (index) => {
+    const newImages = [...eventData.images];
+    newImages.splice(index, 1);
+    setEventData({ ...eventData, images: newImages });
+  };
+
   const handleSubmit = async(e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -192,7 +203,26 @@ function CreateEventForm() {
             </label>
           </div>
         </div>
-        
+        <label>
+          Images:
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileInputChange}
+          />
+        </label>
+        <div>
+          {eventData.images.map((image, index) => (
+            <img
+              key={index}
+              src={URL.createObjectURL(image)}
+              alt={`Preview ${index}`}
+              className="image-preview"
+              onClick={() => removeImage(index)}
+            />
+          ))}
+        </div>
         <button type="submit" className="submit-button">submit</button>
       </form>
     </div>

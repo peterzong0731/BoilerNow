@@ -18,6 +18,8 @@ function Event() {
   const [usersInterested, setUsersInterested] = useState([])
   const [eventCreatedByUser, setEventCreatedByUser] = useState({})
   const [hasJoined, setHasJoined] = useState(false);
+  const [images, setImages] = useState([]);
+
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
@@ -44,7 +46,7 @@ function Event() {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
           console.log(response.data)
           const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
-          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, images } = response.data;
+          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments, images} = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
 

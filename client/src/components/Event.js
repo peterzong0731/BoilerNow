@@ -21,6 +21,7 @@ function Event() {
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
+  const [images, setImages] = useState([]);
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -43,7 +44,7 @@ function Event() {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
           console.log(response.data)
           const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
-          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments} = response.data;
+          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, images } = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
 
@@ -57,7 +58,8 @@ function Event() {
           setCapacity(capacity)
           setStatus(status)
           setUsersInterested(usersInterested)
-
+          setImages(images.map(image => `http://localhost:8000/${image}`));
+          
           if (userOfEvent.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
           console.log(usersInterested)
@@ -123,6 +125,11 @@ function Event() {
       <div className="event-location">{'\u{1F4CD}'} {location}</div>
       <h2 className="event-description-title">Description:</h2>
       <p className="event-description"> {description} </p>
+      <div className="event-images">
+        {images.map((image, index) => (
+          <img key={index} src={image} alt={`Event Image ${index + 1}`} className="event-image" />
+        ))}
+      </div>
     </div>
   )
 }

@@ -27,9 +27,9 @@ function Profile() {
         async function fetchUser() {
             try {
                 console.log(userId)
+                
                 const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
                 setUser(userResponse.data);
-
 
                 if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
@@ -61,6 +61,7 @@ function Profile() {
         console.log(eventId)
         try {
             const response = await axios.delete(`http://localhost:8000/events/delete/${eventId}`);
+            alert("Event deleted")
             console.log('Event deleted successfully:', response.data);
           } catch (error) {
             console.error('Error deleting event:', error);

@@ -377,7 +377,6 @@ passport.use(
 				const newUser = await db.collection("users").insertOne(newUserObj);
 				console.log("Inserted new user with _id: " + newUser.insertedId);
 				currentUser = user;
-				console.log("Current user test: " + currentUser)
 				return cb(null, newUser);
 			} catch (err) {
 				return cb(err);

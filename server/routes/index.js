@@ -54,7 +54,7 @@ router.get("/auth/google/boilernow",
 	passport.authenticate('google', { failureRedirect: "http://localhost:8000/login" }),
 	function (req, res, err) {
 		console.log("google login")
-		res.redirect("http://localhost:3000/");
+		res.redirect("http://localhost:3000/profile");
 	});
 
 
@@ -343,6 +343,7 @@ router.post("/reset-password", async function (req, res) {
     }
 });
 
+let currentUser = null;
 
 passport.use(
 	"google",
@@ -368,13 +369,14 @@ passport.use(
 				const user = await db.collection("users").findOne({ "login.email": newUserObj.login.email });
 				if (user) {
 					console.log('User already exists');
+					currentUser = user;
 					return cb(null, user);
 				}
 
 				// Insert new document to users collection
 				const newUser = await db.collection("users").insertOne(newUserObj);
 				console.log("Inserted new user with _id: " + newUser.insertedId);
-
+				currentUser = user;
 				return cb(null, newUser);
 			} catch (err) {
 				return cb(err);

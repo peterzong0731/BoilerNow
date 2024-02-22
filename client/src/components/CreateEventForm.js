@@ -203,15 +203,6 @@ function CreateEventForm() {
             </label>
           </div>
         </div>
-        <label>
-          Images:
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileInputChange}
-          />
-        </label>
         <div>
           {eventData.images.map((image, index) => (
             <img

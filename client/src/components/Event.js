@@ -23,7 +23,6 @@ function Event() {
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
-  const [images, setImages] = useState([]);
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };

@@ -192,7 +192,7 @@ function EditEventForm() {
               <input
                 type="radio"
                 name="status"
-                value="public"
+                value="private"
                 checked={eventData.status === 'private'}
                 onChange={handleInputChange}
               />

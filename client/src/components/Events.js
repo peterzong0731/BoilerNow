@@ -63,6 +63,7 @@ function Events() {
     
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
+        console.log(selectedCategory)
     };
 
     useEffect(() => {
@@ -125,7 +126,7 @@ function Events() {
                     {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                         <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                             {day && <div className="day-number">{day}</div>}
-                            {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && (event.status == 'public') || userStr).map((event, idx) => (
+                            {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
                                     <div className={`event ${event.category}`}>{event.title}</div>
                                 </Link>

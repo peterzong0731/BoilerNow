@@ -21,6 +21,7 @@ async function checkEvents() {
     const currentDatetime = new Date();
     currentDatetime.setSeconds(0, 0);
     currentDatetime.setDate(currentDatetime.getDate() + 1);
+    currentDatetime.setHours(currentDatetime.getHours() - 5);
 
     console.log(currentDatetime)
 
@@ -90,23 +91,29 @@ async function checkEvents() {
         }
     ];
 
-    var results = await db.collection("events").aggregate(pipeline).toArray();
+    try {
+        var results = await db.collection("events").aggregate(pipeline).toArray();
 
-    //console.log(results);
-    
-    // Loop through each event
-    results.forEach(event => {
-        console.log(event.usersInterested);
-        // Loop through each user interested
-        event.usersInterested.forEach( user => {
-            sendEmail(event, user);
+        // console.log(results);
+        
+        // Loop through each event
+        results.forEach(event => {
+            console.log(event.usersInterested);
+            // Loop through each user interested
+            event.usersInterested.forEach( user => {
+                sendEmail(event, user);
+            });
         });
-    });
+    } catch(e) {
+        console.log(e);
+    }
 }
 
 function sendEmail(event, user) {
     let email = user.email;
     let name = user.name;
+    let date = new Date(event.convertedDate);
+    date.setHours(date.getHours() + 5);
 
     let mailOptions = {
         from: '"Team BoilerNow" boilernow2023@gmail.com',
@@ -114,7 +121,7 @@ function sendEmail(event, user) {
         subject: `${event.eventTitle} is coming up!`,
         html: emailTemplate.replace("{{name}}", name)
                            .replace("{{eventTitle}}", event.eventTitle)
-                           .replace("{{startTime}}", event.convertedDate)
+                           .replace("{{startTime}}", date)
     }
     
     // For testing purposes so I dont send an email on every run

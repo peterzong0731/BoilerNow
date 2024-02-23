@@ -9,7 +9,7 @@
     "bio": "",
     "emailNotifs": {
         "orgAlerts": false,
-        "upcomingEvents": false
+        "upcomingEvents": true
     },
     "createdDatetime": null,
     "followingOrgs": [],

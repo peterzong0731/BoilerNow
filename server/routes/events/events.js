@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
             .find({})
             .toArray();
 
-        console.log(results);
+        // console.log(results);
         res.json(results);
 
     } catch (e) {

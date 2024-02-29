@@ -7,7 +7,9 @@ import "./conn.js";
 import path from 'path';
 
 // Routes
-import indexRouter from "./routes/index.js";
+import userRouter from "./routes/users/users.js";
+import googleOAuthRouter from "./routes/users/googleOAuth.js";
+import forgotPasswordRouter from "./routes/users/forgotPassword.js";
 import eventRouter from "./routes/events/events.js";
 import postRouter from "./routes/posts/posts.js";
 
@@ -20,7 +22,9 @@ app.use('/uploads', express.static('uploads'));
 
 
 // Connect routes
-app.use('/', indexRouter);
+app.use('/', userRouter);
+app.use('/', googleOAuthRouter);
+app.use('/', forgotPasswordRouter);
 app.use('/events', eventRouter);
 app.use('/posts', postRouter);
 

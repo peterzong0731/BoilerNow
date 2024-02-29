@@ -1,5 +1,6 @@
 {
     "title": "eventsSchema",
+    "additionalProperties": false,
     "bsonType": "object",
     "properties": {
         "_id": {

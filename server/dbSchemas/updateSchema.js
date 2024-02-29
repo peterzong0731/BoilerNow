@@ -18,10 +18,8 @@ if (updateEventsSchema) {
             validator: {
                 $jsonSchema: eventsSchema
             },
-
-            validationLevel: "off",
-            additionalProperties: false
-
+            // validationLevel: "off",
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -37,10 +35,10 @@ if (updateOrgsSchema) {
         await db.command({
             collMod: "orgs",
             validator: {
-                $jsonSchema: orgsSchema,
-                additionalProperties: false
+                $jsonSchema: orgsSchema
             },
-            validationLevel: "off"
+            // validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"orgs\" collection schema.");
     } catch (e) {
@@ -56,10 +54,10 @@ if (updateUsersSchema) {
         await db.command({
             collMod: "users",
             validator: {
-                $jsonSchema: usersSchema,
-                additionalProperties: false
+                $jsonSchema: usersSchema
             },
-            validationLevel: "off"
+            // validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"users\" collection schema.");
     } catch (e) {

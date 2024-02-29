@@ -1,5 +1,6 @@
 {
     "title": "usersSchema",
+    "additionalProperties": false,
     "bsonType": "object",
     "properties": {
         "_id": {
@@ -9,10 +10,12 @@
             "bsonType": "object",
             "properties": {
                 "email": {
-                    "bsonType": "string"
+                    "bsonType": "string",
+                    "pattern": "^[a-z0-9_]+@[a-z0-9]+.[a-z]+$"
                 },
                 "password": {
-                    "bsonType": "string"
+                    "bsonType": "string",
+                    "minLength": 6
                 },
                 "googleId": {
                     "bsonType": "string"
@@ -37,7 +40,10 @@
         "emailNotifs": {
             "bsonType": "object",
             "properties": {
-                "orgAlerts": {
+                "newEventByOrg": {
+                    "bsonType": "bool"
+                },
+                "newPostForEvent": {
                     "bsonType": "bool"
                 },
                 "upcomingEvents": {
@@ -45,7 +51,8 @@
                 }
             },
             "required": [
-                "orgAlerts",
+                "newEventByOrg",
+                "newPostForEvent",
                 "upcomingEvents"
             ]
         },
@@ -58,7 +65,7 @@
                 "bsonType": "objectId"
             }
         },
-        "prevInterestedEvents": {
+        "interestedEventHistory": {
             "bsonType": "array",
             "items": {
                 "bsonType": "objectId"
@@ -157,7 +164,7 @@
         "emailNotifs",
         "createdDatetime",
         "followingOrgs",
-        "prevInterestedEvents",
+        "interestedEventHistory",
         "hostedEvents",
         "posts"
     ]

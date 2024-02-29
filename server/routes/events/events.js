@@ -295,7 +295,6 @@ router.patch('/join/:eventId/:userId', async (req, res) => {
 
 // unregister from event
 router.patch('/unregister/:eventId/:userId', async (req, res) => {
-    console.log("here")
     const { eventId } = req.params;
     const { userId } = req.params;
 

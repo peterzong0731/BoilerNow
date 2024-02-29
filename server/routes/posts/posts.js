@@ -17,7 +17,7 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
                 "content": string,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Objects],
+                "replies": [Object],
                 "event": Object
             }
         ]
@@ -78,7 +78,7 @@ router.get('/', async (req, res) => {
                 "content": string,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Objects],
+                "replies": [Object],
                 "event": Object
             }
         ]
@@ -147,9 +147,9 @@ router.get('/:userId', async (req, res) => {
         params: 
             userId: string | ObjectId
         body: {
-            title: string,
-            content: string,
-            eventId: ObjectId
+            "title": string,
+            "content": string,
+            "eventId": ObjectId
         }
     Outgoing data: None
     On Success:

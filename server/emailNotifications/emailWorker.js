@@ -94,7 +94,7 @@ async function checkEvents() {
     try {
         var results = await db.collection("events").aggregate(pipeline).toArray();
 
-        // console.log(results);
+        console.log(results);
         
         // Loop through each event
         results.forEach(event => {

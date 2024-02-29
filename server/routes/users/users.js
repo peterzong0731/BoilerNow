@@ -12,31 +12,31 @@ const newUserTemplate = fs.readFileSync("./routes/users/dbTemplates/newUserTempl
 /*  
     Description: Get user information
     Incoming data:
-	    params:
-			userId: string | ObjectId
+        params:
+            userId: string | ObjectId
     Outgoing data: 
-		{
-			"login": {
-				"email": string,
-				"isPurdueEmail": bool
-			},
-			"name": string,
-			"bio": string,
-			"emailNotifs": {
-				"newEventByOrg": bool,
-				"newPostForEvent": bool,
-				"upcomingEvents": bool
-			},
-			"followingOrgs": [ObjectId],
-			"interestedEventHistory": [ObjectId],
-			"hostedEvents": [ObjectId],
-			"posts": [Objects]
-		}
+        {
+            "login": {
+                "email": string,
+                "isPurdueEmail": bool
+            },
+            "name": string,
+            "bio": string,
+            "emailNotifs": {
+                "newEventByOrg": bool,
+                "newPostForEvent": bool,
+                "upcomingEvents": bool
+            },
+            "followingOrgs": [ObjectId],
+            "interestedEventHistory": [ObjectId],
+            "hostedEvents": [ObjectId],
+            "posts": [Objects]
+        }
     On Success:
         - 200 : JSON object containing the user data -> Data will be sent following the Outgoing data structure.
     On Error:
-		- 400 : <message> -> The incoming request does not contain the required data fields.
-		- 404 : User not found. -> Cannot find a user with the provided userId.
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : User not found. -> Cannot find a user with the provided userId.
         - 500 : Error fetching user. -> There was a db error when fetching the user data.
 */
 router.get('/user/:userId', async (req, res) => {
@@ -82,22 +82,22 @@ router.get('/user/:userId', async (req, res) => {
 /*  
     Description: Register new user
     Incoming data:
-	    body: {
+        body: {
             "email": string,
             "password": string,
             "name": ObjectId
         }
     Outgoing data: 
-		{
-			"userId": string
-		}
+        {
+            "userId": string
+        }
     On Success:
         - 200 : JSON object containing the user id -> Data will be sent following the Outgoing data structure.
     On Error:
-		- 400 : <message> -> The incoming request does not contain the required data fields.
-		- 500 : User with that email already exists. -> An account with the provided email already exists.
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : User with that email already exists. -> An account with the provided email already exists.
         - 500 : Error fetching user. -> There was a db error when checking if the user already exists.    
-		- 500 : Error creating new user. -> There was a db error when trying to create the new user.
+        - 500 : Error creating new user. -> There was a db error when trying to create the new user.
 */
 router.post('/register', async function (req, res) {
 	const inputDataCheck = allDataPresent(
@@ -234,21 +234,21 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 /*  
     Description: Log in existing user
     Incoming data:
-	    body: {
+        body: {
             "email": string,
             "password": string
         }
     Outgoing data:
-		{
-			"userId": string
-		}
+        {
+            "userId": string
+        }
     On Success:
         - 200 : JSON object containing the user id -> Data will be sent following the Outgoing data structure.
     On Error:
-		- 400 : <message> -> The incoming request does not contain the required data fields.
-		- 404 : Email not found. -> The provided email address does not match an existing user.
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Email not found. -> The provided email address does not match an existing user.
         - 401 : Incorrect password. -> The provided password does not match the associated user's password.
-		- 500 : Error logging user in. -> There was a db error when trying to log the user in.
+        - 500 : Error logging user in. -> There was a db error when trying to log the user in.
 */
 router.post('/login', async function (req, res) {
 	const inputDataCheck = allDataPresent(

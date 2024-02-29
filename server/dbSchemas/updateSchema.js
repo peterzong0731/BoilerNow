@@ -18,8 +18,8 @@ if (updateEventsSchema) {
             validator: {
                 $jsonSchema: eventsSchema
             },
-            // validationLevel: "off",
-            validationLevel: "strict"
+            validationLevel: "off"
+            //validationLevel: "strict"
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -37,8 +37,8 @@ if (updateOrgsSchema) {
             validator: {
                 $jsonSchema: orgsSchema
             },
-            // validationLevel: "off"
-            validationLevel: "strict"
+            validationLevel: "off"
+            // validationLevel: "strict"
         });
         console.log("Successfully updated \"orgs\" collection schema.");
     } catch (e) {

@@ -1,9 +1,9 @@
 import express from "express";
-import db from "../conn.js";
+import db from "../../conn.js";
 import fs from "fs";
 import md5 from "md5";
 import { ObjectId } from 'mongodb'
-import { allDataPresent } from "../verif/endpoints.js";
+import { allDataPresent } from "../../verif/endpoints.js";
 
 
 const router = express.Router();
@@ -110,9 +110,10 @@ router.post('/register', async function (req, res) {
 		res.status(400).send(inputDataCheck.message);
 		return;
 	}
-	
-	const email = req.body.email.toLowerCase();
-	const password = req.body.password;
+
+    const email = req.body.email.toLowerCase();
+    const password = req.body.password;
+    const name = req.body.name;
 
 	if (password.length < 6) {
 		console.log("Password length is less than 6!");
@@ -125,7 +126,7 @@ router.post('/register', async function (req, res) {
 	// Set user details
 	newUserObj.login.email = email;
 	newUserObj.login.password = md5(password);
-	newUserObj.name = userData.name;
+	newUserObj.name = name;
 	newUserObj.createdDatetime = new Date();
 
 	// Check if email already exists
@@ -149,10 +150,10 @@ router.post('/register', async function (req, res) {
 
 	// If email is a purdue.edu email, send them an email verification
 	// if (email.endsWith('@purdue.edu')) {
-	// 	const link = `http://localhost:${process.env.PORT}/verify-user/${userData.name}/${userData.email}/${md5(userData.password)}`;
+	// 	const link = `http://localhost:${process.env.PORT}/verify-user/${name}/${email}/${md5(password)}`;
 	// 	const msg = {
 	// 		from: '"Team BoilerNow" boilernow2023@gmail.com',
-	// 		to: userData.email,
+	// 		to: email,
 	// 		subject: 'BoilerNow Email Verification',
 	// 		text: `Hello from BoilerNow! Boiler Up! Please click the link to verify your email:\n${link}.\n`
 	// 	}
@@ -175,9 +176,11 @@ router.post('/register', async function (req, res) {
 
 	} catch (e) {
 		if (e.name === "MongoServerError" && e.code === 121) {
-            console.log("Document failed validation.");
+            console.log("Document failed validation:");
+            console.log(e.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied);
+        } else {
+		    console.log(e);
         }
-		console.log(e);
 		res.status(500).send("Error creating new user.");
 	}
 });

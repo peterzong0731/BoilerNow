@@ -1,5 +1,5 @@
 import express from "express";
-import db from "../conn.js";
+import db from "../../conn.js";
 import fs from "fs";
 import passport from 'passport';
 import OAuth from 'passport-google-oauth20';

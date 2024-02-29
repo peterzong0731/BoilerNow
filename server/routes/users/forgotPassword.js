@@ -1,5 +1,5 @@
 import express from "express";
-import db from "../conn.js";
+import db from "../../conn.js";
 import md5 from "md5";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";

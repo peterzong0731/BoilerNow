@@ -249,8 +249,8 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
         - 200 : JSON object containing the user id and name -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
-        - 404 : Email not found. -> The provided email address does not match an existing user.
         - 401 : Incorrect password. -> The provided password does not match the associated user's password.
+        - 404 : Email not found. -> The provided email address does not match an existing user.
         - 500 : Error logging user in. -> There was a db error when trying to log the user in.
 */
 router.post('/login', async function (req, res) {

@@ -3,7 +3,7 @@ import fs from "fs";
 
 // Booleans to control which schema to update
 const updateEventsSchema = true;
-const updateOrgsSchema = false;
+const updateOrgsSchema = true;
 const updateUsersSchema = true;
 
 
@@ -35,8 +35,8 @@ if (updateOrgsSchema) {
             validator: {
                 $jsonSchema: orgsSchema
             },
-            validationLevel: "off"
-            // validationLevel: "strict"
+            // validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"orgs\" collection schema.");
     } catch (e) {

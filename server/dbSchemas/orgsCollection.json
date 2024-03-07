@@ -12,7 +12,10 @@
         "shorthand": {
             "bsonType": "string"
         },
-        "image": {
+        "orgImg": {
+            "bsonType": "string"
+        },
+        "bannerImg": {
             "bsonType": "string"
         },
         "bio": {
@@ -22,7 +25,8 @@
             "bsonType": "object",
             "properties": {
                 "email": {
-                    "bsonType": "string"
+                    "bsonType": "string",
+                    "pattern": "^[a-z0-9_]+@[a-z0-9]+.[a-z]+$"
                 },
                 "twitter": {
                     "bsonType": "string"
@@ -30,19 +34,19 @@
                 "discord": {
                     "bsonType": "string"
                 },
-                "whatsapp": {
-                    "bsonType": "string"
-                },
                 "phoneNumber": {
                     "bsonType": "string"
                 }
             },
             "required": [
-                "email"
+                "email",
+                "twitter",
+                "discord",
+                "phoneNumber"
             ]
         },
         "rating": {
-            "bsonType": "double"
+            "bsonType": ["double", "null"]
         },
         "owner": {
             "bsonType": "objectId"
@@ -56,7 +60,7 @@
         "lastActive": {
             "bsonType": "date"
         },
-        "followerIds": {
+        "followers": {
             "bsonType": "array",
             "items": {
                 "bsonType": "objectId"
@@ -67,19 +71,25 @@
             "items": {
                 "bsonType": "objectId"
             }
+        },
+        "dateCreated": {
+            "bsonType": "date"
         }
     },
     "required": [
         "_id",
         "name",
         "shorthand",
+        "orgImg",
+        "bannerImg",
         "bio",
         "contactInfo",
         "rating",
         "owner",
         "contributors",
         "lastActive",
-        "followerIds",
-        "events"
+        "followers",
+        "events",
+        "dateCreated"
     ]
 }

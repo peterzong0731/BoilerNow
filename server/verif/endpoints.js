@@ -36,11 +36,11 @@ const allDataPresent = (requiredParams, requiredBodyFields, request) => {
         return { "correct": true, "message": "All params and body fields are present." };
     }
     if (!paramFlag) {
-        console.log("Missing some parameters:\nExpected: [" + requiredParams.join(", ") +"]\nActual: [" + Object.keys(requestParams).join(", ") + "]");
+        console.log("Missing some parameters:\nExpected: [" + requiredParams.join(", ") +"]\nActual: [" + Object.keys(request.params).join(", ") + "]");
         return { "correct": false, "message": "Missing some parameters:\nExpected: [" + requiredParams.join(", ") +"]\nActual: [" + Object.keys(requestParams).join(", ") + "]"};
     }
     if (!bodyFlag) {
-        console.log("Missing some body fields:\nExpected: [" + requiredBodyFields.join(", ") +"]\nActual: [" + Object.keys(requestBody).join(", ") + "]");
+        console.log("Missing some body fields:\nExpected: [" + requiredBodyFields.join(", ") +"]\nActual: [" + Object.keys(request.body).join(", ") + "]");
         return { "correct": false, "message": "Missing some body fields:\nExpected: [" + requiredBodyFields.join(", ") +"]\nActual: [" + Object.keys(requestBody).join(", ") + "]"};   
     }
 };

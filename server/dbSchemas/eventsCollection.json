@@ -36,7 +36,7 @@
             "bsonType": "date"
         },
         "capacity": {
-            "bsonType": "int"
+            "bsonType": ["int", "null"]
         },
         "usersInterested": {
             "bsonType": "array",

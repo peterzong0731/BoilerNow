@@ -12,6 +12,7 @@ import googleOAuthRouter from "./routes/users/googleOAuth.js";
 import forgotPasswordRouter from "./routes/users/forgotPassword.js";
 import eventRouter from "./routes/events/events.js";
 import postRouter from "./routes/posts/posts.js";
+import orgRouter from "./routes/orgs/orgs.js";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,6 +28,7 @@ app.use('/', googleOAuthRouter);
 app.use('/', forgotPasswordRouter);
 app.use('/events', eventRouter);
 app.use('/posts', postRouter);
+app.use("/orgs", orgRouter);
 
 // Start the server
 const port = process.env.PORT || 5000;

@@ -78,7 +78,7 @@ router.get('/', async (req, res) => {
                 "eventEndDatetime": Local Date,
                 "category": string,
                 "location": string,
-                "capacity": string | number,
+                "capacity": string | number (optional),
                 "visibility": string,
                 "createdBy": ObjectId,
                 "createdByName": string
@@ -106,7 +106,7 @@ router.get('/', async (req, res) => {
 router.post('/create', upload.array('images'), async (req, res) => {
     const inputDataCheck = allDataPresent(
 		[],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "capacity", "visibility", "createdBy", "createdByName"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "createdBy", "createdByName"],
         req
 	);
 
@@ -120,7 +120,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
     const eventEndDatetime = new Date(new Date(req.body.eventEndDatetime).toUTCString());
     const category = req.body.category;
     const location = req.body.location;
-    const capacity = +req.body.capacity;
+    const capacity = +req.body.capacity || null;
     const visibility = req.body.visibility;
     const createdBy = new ObjectId(req.body.createdBy);
     const createdByName = req.body.createdByName;
@@ -155,8 +155,9 @@ router.post('/create', upload.array('images'), async (req, res) => {
             }
         );
 
-        console.log("Inserted new event with _id: " + results.insertedId);
+        console.log("Created new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event.");
+
     } catch (e) {
         if (e.name === "MongoServerError" && e.code === 121) {
             console.log("Document failed validation:");
@@ -241,7 +242,7 @@ router.get('/user-events/:userId', async (req, res) => {
             "eventEndDatetime": Local Date,
             "location": string,
             "category": string,
-            "capacity": string | number,
+            "capacity": string | number (optional),
             "visibility": string
         }
     Outgoing data: None
@@ -255,7 +256,7 @@ router.get('/user-events/:userId', async (req, res) => {
 router.patch('/update/:eventId', async (req, res) => {
     const inputDataCheck = allDataPresent(
 		["eventId"],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "capacity", "visibility"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "visibility"],
         req
 	);
     console.log("here")
@@ -270,7 +271,7 @@ router.patch('/update/:eventId', async (req, res) => {
     const eventEndDatetime = new Date(new Date(req.body.eventEndDatetime).toUTCString());
     const location = req.body.location;
     const category = req.body.category;
-    const capacity = +req.body.capacity;
+    const capacity = +req.body.capacity || null;
     const visibility = req.body.visibility;
 
     // Set event details
@@ -283,7 +284,7 @@ router.patch('/update/:eventId', async (req, res) => {
         "category": category,
         "capacity": capacity,
         "visibility": visibility
-    }
+    };
 
     try {   
         const updateResult = await db.collection('events').updateOne(
@@ -300,10 +301,10 @@ router.patch('/update/:eventId', async (req, res) => {
         }
     
         res.status(200).send('Event updated successfully.');
+
     } catch (e) {
-        console.log("here")
         console.log(e);
-        res.status(500).send('Error updating event');
+        res.status(500).send('Error updating event.');
     }
 });
 
@@ -335,16 +336,16 @@ router.delete('/delete/:eventId', async (req, res) => {
     const eventId = new ObjectId(req.params.eventId);
     
     try {
-        var results = await db.collection("events").deleteOne({ _id: eventId });
+        var result = await db.collection("events").deleteOne({ _id: eventId });
 
         // TODO: Remove event from all users' interestedEventHistory field
 
-        if (results.deletedCount === 1) {
+        if (result.deletedCount === 1) {
             console.log("Event deleted.");
-            res.status(200).send("Event deleted.");
+            return res.status(200).send("Event deleted.");
         } else {
             console.log("Couldn't find event to delete.");
-            res.status(404).send("Event not found.");
+            return res.status(404).send("Event not found.");
         }
             
     } catch (e) {
@@ -369,7 +370,7 @@ router.delete('/delete/:eventId', async (req, res) => {
             "images": [string],
             "eventStartDatetime": UTC Date,
             "eventEndDatetime": UTC Date,
-            "capacity": number,
+            "capacity": number | null,
             "usersInterested":
                 [
                     {
@@ -533,8 +534,6 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
             { _id: userId },
             { $pull: { interestedEventHistory: eventId } }
         );
-
-        console.log(updateUser)
 
         if (updateUser.matchedCount === 0) {
             console.log("User not found.");

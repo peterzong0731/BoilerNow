@@ -6,7 +6,7 @@
     "images": [],
     "eventStartDatetime": null,
     "eventEndDatetime": null,
-    "capacity": 0,
+    "capacity": null,
     "usersInterested": [],
     "visibility": "",
     "belongsToOrg": null,

@@ -178,6 +178,8 @@ router.post('/create', upload.array('images'), async (req, res) => {
         [
             {
                 "_id": string,
+                "title": string,
+                "category": string,
                 "usersInterested":
                     [
                         {
@@ -188,7 +190,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
             }
         ]
     On Success:
-        - 200 : {Array of event ids and users interested} -> Data will be sent following the Outgoing data structure.
+        - 200 : {Array of partial event objects} -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error retrieving events. -> There was a db error when trying to retrieve the user's events.
@@ -212,6 +214,8 @@ router.get('/user-events/:userId', async (req, res) => {
             {
 				projection: {
 					_id: 1,
+                    "title": 1,
+                    "category": 1,
                     "usersInterested": 1
 				}
 			}

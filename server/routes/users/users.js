@@ -41,14 +41,13 @@ const newUserTemplate = fs.readFileSync("./routes/users/dbTemplates/newUserTempl
 */
 router.get('/user/:userId', async (req, res) => {
 	const inputDataCheck = allDataPresent(
-		["userId"], req.params,
-		[], req.body
+		["userId"],
+		[],
+		req
 	);
 
 	if (!inputDataCheck.correct) {
-		console.log(inputDataCheck.message);
-		res.status(400).send(inputDataCheck.message);
-		return;
+		return res.status(400).send(inputDataCheck.message);
 	}
 
     const userId = req.params.userId;
@@ -85,14 +84,15 @@ router.get('/user/:userId', async (req, res) => {
         body: {
             "email": string,
             "password": string,
-            "name": ObjectId
+            "name": string
         }
     Outgoing data: 
         {
-            "userId": string
+            "userId": string,
+			"name", string
         }
     On Success:
-        - 200 : JSON object containing the user id -> Data will be sent following the Outgoing data structure.
+        - 201 : JSON object containing the user id and name -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : User with that email already exists. -> An account with the provided email already exists.
@@ -101,14 +101,13 @@ router.get('/user/:userId', async (req, res) => {
 */
 router.post('/register', async function (req, res) {
 	const inputDataCheck = allDataPresent(
-		[], req.params,
-		["email", "password", "name"], req.body
+		[],
+		["email", "password", "name"],
+		req
 	);
 
 	if (!inputDataCheck.correct) {
-		console.log(inputDataCheck.message);
-		res.status(400).send(inputDataCheck.message);
-		return;
+		return res.status(400).send(inputDataCheck.message);
 	}
 
     const email = req.body.email.toLowerCase();
@@ -172,7 +171,7 @@ router.post('/register', async function (req, res) {
 	try {
 		const result = await db.collection("users").insertOne(newUserObj);
 		console.log("Inserted new user with _id: " + result.insertedId);
-		res.status(200).json({ "userId": result.insertedId });
+		res.status(201).json({ "userId": result.insertedId, "name": name });
 
 	} catch (e) {
 		if (e.name === "MongoServerError" && e.code === 121) {
@@ -243,10 +242,11 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
         }
     Outgoing data:
         {
-            "userId": string
+            "userId": string,
+			"name": string
         }
     On Success:
-        - 200 : JSON object containing the user id -> Data will be sent following the Outgoing data structure.
+        - 200 : JSON object containing the user id and name -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 404 : Email not found. -> The provided email address does not match an existing user.
@@ -255,31 +255,20 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 */
 router.post('/login', async function (req, res) {
 	const inputDataCheck = allDataPresent(
-		[], req.params,
-		["email", "password"], req.body
+		[],
+		["email", "password"],
+		req
 	);
 
 	if (!inputDataCheck.correct) {
-		console.log(inputDataCheck.message);
-		res.status(400).send(inputDataCheck.message);
-		return;
+		return res.status(400).send(inputDataCheck.message);
 	}
 
 	const email = req.body.email.toLowerCase();
 	const password = req.body.password;
 
 	try {
-		const existingUser = await db.collection('users').findOne(
-			{ "login.email": email },
-			{
-				projection: {
-					_id: 0,
-					"login.password": 0,
-					"login.googleId": 0,
-					createdDatetime: 0
-				}
-			}
-		);
+		const existingUser = await db.collection('users').findOne({ "login.email": email });
 
 		if (!existingUser) {
 			console.log("User with email `" + email + "`Not Found");
@@ -292,7 +281,8 @@ router.post('/login', async function (req, res) {
 		}
 
 		console.log("Successfully logged in to email: " + email);
-		res.status(200).json(existingUser);
+		//res.status(200).json({"user": existingUser})
+		res.status(200).json({ "userId": existingUser._id, "name": existingUser.name });
 	} catch (e) {
 		console.error(e);
 		res.status(500).send('Error logging user in.');

@@ -32,7 +32,7 @@ function EditEventForm() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
         console.log(response.data)
-        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, createdByUser } = response.data;
+        let { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, createdByUser } = response.data;
        
         const convertUTCtoLocal = (datetime) => {
           let dateObj = new Date(datetime);
@@ -41,8 +41,8 @@ function EditEventForm() {
           return dateObj;
         }
 
-        let startDatetime = convertUTCtoLocal(eventStartDatetime);
-        let endDatetime = convertUTCtoLocal(eventEndDatetime);
+        eventStartDatetime = convertUTCtoLocal(eventStartDatetime);
+        eventEndDatetime = convertUTCtoLocal(eventEndDatetime);
         
         console.log(response.data)
         setEventData({

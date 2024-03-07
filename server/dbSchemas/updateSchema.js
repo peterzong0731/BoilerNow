@@ -1,8 +1,6 @@
 import db from "../conn.js";
 import fs from "fs";
 
-// NOTE: Indexes are used to ensure uniqueness of fields. To view, add, and drop indexes, you can do so on the Atlas dashboard
-
 // Booleans to control which schema to update
 const updateEventsSchema = true;
 const updateOrgsSchema = false;
@@ -63,6 +61,28 @@ if (updateUsersSchema) {
     } catch (e) {
         console.log(e);
     }
+}
+
+
+// Used for clearing the collections
+const deleteEvent = false;
+const deleteOrgs = false;
+const deleteUsers = false;
+
+
+if (deleteEvent) {
+    db.collection("events").deleteMany({});
+    console.log("Deleted all events.");
+}
+
+if (deleteOrgs) {
+    db.collection("orgs").deleteMany({});
+    console.log("Deleted all orgs.");
+}
+
+if (deleteUsers) {
+    db.collection("users").deleteMany({});
+    console.log("Deleted all users.");
 }
 
 process.exit(1);

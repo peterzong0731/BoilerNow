@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './Event.css'
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
-import { getUserInfo } from './authUtils';
 import checkmark from './images/yellow_checkmark.png'
+import { Toaster, toast } from 'sonner'
 
 function Event() {
   const { id } = useParams();
@@ -21,7 +21,7 @@ function Event() {
   const [images, setImages] = useState([]);
 
   const currentUserFromStorage = localStorage.getItem('user');
-  const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
+  const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
 
   function formatDateRange(startDateStr, endDateStr) {
@@ -64,7 +64,7 @@ function Event() {
           if (userOfEvent.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
           console.log(usersInterested)
-          const isInterested = usersInterested.includes(currentUser._id);
+          const isInterested = usersInterested.some(user => user.userId === currentUser);
           setHasJoined(isInterested);
 
       } catch (error) {
@@ -76,32 +76,35 @@ function Event() {
 
   const handleJoin = async () => {
     try {
-        const response = await axios.patch(`http://localhost:8000/events/join/${id}/${currentUser._id}`);
+      console.log(id + " ", currentUser)
+        const response = await axios.patch(`http://localhost:8000/events/follow/${id}/${currentUser}`);
         
-        setUsersInterested(prevUsers => [...prevUsers, currentUser._id]);
+        setUsersInterested(prevUsers => [...prevUsers, currentUser]);
+        console.log(usersInterested)
         setHasJoined(true); 
         
-        console.log("Successfully joined")
+        toast.success("Successfully joined event!")
     } catch (error) {
-        console.error('Error joining event:', error);
+        toast.error('Error joining event.');
     }
   }
 
   const handleUnregister = async () => {  
     try {
-        const response = await axios.patch(`http://localhost:8000/events/unregister/${id}/${currentUser._id}`);
+        const response = await axios.patch(`http://localhost:8000/events/unfollow/${id}/${currentUser}`);
         
-        setUsersInterested(prevUsers => prevUsers.filter(userId => userId !== currentUser._id));
+        setUsersInterested(prevUsers => prevUsers.filter(userId => userId !== currentUser));
         setHasJoined(false);
         
-        console.log("Successfully unregistered");
+        toast.success("Successfully unregistered from event.");
     } catch (error) {
-        console.error('Error unregistering from event:', error);
+        toast.error('Error unregistering from event.');
     }
   };
 
   return (
     <div className="event-container">
+      <Toaster richColors position="top-center"/>
       <h1 className="event-title">{title}</h1>
       <div className={`event-category ${category}`}>{category}</div>
       <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>

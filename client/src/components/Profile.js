@@ -31,12 +31,12 @@ function Profile() {
         }
     }, []);
 
-    const userStr = localStorage.getItem('user');
+    userId = localStorage.getItem('user');
 
-    if (userStr) {
-        const userObj = JSON.parse(userStr);
-        userId = userObj._id;
-    }
+    // if (userStr) {
+    //     const userObj = JSON.parse(userStr);
+    //     userId = userObj._id;
+    // }
 
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
@@ -54,6 +54,7 @@ function Profile() {
                 if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
                 const eventsResponse = await axios.get(`http://localhost:8000/events/user-events/${userId}`);
+                console.log(eventsResponse.data)
                 setUserEvents(eventsResponse.data);
 
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
@@ -119,13 +120,14 @@ function Profile() {
                                 <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
                             </div>
                             {<div className='attendants'>
-                                {event.usersInterestedNames.length ? (
+                                {event.usersInterested.length ? (
                                     <div>Users attending:</div>
                                 ) :(<div></div>)}
-                                {event.usersInterestedNames.map(name => (
-                                    <p>{name}</p>
+                                {event.usersInterested.map(userInterested => (
+                                    <p>{userInterested.name}</p>
                                 ))}
-                                </div>}
+                                </div>
+                            }
                         </div>
 
                     ))

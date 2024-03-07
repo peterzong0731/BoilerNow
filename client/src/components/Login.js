@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css'
 import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'sonner'
 
 function Login() {
   const navigate = useNavigate();
@@ -21,25 +22,24 @@ function Login() {
       });
       console.log('Login response:', response.data);
   
-      if (response.data.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (response.data) {
+        localStorage.setItem('user', response.data.userId);
+        localStorage.setItem('name', response.data.name);
         setEmail('');
         setPassword('');
-        alert('Login successful!');
+        toast.success('Login successful!')
         navigate('/profile');
       } else {
-        alert('Incorrect email or password');
+        toast.error('Incorrect email or password.');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      alert('Failed to log in. Please try again later.');
+      toast.error('Login failed. Please try again.')
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      // const response = await window.open('http://localhost:8000/auth/google');
-      // console.log('Google login initiated:', response.data);
       window.open('http://localhost:8000/auth/google');
     } catch (error) {
       console.error('Error initiating Google login:', error);
@@ -52,6 +52,7 @@ function Login() {
 
   return (
     <div className="login-container">
+      <Toaster richColors position="top-center"/>
       <h1>Log In</h1>
       <div>
         <label>email</label>

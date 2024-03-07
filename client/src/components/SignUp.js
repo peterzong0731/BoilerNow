@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './SignUp.css'
+import { Toaster, toast } from 'sonner'
 
 function Signup() {
   const [name, setName] = useState('');
@@ -29,7 +30,7 @@ function Signup() {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      alert('Signup successful!');
+      toast.success('Signup successful!')
     } catch (error) {
       console.error('Error signing up:', error);
       alert('Failed to signup. Please try again later.');
@@ -41,6 +42,7 @@ function Signup() {
   };
   return (
     <div className="signup-container">
+      <Toaster richColors position="top-center"/>
       <h1>Sign Up</h1>
       <div>
         <label>name</label>

@@ -126,12 +126,13 @@ router.get('/:userId', async (req, res) => {
          ]).toArray();
 
         console.log(results);
+        res.status(200).json(results)
 
-        if (results[0]) {
-            res.status(200).json(results);
-        } else {
-            res.status(404).send("The given userId has no posts.");
-        }
+        // if (results[0]) {
+        //     res.status(200).json(results);
+        // } else {
+        //     res.status(404).send("The given userId has no posts.");
+        // }
 
     } catch (e) {
         console.log("Get all posts error:");

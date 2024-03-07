@@ -151,7 +151,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
             { _id: createdBy },
             { 
                 $push: { hostedEvents: results.insertedId },
-                $addToSet: { prevInterestedEvents: results.insertedId }
+                $addToSet: { interestedEventHistory: results.insertedId }
             }
         );
 
@@ -254,7 +254,7 @@ router.patch('/update/:eventId', async (req, res) => {
 		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "capacity", "visibility"],
         req
 	);
-
+    console.log("here")
 	if (!inputDataCheck.correct) {
 		return res.status(400).send(inputDataCheck.message);
 	}
@@ -297,6 +297,7 @@ router.patch('/update/:eventId', async (req, res) => {
     
         res.status(200).send('Event updated successfully.');
     } catch (e) {
+        console.log("here")
         console.log(e);
         res.status(500).send('Error updating event');
     }

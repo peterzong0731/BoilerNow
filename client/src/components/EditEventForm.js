@@ -5,15 +5,7 @@ import { useParams } from 'react-router-dom';
 
 function EditEventForm() {
   const { id } = useParams();
-  const userStr = localStorage.getItem('user');
-  var userId;
-  
-  if (userStr) {
-      const userObj = JSON.parse(userStr);
-      userId = userObj._id;
-  } else {
-      console.log("User not found in localStorage.");
-  }
+  const userId = localStorage.getItem('user');
 
   const [eventData, setEventData] = useState({
     title: '',

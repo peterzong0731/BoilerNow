@@ -94,7 +94,7 @@ router.get('/:orgId', async (req, res) => {
             }
     Outgoing data: None
     On Success:
-        - 200 : Successfuly created the new org. -> The org was added to the db.
+        - 201 : Successfuly created the new org. -> The org was added to the db.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error creating new org. -> There was a db error when trying to create the org.
@@ -283,16 +283,17 @@ router.delete('/delete/:orgId', async (req, res) => {
             return res.status(404).send("Org not found.");
         }
         
-        let followerIds = [members.owner];
-        members.contributors.forEach( (id) => { followerIds.push(id); });
-        members.followers.forEach( (id) => { followerIds.pushh(id); });
+        let followerIds = [members.owner.toString()];
+        members.contributors.forEach( (id) => { followerIds.push(id.toString()); });
+        members.followers.forEach( (id) => { followerIds.push(id.toString()); });
+        followerIds = [...new Set(followerIds)].map(id => new ObjectId(id));
 
         var result = await db.collection("orgs").deleteOne({ _id: orgId });
 
         var updateUser = await db.collection("users").updateMany(
             { _id: { $in: followerIds } },
             { $pull: { followingOrgs: orgId } }
-        )
+        );
 
         console.log("Org deleted.");
         res.status(200).send("Org deleted.");
@@ -302,6 +303,82 @@ router.delete('/delete/:orgId', async (req, res) => {
         res.status(500).send("Error deleting org.");
     }
 });
+
+
+/*
+    Description: Get list of org members
+    Incoming data:
+        params:
+            orgId: string | ObjectId
+    Outgoing data:
+        [
+            {
+                "name": string
+            }
+        ]
+    On Success:
+        - 200 : [Name of org members] -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Org not found. -> The org with the given org id does not exist in the db.
+        - 500 : Error retrieving members. -> There was a db error when trying to retrieve the org's members.
+*/
+router.get('/members/:orgId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["orgId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+
+    try {
+        var members = await db.collection("orgs").findOne(
+            { _id: orgId },
+            { 
+                projection: {
+                    owner: 1,
+                    contributors: 1,
+                    followers: 1
+                } 
+            }
+        );
+
+        if (!members) {
+            console.log("Couldn't find org to delete.");
+            return res.status(404).send("Org not found.");
+        }
+
+        let followerIds = [members.owner.toString()];
+        members.contributors.forEach( (id) => { followerIds.push(id.toString()); });
+        members.followers.forEach( (id) => { followerIds.push(id.toString()); });
+        followerIds = [...new Set(followerIds)].map(id => new ObjectId(id));
+        
+        var userObjects = await db.collection("users").find(
+            { _id: { $in: followerIds } },
+            {
+                projection: {
+                    _id: 0,
+                    name: 1
+                }
+            }
+        ).toArray();
+
+        res.status(200).json(userObjects);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error retrieving members.");
+    }
+
+
+
+});
+
 
 
 

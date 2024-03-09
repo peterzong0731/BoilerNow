@@ -308,4 +308,74 @@ router.get('/user', (req, res) => {
 });
 
 
+/*  
+    Description: Get list of orgs a user is following
+    Incoming data:
+        params:
+            userId: string | ObjectId
+    Outgoing data:
+        [
+            {
+                "orgId": string,
+                "name": string,
+                "shorthand": string
+            }
+        ]
+    On Success:
+        - 200 : [JSON object with org id, name, and shorthand] -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error retrieving list of orgs user is in. -> There was a db error when trying to retrieve list of orgs user is following.
+*/
+router.get('/user-orgs/:userId', async (req, res) => {
+	const inputDataCheck = allDataPresent(
+		["userId"],
+		[],
+		req
+	);
+
+	if (!inputDataCheck.correct) {
+		return res.status(400).send(inputDataCheck.message);
+	}
+
+	const userId = new ObjectId(req.params.userId);
+
+	try {
+		var result = await db.collection("users").aggregate([
+			{ $match: { _id: userId } },
+			{ $unwind: "$followingOrgs" },
+			{
+				$lookup: {
+					from: "orgs",
+					localField: "followingOrgs",
+					foreignField: "_id",
+					as: "orgs"
+				}
+			},
+			{
+				$unwind: "$orgs"
+			},
+			{
+				$project: {
+					_id: 0,
+					orgId: "$orgs._id",
+					name: "$orgs.name",
+					shorthand: "$orgs.shorthand"
+				}
+			}
+		]).toArray();
+
+		res.status(200).json(result);
+
+	} catch (e) {
+		console.error(e);
+		res.status(500).send("Error retrieving list of orgs user is following.");
+	}
+});
+
+
+
+
+
+
 export default router;

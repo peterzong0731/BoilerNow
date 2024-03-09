@@ -317,7 +317,7 @@ router.delete('/delete/:orgId', async (req, res) => {
             }
         ]
     On Success:
-        - 200 : [Name of org members] -> Data will be sent following the Outgoing data structure.
+        - 200 : [JSON object with name of org members] -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 404 : Org not found. -> The org with the given org id does not exist in the db.

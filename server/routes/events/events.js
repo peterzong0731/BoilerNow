@@ -471,7 +471,7 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
         );
 
         const result = await db.collection('events').updateOne(
-            { _id: new ObjectId(eventId) },
+            { _id: eventId },
             {
                 $addToSet: {
                     usersInterested: {
@@ -541,7 +541,7 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
         }
 
         const result = await db.collection('events').updateOne(
-            { _id: new ObjectId(eventId) },
+            { _id: eventId },
             { $pull: { usersInterested: { "userId": userId } } }
         );
 

@@ -380,6 +380,130 @@ router.get('/members/:orgId', async (req, res) => {
 });
 
 
+/*
+    Description: Follow an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+    Outgoing data: None
+    On Success:
+        - 200 : User is now following the org. -> The user has been added to the org's followers list and the user's following orgs list.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : User not found. -> The user with the given user id does not exist in the db.
+        - 404 : Org not found. -> The org with the given org id does not exist in the db.
+        - 500 : Error following org. -> There was a db error when trying to follow the org.
+*/
+router.patch('/follow/:orgId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["orgId", "userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+
+    try {
+        const updateUser = await db.collection('users').updateOne(
+            { _id: userId },
+            { $addToSet: { followingOrgs: orgId } }
+        );
+
+        if (updateUser.matchedCount === 0) {
+            console.log("User not found.");
+            return res.status(404).send('User not found.');
+        }
+
+        const result = await db.collection('orgs').updateOne(
+            { _id: orgId },
+            { $addToSet: { followers: userId } }
+        );
+
+        if (result.matchedCount === 0) {
+            console.log("Org not found.");
+            return res.status(404).send('Org not found.');
+        }
+
+        if (result.modifiedCount === 0) {
+            throw new Error("User is already following this org.");
+        }
+
+        res.status(200).send('User is now following the org.');
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Error following org.');
+    }
+
+});
+
+
+/*
+    Description: Unfollow an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+    Outgoing data: None
+    On Success:
+        - 200 : User is no longer following the org. -> The user has been removed from the org's followers list and the user's following orgs list.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : User not found. -> The user with the given user id does not exist in the db.
+        - 404 : Org not found. -> The org with the given org id does not exist in the db.
+        - 500 : Error unfollowing from org. -> There was a db error when trying to unfollow the org.
+*/
+router.patch('/unfollow/:orgId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+		["orgId", "userId"],
+		[],
+        req
+	);
+
+	if (!inputDataCheck.correct) {
+		return res.status(400).send(inputDataCheck.message);
+	}
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+
+    try {
+        const updateUser = await db.collection('users').updateOne(
+            { _id: userId },
+            { $pull: { followingOrgs: orgId } }
+        );
+
+        if (updateUser.matchedCount === 0) {
+            console.log("User not found.");
+            return res.status(404).send('User not found.');
+        }
+
+        const result = await db.collection('orgs').updateOne(
+            { _id: orgId },
+            { $pull: { followers: userId } }
+        );
+
+        if (result.matchedCount === 0) {
+            console.log("Org not found.");
+            return res.status(404).send('Org not found.');
+        }
+
+        if (result.modifiedCount === 0) {
+            throw new Error("User was not following the org.");
+        }
+
+        res.status(200).send('User is no longer following the org.');
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Error unfollowing from org.');
+    }
+});
 
 
 export default router;

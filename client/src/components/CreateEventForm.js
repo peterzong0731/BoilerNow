@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
+import { Toaster, toast } from 'sonner'
 
 function CreateEventForm() {
-  const userStr = localStorage.getItem('user');
-  var userId;
-  
-  if (userStr) {
-      const userObj = JSON.parse(userStr);
-      userId = userObj._id;
-  } else {
-      console.log("User not found in localStorage.");
-  }
+  const userId = localStorage.getItem('user');
+  const userName = localStorage.getItem('name');
 
   const [eventData, setEventData] = useState({
     title: '',
@@ -22,7 +16,9 @@ function CreateEventForm() {
     location: '',
     capacity: 0,
     status: '',
+    visibility: "Public",
     createdBy: userId,
+    createdByName: userName,
     usersInterested: [],
     usersInterestedNames: [],
     images: []
@@ -35,17 +31,6 @@ function CreateEventForm() {
     } else {
       setEventData({ ...eventData, [name]: value });
     }
-  };
-
-  const handleFileInputChange = (e) => {
-    const files = Array.from(e.target.files);
-    setEventData({ ...eventData, images: [...eventData.images, ...files] });
-  };
-
-  const removeImage = (index) => {
-    const newImages = [...eventData.images];
-    newImages.splice(index, 1);
-    setEventData({ ...eventData, images: newImages });
   };
 
   const handleSubmit = async(e) => {
@@ -62,14 +47,19 @@ function CreateEventForm() {
         formData.append(key, eventData[key]);
       }
     });
+    
     try {
       const response = await axios.post('http://localhost:8000/events/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      window.alert('Event created successfully!');
-      window.location.href = '/events';
+      toast.success('Event created successfully!', {
+        action: {
+          label: 'Undo',
+          onClick: () => window.location.href = '/events'
+        }
+      })
       console.log('Successfully created the event', response.data);
     } catch (error) {
       console.error('Error during event creation', error);
@@ -78,6 +68,7 @@ function CreateEventForm() {
 
   return (
     <div className="create-event-form-container">
+      <Toaster richColors position="top-center"/>
       <h1>Create Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -203,17 +194,7 @@ function CreateEventForm() {
             </label>
           </div>
         </div>
-        <div>
-          {eventData.images.map((image, index) => (
-            <img
-              key={index}
-              src={URL.createObjectURL(image)}
-              alt={`Preview ${index}`}
-              className="image-preview"
-              onClick={() => removeImage(index)}
-            />
-          ))}
-        </div>
+        
         <button type="submit" className="submit-button">submit</button>
       </form>
     </div>

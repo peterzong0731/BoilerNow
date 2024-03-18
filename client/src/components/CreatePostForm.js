@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
+import { Toaster, toast } from 'sonner'
 
 function CreatePostForm() {
   const [postData, setPostData] = useState({
@@ -10,12 +11,12 @@ function CreatePostForm() {
   });
   const [userEvents, setUserEvents] = useState([]);
   const currentUserFromStorage = localStorage.getItem('user');
-  const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
+  const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   
   useEffect(() => {
     async function fetchUserEvents() {
       try {
-        const response = await axios.get(`http://localhost:8000/events/user-events/${currentUser._id}`);
+        const response = await axios.get(`http://localhost:8000/events/user-events/${currentUser}`);
         setUserEvents(response.data);
       } catch (error) {
         console.error('Error fetching user events:', error);
@@ -32,20 +33,21 @@ function CreatePostForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8000/posts/create/${currentUser._id}`, {
+      const response = await axios.post(`http://localhost:8000/posts/create/${currentUser}`, {
         title: postData.title,
         content: postData.content,
         eventId: postData.eventId
       });
-      window.alert('Post created successfully!');
+      toast.success('Post created successfully!');
       window.location.href = '/posts';
     } catch (error) {
-      console.error('Error creating post:', error);
+      toast.error('Error creating post.');
     }
   };
 
   return (
     <div className="create-event-form-container">
+      <Toaster richColors position="top-center"/>
       <h1>Create Post</h1>
       <form onSubmit={handleSubmit}>
         <label>

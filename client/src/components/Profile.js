@@ -31,16 +31,12 @@ function Profile() {
         }
     }, []);
 
-    const userStr = localStorage.getItem('user');
-
-    if (userStr) {
-        const userObj = JSON.parse(userStr);
-        userId = userObj._id;
-    }
+    userId = localStorage.getItem('user');
 
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
     const [userPosts, setUserPosts] = useState([])
+    const [userOrgs, setUserOrgs] = useState([])
     const [purdueEmail, setPurdueEmail] = useState(false)
 
     useEffect(() => {
@@ -54,6 +50,7 @@ function Profile() {
                 if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
                 const eventsResponse = await axios.get(`http://localhost:8000/events/user-events/${userId}`);
+                console.log(eventsResponse.data)
                 setUserEvents(eventsResponse.data);
 
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
@@ -119,13 +116,14 @@ function Profile() {
                                 <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
                             </div>
                             {<div className='attendants'>
-                                {event.usersInterestedNames.length ? (
+                                {event.usersInterested.length ? (
                                     <div>Users attending:</div>
                                 ) :(<div></div>)}
-                                {event.usersInterestedNames.map(name => (
-                                    <p>{name}</p>
+                                {event.usersInterested.map(userInterested => (
+                                    <p>{userInterested.name}</p>
                                 ))}
-                                </div>}
+                                </div>
+                            }
                         </div>
 
                     ))
@@ -150,6 +148,7 @@ function Profile() {
             </div>
             <Link to={`/create-event`}>Create Event</Link>
             <Link to={`/create-post`}>Create Post</Link>
+            <Link to={`/create-org`}>Create Org</Link>
             <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )

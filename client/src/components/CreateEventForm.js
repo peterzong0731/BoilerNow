@@ -21,7 +21,8 @@ function CreateEventForm() {
     createdByName: userName,
     usersInterested: [],
     usersInterestedNames: [],
-    images: []
+    images: [],
+    ageRequirement: 0
   });
 
   const handleInputChange = (e) => {

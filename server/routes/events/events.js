@@ -100,7 +100,7 @@ router.get('/', async (req, res) => {
             ]
     Outgoing data: None
     On Success:
-        - 201 : Successfully created the new event with id: <userId> -> The event was successfully inserted into the db.
+        - 201 : Successfully created the new event with id: <eventId> -> The event was successfully inserted into the db.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error creating new event. -> There was a db error when trying to create the new event.

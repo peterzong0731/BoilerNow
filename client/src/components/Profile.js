@@ -33,14 +33,10 @@ function Profile() {
 
     userId = localStorage.getItem('user');
 
-    // if (userStr) {
-    //     const userObj = JSON.parse(userStr);
-    //     userId = userObj._id;
-    // }
-
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
     const [userPosts, setUserPosts] = useState([])
+    const [userOrgs, setUserOrgs] = useState([])
     const [purdueEmail, setPurdueEmail] = useState(false)
 
     useEffect(() => {
@@ -152,6 +148,7 @@ function Profile() {
             </div>
             <Link to={`/create-event`}>Create Event</Link>
             <Link to={`/create-post`}>Create Post</Link>
+            <Link to={`/create-org`}>Create Org</Link>
             <button onClick={() => handleSignOut()}>Sign Out</button>
         </div>
     )

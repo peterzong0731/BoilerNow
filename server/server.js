@@ -13,6 +13,7 @@ import forgotPasswordRouter from "./routes/users/forgotPassword.js";
 import eventRouter from "./routes/events/events.js";
 import postRouter from "./routes/posts/posts.js";
 import orgRouter from "./routes/orgs/orgs.js";
+import shareEventRouter from "./emails/shareEventEmail.js";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,6 +30,7 @@ app.use('/', forgotPasswordRouter);
 app.use('/events', eventRouter);
 app.use('/posts', postRouter);
 app.use("/orgs", orgRouter);
+app.use("/shareEvent", shareEventRouter);
 
 // Start the server
 const port = process.env.PORT || 5000;
@@ -37,6 +39,6 @@ app.listen(port, () => {
 });
 
 // Schedule email task to check and send emails every 5 minutes. Occurs on separate thread to prevent server from slowing down
-cron.schedule('*/5 * * * *', () => {
- 	const worker = new Worker('./emailNotifications/emailWorker.js');
-});
+// cron.schedule('*/5 * * * *', () => {
+//  	const worker = new Worker('./emails/eventReminderEmail.js');
+// });

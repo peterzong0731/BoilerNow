@@ -1,20 +1,9 @@
-import nodemailer from "nodemailer";
 import fs from "fs";
 import db from "../conn.js"
+import transporter from "./emailTransporter.js";
 
 
-const emailTemplate = fs.readFileSync("./emailNotifications/emailTemplate.html", "utf8");
-const transporter = nodemailer.createTransport({
-	service: 'gmail',
-	host: 'smtp.gmail.com',
-	port: 465,
-	secure: true,
-	auth: {
-		user: 'boilernow2023@gmail.com',
-		pass: process.env.APP_PASS,
-	}
-});
-
+const emailTemplate = fs.readFileSync("./emails/eventReminderTemplate.html", "utf8");
 
 async function checkEvents() {
     // Emails set to send 1 day +- 5 minutes before event starts. Milliseconds and seconds are ignored

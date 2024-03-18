@@ -2,8 +2,10 @@ import express from "express";
 import fs from "fs";
 import db from "../../conn.js";
 import { ObjectId } from "mongodb";
+import multer from 'multer';
 import { allDataPresent } from "../../verif/endpoints.js";
 
+const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 const newOrgTemplate = fs.readFileSync("./routes/orgs/dbTemplates/newOrgTemplate.json", "utf8");
 
@@ -99,7 +101,7 @@ router.get('/:orgId', async (req, res) => {
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error creating new org. -> There was a db error when trying to create the org.
 */
-router.post('/create', async (req, res) => {
+router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: 'bannerImg', maxCount: 1 }]), async (req, res) => {
     const inputDataCheck = allDataPresent(
         [],
         ["createdBy", "name", "shorthand", "bio", "email"],
@@ -118,6 +120,8 @@ router.post('/create', async (req, res) => {
     const twitter = req.body.twitter || "";
     const discord = req.body.discord || "";
     const phoneNumber = req.body.phoneNumber || "";
+    const orgImgPath = req.files['orgImg'] ? req.files['orgImg'][0].path : "";
+    const bannerImgPath = req.files['bannerImg'] ? req.files['bannerImg'][0].path : "";
 
     const newOrgObj = JSON.parse(newOrgTemplate);
 
@@ -125,8 +129,8 @@ router.post('/create', async (req, res) => {
     newOrgObj.name = name;
     newOrgObj.shorthand = shorthand;
     newOrgObj.bio = bio;
-    // TODO orgImg
-    // TODO bannerImg
+    newOrgObj.orgImg = orgImgPath;
+    newOrgObj.bannerImg = bannerImgPath;
     newOrgObj.contactInfo.email = email;
     newOrgObj.contactInfo.twitter = twitter;
     newOrgObj.contactInfo.discord = discord;
@@ -135,6 +139,8 @@ router.post('/create', async (req, res) => {
     newOrgObj.followers = [userId];
     newOrgObj.lastActive = new Date();
     newOrgObj.dateCreated = new Date();
+
+    console.log(newOrgObj)
 
     try {
         const results = await db.collection("orgs").insertOne(newOrgObj);

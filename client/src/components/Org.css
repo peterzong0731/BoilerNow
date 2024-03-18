@@ -32,6 +32,23 @@
   cursor: pointer;
 }
 
+.org-first-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon-container {
+  font-size: 20px;
+}
+
+.icon-container:hover {
+  cursor: pointer;
+}
+
+.twitter-link {
+  font-size: 20px;
+  color: #1DA1F2;
+}
 
 .org-text {
   display: flex;

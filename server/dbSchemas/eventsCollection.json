@@ -63,6 +63,9 @@
                 "Private"
             ]
         },
+        "ageRequirement": {
+            "bsonType": "int"
+        },
         "belongsToOrg": {
             "bsonType": "objectId"
         },
@@ -156,6 +159,7 @@
         "capacity",
         "usersInterested",
         "visibility",
+        "ageRequirement",
         "belongsToOrg",
         "createdBy",
         "createdDatetime",

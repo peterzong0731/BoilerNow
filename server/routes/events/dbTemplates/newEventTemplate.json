@@ -9,6 +9,7 @@
     "capacity": null,
     "usersInterested": [],
     "visibility": "",
+    "ageRequirement": 0,
     "belongsToOrg": null,
     "createdBy": null,
     "createdDatetime": null,

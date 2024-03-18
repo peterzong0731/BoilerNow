@@ -32,6 +32,7 @@ const newEventTemplate = fs.readFileSync("./routes/events/dbTemplates/newEventTe
                         }
                     ],
                 "visibility": string,
+                "ageRequirement": number,
                 "belongsToOrg": string | ObjectId, TODO: Will later be changed to also return org name
                 "createdBy": string | ObjectId,
                 "createdDatetime": UTC Date,
@@ -80,6 +81,7 @@ router.get('/', async (req, res) => {
                 "location": string,
                 "capacity": string | number (optional),
                 "visibility": string,
+                "ageRequirement": number,
                 "createdBy": ObjectId,
                 "createdByName": string
             }
@@ -98,7 +100,7 @@ router.get('/', async (req, res) => {
             ]
     Outgoing data: None
     On Success:
-        - 201 : Successfully created the new event. -> The event was successfully inserted into the db.
+        - 201 : Successfully created the new event with id: <userId>. -> The event was successfully inserted into the db.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error creating new event. -> There was a db error when trying to create the new event.
@@ -106,7 +108,7 @@ router.get('/', async (req, res) => {
 router.post('/create', upload.array('images'), async (req, res) => {
     const inputDataCheck = allDataPresent(
 		[],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "createdBy", "createdByName"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "ageRequirement", "createdBy", "createdByName"],
         req
 	);
 
@@ -122,6 +124,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
     const location = req.body.location;
     const capacity = +req.body.capacity || null;
     const visibility = req.body.visibility;
+    const ageRequirement = +req.body.ageRequirement;
     const createdBy = new ObjectId(req.body.createdBy);
     const createdByName = req.body.createdByName;
 
@@ -140,6 +143,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
     newEventObj.capacity = capacity;
     newEventObj.usersInterested = [{"userId": createdBy, "name": createdByName}];
     newEventObj.visibility = visibility;
+    newEventObj.ageRequirement = ageRequirement;
     newEventObj.belongsToOrg = new ObjectId();
     newEventObj.createdBy = createdBy;
     newEventObj.createdDatetime = new Date();
@@ -156,7 +160,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
         );
 
         console.log("Created new event with _id: " + results.insertedId);
-        res.status(201).send("Successfully created the new event.");
+        res.status(201).send("Successfully created the new event with id: " + results.insertedId);
 
     } catch (e) {
         if (e.name === "MongoServerError" && e.code === 121) {
@@ -243,7 +247,8 @@ router.get('/user-events/:userId', async (req, res) => {
             "location": string,
             "category": string,
             "capacity": string | number (optional),
-            "visibility": string
+            "visibility": string,
+            "ageRequirement": number
         }
     Outgoing data: None
     On Success:
@@ -256,10 +261,10 @@ router.get('/user-events/:userId', async (req, res) => {
 router.patch('/update/:eventId', async (req, res) => {
     const inputDataCheck = allDataPresent(
 		["eventId"],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "visibility"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "visibility", "ageRequirement"],
         req
 	);
-    console.log("here")
+
 	if (!inputDataCheck.correct) {
 		return res.status(400).send(inputDataCheck.message);
 	}
@@ -273,6 +278,7 @@ router.patch('/update/:eventId', async (req, res) => {
     const category = req.body.category;
     const capacity = +req.body.capacity || null;
     const visibility = req.body.visibility;
+    const ageRequirement = +req.body.ageRequirement;
 
     // Set event details
     const eventData = {
@@ -283,7 +289,8 @@ router.patch('/update/:eventId', async (req, res) => {
         "location": location,
         "category": category,
         "capacity": capacity,
-        "visibility": visibility
+        "visibility": visibility,
+        "ageRequirement": ageRequirement
     };
 
     try {   
@@ -379,6 +386,7 @@ router.delete('/delete/:eventId', async (req, res) => {
                     }
                 ],
             "visibility": string,
+            "ageRequirement": number,
             "belongsToOrg": string | ObjectId, TODO: Will later be changed to also return org name
             "createdBy": string | ObjectId,
             "createdDatetime": UTC Date,

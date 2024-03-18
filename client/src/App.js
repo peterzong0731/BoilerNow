@@ -4,6 +4,7 @@ import Posts from './components/Posts';
 import Events from './components/Events';
 import Navbar from './components/Navbar';
 import CreateEventForm from './components/CreateEventForm';
+import CreateOrgForm from './components/CreateOrgForm';
 import CreatePostForm from './components/CreatePostForm';
 import Event from './components/Event';
 import Login from './components/Login';
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/events" element={<Events />} />
         <Route path="/create-event" element={<CreateEventForm />} />
         <Route path="/event" element={<Event />}/>
+        <Route path="/create-org" element={<CreateOrgForm />} />
         <Route exact path="/event/:id" element={<Event />} />
         <Route exact path="/edit-event/:id" element={<EditEventForm />} />
         <Route path="/login" element={<Login />} />

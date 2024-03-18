@@ -49,3 +49,122 @@
     height: 30px;
     width: 30px;
 }
+
+.hosted-events h1 {
+    font-size: 20px;
+}
+
+.hosted-event {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px;
+    padding-left: 10px;
+    width: 400px;
+    border: solid 1px rgb(221, 221, 221);
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.hosted-event p {
+    margin-right: 10px;
+}
+
+.attendants {
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+  
+.attendants > button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+  
+.attendants > button:hover {
+    background-color: #e0e0e0;
+}
+  
+.dropdown {
+    display: none;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    width: 100%;
+    z-index: 100;
+    transition: opacity 0.5s ease-out;
+}
+  
+.dropdown.show {
+    display: block;
+    opacity: 1;
+}
+  
+.dropdown p {
+    padding: 10px 16px;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+  
+.dropdown p:last-child {
+    border-bottom: none;
+}
+  
+.dropdown p:hover {
+    background-color: #f9f9f9;
+}
+  
+
+.fa-eye {
+    cursor: pointer;
+    color: #858585;
+}
+
+.fa-edit {
+    cursor: pointer;
+}
+
+.fa-delete {
+    color: rgb(218, 0, 0);
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.profile-button-container {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+}
+
+.profile-page-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    width: 110px;
+    height: 25px;
+    background-color: #88fd52;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.profile-sign-out {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    color: white;
+    border-radius: 4px;
+    background-color: #ff5858;
+    cursor: pointer;
+}

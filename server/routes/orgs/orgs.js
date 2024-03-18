@@ -9,6 +9,70 @@ const newOrgTemplate = fs.readFileSync("./routes/orgs/dbTemplates/newOrgTemplate
 
 
 /*
+    Description: Get all orgs
+    Incoming data: None
+    Outgoing data:
+        [
+            {
+                "name": string,
+                "shorthand": string,
+                "orgImg": string,
+                "bannerImg": string,
+                "bio": string,
+                "contactInfo": {
+                    "email": string,
+                    "twitter": string,
+                    "discord": string,
+                    "phoneNumber": string
+                },
+                "rating": double,
+                "owner": string | ObjectId,
+                "contributors": [ObjectId],
+                "lastActive": UTC Date,
+                "followers": [ObjectId],
+                "events": [ObjectId],
+                "dateCreated": UTC Date
+            }
+        ]
+    On Success:
+        - 200 : [Org data] -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error retrieving orgs. -> There was a db error when trying to retrieve the orgs.
+*/
+router.get('/', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        [],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    try {
+        var results = await db.collection("orgs").find({}).toArray();
+
+        results.forEach((org) => {
+            if (org.orgImg != "") {
+                org.orgImg = `http://localhost:8000/uploads/${org.orgImg.replace('uploads\\', '')}`
+            }
+            if (org.bannerImg != "") {
+                org.bannerImg = `http://localhost:8000/uploads/${org.orgImg.replace('uploads\\', '')}`
+            }
+        });
+        
+        res.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error retrieving orgs.");
+    }
+});
+
+
+/*
     Description: Get specific org
     Incoming data:
         params:
@@ -65,7 +129,7 @@ router.get('/:orgId', async (req, res) => {
         if (results.orgImg != "") {
             results.orgImg = `http://localhost:8000/uploads/${results.orgImg.replace('uploads\\', '')}`
         }
-        if (results.orgImg != "") {
+        if (results.bannerImg != "") {
             results.bannerImg = `http://localhost:8000/uploads/${results.orgImg.replace('uploads\\', '')}`
         }
         
@@ -502,6 +566,74 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
     } catch (e) {
         console.error(e);
         res.status(500).send('Error unfollowing from org.');
+    }
+});
+
+
+/*
+    Description: Get orgs the user is an owner of
+    Incoming data:
+        params:
+            userId: string | ObjectId
+    Outgoing data:
+        [
+            {
+                "name": string,
+                "shorthand": string,
+                "orgImg": string,
+                "bannerImg": string,
+                "bio": string,
+                "contactInfo": {
+                    "email": string,
+                    "twitter": string,
+                    "discord": string,
+                    "phoneNumber": string
+                },
+                "rating": double,
+                "owner": string | ObjectId,
+                "contributors": [ObjectId],
+                "lastActive": UTC Date,
+                "followers": [ObjectId],
+                "events": [ObjectId],
+                "dateCreated": UTC Date
+            }
+        ]
+    On Success:
+        - 200 : [Org data] -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error retrieving list of orgs. -> There was a db error when trying to retrieve the orgs the user is an owner of.
+*/
+router.get('/owner/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const userId = new ObjectId(req.params.userId);
+
+    try {
+        var results = await db.collection("orgs").find({ owner: userId }).toArray();
+
+        results.forEach((org) => {
+            if (org.orgImg != "") {
+                org.orgImg = `http://localhost:8000/uploads/${org.orgImg.replace('uploads\\', '')}`
+            }
+            if (org.bannerImg != "") {
+                org.bannerImg = `http://localhost:8000/uploads/${org.orgImg.replace('uploads\\', '')}`
+            }
+        });
+        
+        res.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error retrieving list of orgs.");
     }
 });
 

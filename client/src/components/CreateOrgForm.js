@@ -5,6 +5,7 @@ import { Toaster, toast } from 'sonner'
 
 function CreateOrgForm() {
   const userId = localStorage.getItem('user');
+  const userName = localStorage.getItem('name');
 
   const [orgData, setOrgData] = useState({
     createdBy: userId,
@@ -14,42 +15,29 @@ function CreateOrgForm() {
     email: '',
     twitter: '',
     discord: '',
-    phoneNumber: '',
-    orgImg: '',
-    bannerImg: ''
+    phoneNumber: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (files && name === 'orgImg') {
-      setOrgData(prevOrgData => ({ ...prevOrgData, orgImg: files[0] }));
-    } else if (files && name === 'bannerImg') {
-      setOrgData(prevOrgData => ({ ...prevOrgData, bannerImg: files[0] }));
+    if (files) {
+        setOrgData({ ...orgData, images: [...files] });
     } else {
-      setOrgData(prevOrgData => ({ ...prevOrgData, [name]: value }));
+        setOrgData({ ...orgData, [name]: value });
     }
   };
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.keys(orgData).forEach(key => {
-      formData.append(key, orgData[key]);
-    });
-  
+    
     try {
-      const response = await axios.post('http://localhost:8000/orgs/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
+      const response = await axios.post('http://localhost:8000/orgs/create', orgData);
       toast.success('Org created successfully!', {
         action: {
           label: 'Undo',
           onClick: () => window.location.href = '/events'
         }
-      });
+      })
       console.log('Successfully created the org!', response.data);
     } catch (error) {
       console.error('Error during org creation', error);
@@ -125,24 +113,6 @@ function CreateOrgForm() {
             name="phoneNumber"
             value={orgData.phoneNumber}
             onChange={handleInputChange}
-          />
-        </label>
-        <label>
-          organization picture (optional)
-          <input
-            type="file"
-            name="orgImg"
-            onChange={handleInputChange}
-            accept="image/*"
-          />
-        </label>
-        <label>
-          organization banner (optional)
-          <input
-            type="file"
-            name="bannerImg"
-            onChange={handleInputChange}
-            accept="image/*"
           />
         </label>
         <button type="submit" className="submit-button">submit</button>

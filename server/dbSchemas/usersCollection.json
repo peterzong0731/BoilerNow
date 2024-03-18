@@ -37,6 +37,9 @@
         "bio": {
             "bsonType": "string"
         },
+        "age": {
+            "bsonType": "int"
+        },
         "emailNotifs": {
             "bsonType": "object",
             "properties": {
@@ -161,6 +164,7 @@
         "login",
         "name",
         "bio",
+        "age",
         "emailNotifs",
         "createdDatetime",
         "followingOrgs",

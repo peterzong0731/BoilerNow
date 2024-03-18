@@ -22,6 +22,7 @@ const newUserTemplate = fs.readFileSync("./routes/users/dbTemplates/newUserTempl
             },
             "name": string,
             "bio": string,
+			"age": number,
             "emailNotifs": {
                 "newEventByOrg": bool,
                 "newPostForEvent": bool,
@@ -84,7 +85,8 @@ router.get('/user/:userId', async (req, res) => {
         body: {
             "email": string,
             "password": string,
-            "name": string
+            "name": string,
+            "age": number
         }
     Outgoing data: 
         {
@@ -102,7 +104,7 @@ router.get('/user/:userId', async (req, res) => {
 router.post('/register', async function (req, res) {
 	const inputDataCheck = allDataPresent(
 		[],
-		["email", "password", "name"],
+		["email", "password", "name", "age"],
 		req
 	);
 
@@ -113,6 +115,7 @@ router.post('/register', async function (req, res) {
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
     const name = req.body.name;
+	const age = +req.body.age;
 
 	if (password.length < 6) {
 		console.log("Password length is less than 6!");
@@ -126,6 +129,7 @@ router.post('/register', async function (req, res) {
 	newUserObj.login.email = email;
 	newUserObj.login.password = md5(password);
 	newUserObj.name = name;
+	newUserObj.age = age;
 	newUserObj.createdDatetime = new Date();
 
 	// Check if email already exists
@@ -185,12 +189,13 @@ router.post('/register', async function (req, res) {
 });
 
 
-router.get("/verify-user/:name/:email/:password", async function (req, res) {
+router.get("/verify-user/:name/:email/:password/:age", async function (req, res) {
 	console.log("User Successfully Verified!");
 
 	const name = req.params.name;
 	const email = req.params.email.toLowerCase();
 	const password = req.params.password;
+	const age = +req.params.age;
 
 	const newUserObj = JSON.parse(newUserTemplate);
 
@@ -198,6 +203,7 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 	newUserObj.login.email = email;
 	newUserObj.login.password = md5(password);
 	newUserObj.name = name;
+	newUserObj.age = age;
 	newUserObj.createdDatetime = new Date();
 
 	// Check if email already exists
@@ -218,7 +224,7 @@ router.get("/verify-user/:name/:email/:password", async function (req, res) {
 	try {
 		const result = await db.collection("users").insertOne(newUserObj);
 		console.log("Inserted new user with _id: " + result.insertedId);
-		res.status(200).send("Successfully created new user");
+		res.status(201).json({ "userId": result.insertedId, "name": name });
 
 	} catch (e) {
 		if (e.name === "MongoServerError" && e.code === 121) {

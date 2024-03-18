@@ -53,6 +53,7 @@ passport.use(
 				newUserObj.login.email = profile.emails[0].value.toLowerCase();
 				newUserObj.login.googleId = profile.id;
 				newUserObj.name = profile.displayName;
+				newUserObj.age = 25; // TODO: Needs to be changed to calculate age from Google profile's dob
 				newUserObj.createdDatetime = new Date();
 				console.log(newUserObj);
 
@@ -67,6 +68,7 @@ passport.use(
 				console.log("Inserted new user with _id: " + newUser.insertedId);
 				return cb(null, newUser);
 			} catch (err) {
+				console.log(err);
 				return cb(err);
 			}
 		}

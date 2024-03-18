@@ -14,7 +14,9 @@ function Event() {
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
   const [capacity, setCapacity] = useState(0)
+  const [ageRequirement, setAgeRequirement] = useState(0);
   const [status, setStatus] = useState('')
+  const [userAge, setUserAge] = useState(0);
   const [usersInterested, setUsersInterested] = useState([])
   const [eventCreatedByUser, setEventCreatedByUser] = useState({})
   const [hasJoined, setHasJoined] = useState(false);
@@ -40,11 +42,20 @@ function Event() {
   }
 
   useEffect(() => {
+    async function fetchUser() {
+      try {
+        var userId = localStorage.getItem('user');
+        const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
+        setUserAge(userResponse.data.age);
+      } catch (error) {
+        console.log(error);
+      }
+    }
     async function fetchEvent() {
       try {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
           console.log(response.data)
-          const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
+          const { _id, title, description, category, location, ageRequirement, eventStartDatetime, eventEndDatetime, 
           capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments, images} = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
@@ -56,6 +67,7 @@ function Event() {
           setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
           setTitle(title)
           setLocation(location)
+          setAgeRequirement(ageRequirement)
           setCapacity(capacity)
           setStatus(status)
           setUsersInterested(usersInterested)
@@ -71,6 +83,7 @@ function Event() {
         console.error(error);
       }
     }
+    fetchUser();
     fetchEvent();
   }, [id]);
 
@@ -118,7 +131,11 @@ function Event() {
             <button className="event-unregister-button" onClick={handleUnregister}>Unregister</button>
           </>
         ) : (
-          <button className="event-join-button" onClick={handleJoin}>Join</button>
+          (userAge >= ageRequirement) ? (
+            <button className="event-join-button" onClick={handleJoin}>Join</button>
+          ) : (
+            <button className="event-join-button-disabled" disabled>Not old enough</button>
+          )
         )
       ) : (
         <button className="event-join-button-disabled" disabled>Log in to join</button>

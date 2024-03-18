@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { AiOutlineMail, AiOutlineTwitter, AiOutlinePhone } from 'react-icons/ai';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import './Org.css'
 
 function Org() {
@@ -37,7 +39,6 @@ function Org() {
         }
       });
       console.log("Org Image added successfully", response.data);
-      // Fetch the updated organization data again
       fetchOrg();
     } catch (error) {
       console.error("Error adding Org Image:", error);
@@ -56,7 +57,6 @@ function Org() {
         }
       });
       console.log("Banner Image added successfully", response.data);
-      // Fetch the updated organization data again
       fetchOrg();
     } catch (error) {
       console.error("Error adding Banner Image:", error);
@@ -75,7 +75,38 @@ function Org() {
           {orgData.orgImg && <img src={orgData.orgImg} alt="Organization Image" id='org-pfp'/>}
         </div>
         <div className='org-text'>
-          <span id='org-name'>{orgData.name}</span>
+          <div className='org-first-row'>
+            <span id='org-name'>{orgData.name}</span>
+            <div className='org-contact-info'>
+              {orgData.contactInfo.email && (
+                <CopyToClipboard text={orgData.contactInfo.email}>
+                  <span className="icon-container" title={orgData.contactInfo.email}>
+                    <AiOutlineMail className="icon" />
+                  </span>
+                </CopyToClipboard>
+              )}
+              {orgData.contactInfo.twitter && (
+                <a className="twitter-link" href={orgData.contactInfo.twitter} target="_blank" rel="noopener noreferrer" title={orgData.contactInfo.twitter}>
+                  <AiOutlineTwitter className="icon" />
+                </a>
+              )}
+              {/* TODO: need discord icon */}
+              {/* {orgData.contactInfo.discord && (
+                <CopyToClipboard text={orgData.contactInfo.discord}>
+                  <span className="icon-container" title="Copy Discord">
+                    <AiOutlineTwitter className="icon" />
+                  </span>
+                </CopyToClipboard>
+              )} */}
+              {orgData.contactInfo.phoneNumber && (
+                <CopyToClipboard text={orgData.contactInfo.phoneNumber}>
+                  <span className="icon-container" title={orgData.contactInfo.phoneNumber}>
+                    <AiOutlinePhone className="icon" />
+                  </span>
+                </CopyToClipboard>
+              )}
+            </div>
+          </div>
           <span id='org-bio'>{orgData.bio}</span>
         </div>
         {/* <input type="file" accept="image/*" onChange={handleOrgImgClick} />

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Posts from './components/Posts';
 import Events from './components/Events';
 import Orgs from './components/Orgs';
+import Org from './components/Org';
 import Navbar from './components/Navbar';
 import CreateEventForm from './components/CreateEventForm';
 import CreateOrgForm from './components/CreateOrgForm';
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/event" element={<Event />}/>
         <Route path="/create-org" element={<CreateOrgForm />} />
         <Route path="/orgs" element={<Orgs />} />
+        <Route path="/org/:id" element={<Org />} />
         <Route exact path="/event/:id" element={<Event />} />
         <Route exact path="/edit-event/:id" element={<EditEventForm />} />
         <Route path="/login" element={<Login />} />

@@ -1,6 +1,6 @@
 import fs from "fs";
 import db from "../conn.js"
-import transporter from "./emailTransporter.js";
+import { transporter } from "./emailUtil.js";
 
 
 const emailTemplate = fs.readFileSync("./emails/eventReminderTemplate.html", "utf8");

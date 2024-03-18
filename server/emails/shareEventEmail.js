@@ -2,7 +2,7 @@ import fs from "fs";
 import db from "../conn.js"
 import express from "express";
 import { ObjectId } from "mongodb";
-import transporter from "./emailTransporter.js";
+import { transporter, convertDateToEST } from "./emailUtil.js";
 import { allDataPresent } from "../verif/endpoints.js";
 
 const router = express.Router();
@@ -48,20 +48,8 @@ router.post('/:userId/:eventId', async (req, res) => {
             return res.status(404).send("User or event not found.");
         }
 
-        const options = {
-            timeZone: 'America/New_York',
-            timeZoneName: 'short',
-            hour12: true,
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        };
-
-        const startTime = new Date(event.eventEndDatetime).toLocaleTimeString('en-US', options);
-        const endTime = new Date(event.eventEndDatetime).toLocaleTimeString('en-US', options);
+        const startTime = convertDateToEST(event.eventStartDatetime);
+        const endTime = convertDateToEST(event.eventEndDatetime);
         
         const mailOptions = {
             from: '"Team BoilerNow" boilernow2023@gmail.com',

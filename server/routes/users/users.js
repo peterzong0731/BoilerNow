@@ -374,8 +374,58 @@ router.get('/user-orgs/:userId', async (req, res) => {
 });
 
 
+/*
+    Description: Update user's email notification preferences
+    Incoming data:
+        params:
+            userId: string | ObjectId
+        body: {
+            "newEventByOrg": bool,
+            "newPostForEvent": bool,
+            "upcomingEvents": bool
+        }
+    Outgoing data: None
+    On Success:
+        - 200 : Notification preferences updated. -> The user's email notifications preferences have been updated.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error updating notification preferences. -> There was an error when updating notification preferences.
+*/
+router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["userId"],
+        ["newEventByOrg", "newPostForEvent", "upcomingEvents"],
+        req
+    );
 
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
 
+    const userId = new ObjectId(req.params.userId);
+    const newEvent = req.body.newEventByOrg;
+    const newPost = req.body.newPostForEvent;
+    const upcomingEvents = req.body.upcomingEvents;
+
+    try {
+        await db.collection('users').updateOne(
+            { _id: userId },
+            {
+                $set: { 
+                    "emailNotifs.newEventByOrg": newEvent,
+                    "emailNotifs.newPostForEvent": newPost,
+                    "emailNotifs.upcomingEvents": upcomingEvents
+                } 
+            }
+        );
+
+        res.status(200).send('Notification preferences updated.');
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Error updating notification preferences.');
+    }
+});
 
 
 export default router;

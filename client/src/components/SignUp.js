@@ -6,8 +6,10 @@ import { Toaster, toast } from 'sonner'
 function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
 
   const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -18,16 +20,24 @@ function Signup() {
       alert('Passwords do not match');
       return;
     }
+    if (Date.parse(dob) == NaN) {
+      alert('Invalid DOB');
+      return;
+    }
+
+    const age = parseAge(dob);
 
     try {
       const response = await axios.post('http://localhost:8000/register', {
         name,
         email,
-        password
+        password,
+        age
       });
       console.log('Signup response:', response.data);
       setName('');
       setEmail('');
+      setDob('');
       setPassword('');
       setConfirmPassword('');
       toast.success('Signup successful!')
@@ -36,6 +46,15 @@ function Signup() {
       alert('Failed to signup. Please try again later.');
     }
   };
+
+  function parseAge(dob) {
+    var today = new Date();
+    var birthDate = new Date(dob);
+    var age = today.getFullYear()-birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+    return age;
+  }
 
   const handleLoginRedirect = () => {
     window.location.href = '/login';
@@ -58,6 +77,14 @@ function Signup() {
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>date of birth (mm/dd/yy)</label>
+        <input
+          type="text"
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
         />
       </div>
       <div>

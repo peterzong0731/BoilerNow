@@ -160,7 +160,7 @@ router.get('/:userId', async (req, res) => {
         }
     Outgoing data: None
     On Success:
-        - 200 : Post published successfully with postId: <postId>. -> Post was inserted into the user's document.
+        - 200 : Post published successfully with postId: <postId> -> Post was inserted into the user's document.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 404 : UserId does not match an existing user. -> The userId is not found in the db.

@@ -30,7 +30,7 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
 */
 router.get('/', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		["userId"],
+		[],
 		[],
 		req
 	);
@@ -156,11 +156,11 @@ router.get('/:userId', async (req, res) => {
         body: {
             "title": string,
             "content": string,
-            "eventId": ObjectId
+            "eventId": string | ObjectId
         }
     Outgoing data: None
     On Success:
-        - 200 : Post published successfully. -> Post was inserted into the user's document.
+        - 200 : Post published successfully with postId: <postId>. -> Post was inserted into the user's document.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 404 : UserId does not match an existing user. -> The userId is not found in the db.
@@ -169,7 +169,7 @@ router.get('/:userId', async (req, res) => {
 router.post('/create/:userId', async (req, res) => {
     const inputDataCheck = allDataPresent(
 		["userId"],
-		[],
+		["title", "content", "eventId"],
 		req
 	);
 
@@ -194,14 +194,11 @@ router.post('/create/:userId', async (req, res) => {
     // newPostObj.image = image;
 
     // Insert post by modifying the user's document
-    console.log(newPostObj)
     try {
         const results = await db.collection("users").updateOne(
             { _id: userId },
             { $push: { posts: newPostObj } }
         );
-
-        console.log(results);
 
         if (results.matchedCount === 0) {
             return res.status(404).send("UserId does not match an existing user.");
@@ -211,10 +208,10 @@ router.post('/create/:userId', async (req, res) => {
             throw new Error('Post was not published.');
         }
 
-        res.status(200).send('Post published successfully.');
+        console.log("Post published with postId: " + newPostObj.postId);
+        res.status(200).send('Post published successfully with id: ' + newPostObj.postId);
 
     } catch (e) {
-        console.log("Error publishing post: ");
         console.log(e);
         res.status(500).send('Error publishing post.');
     }
@@ -244,7 +241,7 @@ router.patch('/update', async (req, res) => {
 */
 router.delete('/delete/:userId/:postId', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		["userId"],
+		["userId", "postId"],
 		[],
 		req
 	);

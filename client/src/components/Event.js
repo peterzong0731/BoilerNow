@@ -115,11 +115,27 @@ function Event() {
     }
   };
 
+  const isNewEvent = (createdDatetime) => {
+    const now = new Date();
+    const createdDate = new Date(createdDatetime);
+    const diff = now - createdDate;
+    const hours = diff / (1000 * 60 * 60);
+    return hours <= 24;
+  };
+
   return (
     <div className="event-container">
       <Toaster richColors position="top-center"/>
       <h1 className="event-title">{title}</h1>
-      <div className={`event-category ${category}`}>{category}</div>
+      <div className={`event-category ${category}`}>
+        {category}
+        {isNewEvent(createdDatetime) && (
+          <span className="emoji-tooltip-container">
+            🔥
+            <span className="emoji-tooltip-text">New event</span>
+          </span>
+        )}
+      </div>
       <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>

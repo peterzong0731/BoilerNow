@@ -17,6 +17,7 @@ function CreateEventForm() {
     capacity: 0,
     status: '',
     visibility: "Public",
+    ageRequirement: 0,
     createdBy: userId,
     createdByName: userName,
     usersInterested: [],
@@ -86,6 +87,15 @@ function CreateEventForm() {
           <textarea
             name="description"
             value={eventData.description}
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          age requirement
+          <input
+            type="text"
+            name="ageRequirement"
+            value={eventData.ageRequirement}
             onChange={handleInputChange}
           />
         </label>

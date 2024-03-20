@@ -14,6 +14,7 @@ function Navbar() {
     <nav className='nav'>
       <p><a href='/'>BoilerNow</a></p>
       <ul>
+        <li><a href="/about">About</a></li>
         <li><a href="/posts">Posts</a></li>
         <li><a href="/events">Events</a></li>
         <li><a href="/orgs">Orgs</a></li>

@@ -73,6 +73,9 @@ function Profile() {
 
                 const orgsCreatedResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);
                 setCreatedOrgs(orgsCreatedResponse.data)
+
+                
+
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }

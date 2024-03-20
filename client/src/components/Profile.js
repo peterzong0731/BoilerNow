@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import checkmark from './images/yellow_checkmark.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrashAlt, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 
 function Profile() {
@@ -73,9 +73,9 @@ function Profile() {
 
                 const orgsCreatedResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);
                 setCreatedOrgs(orgsCreatedResponse.data)
-
                 
-
+                const orgsFollowingResponse = await axios.get(`http://localhost:8000/orgs/following/${userId}`);
+                setUserOrgs(orgsFollowingResponse.data)
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
@@ -140,7 +140,7 @@ function Profile() {
         });
       };
 
-      const handleDeleteOrg = (orgId) => {      
+    const handleDeleteOrg = (orgId) => {      
         Swal.fire({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
@@ -161,8 +161,31 @@ function Profile() {
             }
           }
         });
-      };
-    
+    };
+
+    const handleUnfollowOrg = (orgId) => {      
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, unfollow!'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await axios.patch(`http://localhost:8000/orgs/unfollow/${orgId}/${userId}`);
+              Swal.fire('Unfollowed!', 'You have unfollowed the org.', 'success');
+              console.log('Org successfully unfollowed:', response.data);
+            } catch (error) {
+              Swal.fire('Error!', 'There was a problem unfollowing the org.', 'error');
+              console.error('Error deleting org:', error);
+            }
+          }
+        });
+    };
+
     const toggleDropdown = (eventId) => {
         setDropdownVisible(prevState => ({
           ...prevState,
@@ -252,6 +275,22 @@ function Profile() {
                         ))
                     ) : (
                         <p>No orgs created.</p>
+                    )}
+                    <h1>Orgs you follow:</h1>
+                    {userOrgs.length > 0 ? (
+                        userOrgs.map(org => (
+                            <div className='hosted-event'>
+                                <p>{org.name}</p>
+                                <div>
+                                    <Link to={`/org/${org._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-eye' icon={faEye} />
+                                    </Link>
+                                    <FontAwesomeIcon className='fa-delete' icon={faPersonWalkingArrowRight} onClick={() => handleUnfollowOrg(org._id)}/>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No orgs followed.</p>
                     )}
                     <h1>Your Posts:</h1>
                     {userPosts.length > 0 ? (

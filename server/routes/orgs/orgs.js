@@ -204,7 +204,7 @@ router.patch('/update/:orgId', async (req, res) => {
     const owner = new ObjectId(req.body.owner);
     const email = req.body.email;
     const twitter = req.body.twitter || "";
-    const discord = req.body.twitter || "";
+    const discord = req.body.discord || "";
     const phoneNumber = req.body.phoneNumber || "";
 
     // Set org details

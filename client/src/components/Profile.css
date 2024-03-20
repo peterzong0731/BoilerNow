@@ -168,3 +168,16 @@
     background-color: #ff5858;
     cursor: pointer;
 }
+
+.profile-header button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+.profile-header button.active {
+    border-bottom: 2px solid blue;
+}

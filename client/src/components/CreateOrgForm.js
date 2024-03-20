@@ -28,15 +28,16 @@ function CreateOrgForm() {
     } else {
       setOrgData(prevOrgData => ({ ...prevOrgData, [name]: value }));
     }
+    console.log(orgData);
   };
-
+  
   const handleSubmit = async(e) => {
     e.preventDefault();
     const formData = new FormData();
     Object.keys(orgData).forEach(key => {
       formData.append(key, orgData[key]);
     });
-  
+    
     try {
       const response = await axios.post('http://localhost:8000/orgs/create', formData, {
         headers: {
@@ -46,8 +47,8 @@ function CreateOrgForm() {
   
       toast.success('Org created successfully!', {
         action: {
-          label: 'Undo',
-          onClick: () => window.location.href = '/events'
+          label: 'View',
+          onClick: () => window.location.href = '/org/' + response.data
         }
       });
       console.log('Successfully created the org!', response.data);
@@ -55,7 +56,7 @@ function CreateOrgForm() {
       console.error('Error during org creation', error);
     }
   };
-
+  
   return (
     <div className="create-event-form-container">
       <Toaster richColors position="top-center"/>

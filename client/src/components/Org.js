@@ -69,7 +69,7 @@ function Org() {
 
   return (
     <div className='org-page-outer-container'>
-      {orgData.bannerImg && <img src={orgData.orgImg} alt="Banner Image" className='org-banner'/>}
+      {orgData.bannerImg && <img src={orgData.bannerImg} alt="Banner Image" className='org-banner'/>}
       <div className='org-page-inner-container'>
         <div className='org-images'>
           {orgData.orgImg && <img src={orgData.orgImg} alt="Organization Image" id='org-pfp'/>}

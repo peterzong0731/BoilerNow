@@ -21,6 +21,8 @@ function Event() {
   const [eventCreatedByUser, setEventCreatedByUser] = useState({})
   const [hasJoined, setHasJoined] = useState(false);
   const [images, setImages] = useState([]);
+  const [showShareBox, setShowShareBox] = useState(false);
+  const [shareEmail, setShareEmail] = useState('');
 
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
@@ -123,6 +125,26 @@ function Event() {
     return hours <= 24;
   };
 
+  const handleShareClick = () => {
+    setShowShareBox(!showShareBox);
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = `http://localhost:8000/shareEvent/${currentUser}/${id}`;
+      
+      await axios.post(url, { email: shareEmail });
+
+      console.log(`Email sent to: ${shareEmail}`);
+      toast.success("Event shared successfully!");
+      
+      setShareEmail('');
+      setShowShareBox(false);
+    } catch (error) {
+      console.error('Error sharing event:', error);
+      toast.error("Failed to share the event.");
+    }
+  };
   return (
     <div className="event-container">
       <Toaster richColors position="top-center"/>
@@ -155,6 +177,24 @@ function Event() {
         )
       ) : (
         <button className="event-join-button-disabled" disabled>Log in to join</button>
+      )}
+            {currentUser ? (
+        <>
+          <button className="event-share-button" onClick={handleShareClick}>Share</button>
+          {showShareBox && (
+            <div className="share-box">
+              <input 
+                type="email" 
+                value={shareEmail} 
+                onChange={(e) => setShareEmail(e.target.value)} 
+                placeholder="Enter email to share" 
+              />
+              <button className="share-box-button" onClick={handleShare}>Send</button>
+            </div>
+          )}
+        </>
+      ) : (
+        <button className="event-join-button-disabled" disabled>Log in to share</button>
       )}
       <div className="event-dates">
         <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>

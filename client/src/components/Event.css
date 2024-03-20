@@ -36,10 +36,17 @@
     cursor: pointer;
     font-size: 18px;
     margin: 10px 0;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.event-join-button:hover, .event-join-button:focus {
+    background-color: #45a049;
+    transform: scale(1.05);
 }
   
-.event-join-button:hover {
-    background-color: #45a049;
+.event-join-button:active {
+    background-color: #3c8b40;
+    transform: scale(1);
 }
 
 .event-join-button-disabled {
@@ -65,10 +72,17 @@
     cursor: pointer;
     font-size: 18px;
     margin: 10px 0 0 5px;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.event-unregister-button:hover, .event-unregister-button:focus {
+    background-color: #ff4343;
+    transform: scale(1.05);
 }
   
-.event-unregister-button:hover {
-    background-color: #ff4343;
+.event-unregister-button:active {
+    background-color: #d63636;
+    transform: scale(1);
 }
 
 .event-dates {
@@ -201,3 +215,64 @@
     opacity: 1;
 }
   
+.event-share-button {
+    font-family: 'Calistoga', sans-serif;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+    margin-left: 5px;
+}
+  
+.event-share-button:hover, .event-share-button:focus {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+  
+.event-share-button:active {
+    background-color: #004094;
+    transform: scale(1);
+}
+  
+  
+.share-box {
+    margin-top: 10px;
+}
+  
+.share-box input {
+    font-family: 'Calistoga', sans-serif;
+    margin-right: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+  
+.share-box button {
+    font-family: 'Calistoga', sans-serif;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+  
+.share-box-button:hover, .share-box-button:focus {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+  
+.share-box-button:active {
+    background-color: #004094;
+    transform: scale(1);
+}

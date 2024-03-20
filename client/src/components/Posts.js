@@ -5,45 +5,44 @@ import './Posts.css';
 
 function Posts() {
   const [posts, setPosts] = useState([]);
-  const [sortedPosts, setSortedPosts] = useState([]);
-  const [sortBy, setSortBy] = useState('time');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOption, setSortOption] = useState('mostRecent');
 
   useEffect(() => {
     async function fetchPosts() {
       try {
         const response = await axios.get('http://localhost:8000/posts');
-        setPosts(response.data);
-        setSortedPosts(response.data);
+        const sortedPosts = sortPosts(response.data, sortOption);
+        setPosts(sortedPosts);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
     }
     fetchPosts();
-  }, []);
+  }, [sortOption]);
 
-  const sortByTime = () => {
-    let sorted;
-    if (sortOrder === 'asc') {
-      sorted = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setSortOrder('desc');
-    } else {
-      sorted = [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      setSortOrder('asc');
-    }
-    setSortedPosts(sorted);
-    setSortBy('time');
+  const sortPosts = (posts, option) => {
+    return posts.sort((a, b) => {
+      const dateA = new Date(a.postedDatetime);
+      const dateB = new Date(b.postedDatetime);
+      return option === 'mostRecent' ? dateB - dateA : dateA - dateB;
+    });
+  };
+
+  const handleSortChange = (event) => {
+    setSortOption(event.target.value);
   };
 
   return (
     <div className="posts-outer-container">
-      <div className="posts-sort-buttons">
-        {/* <button onClick={sortByTime}>
-          {sortOrder === 'asc' ? 'Sort by Newest' : 'Sort by Oldest'}
-        </button> */}
+      <div className="sort-options">
+        <label>Sort by:</label>
+        <select onChange={handleSortChange} value={sortOption}>
+          <option value="mostRecent">Most Recent</option>
+          <option value="oldest">Latest</option>
+        </select>
       </div>
       <div className="posts-inner-container">
-        {sortedPosts.map(post => (
+        {posts.map(post => (
           <PostCard key={post._id} post={post} />
         ))}
       </div>

@@ -40,7 +40,7 @@ const newEventTemplate = fs.readFileSync("./routes/events/dbTemplates/newEventTe
             }
         ]
     On Success:
-        - 201 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+        - 201 : [Event objects] -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error retrieving events. -> There was a db error when trying to retrieve all the events.

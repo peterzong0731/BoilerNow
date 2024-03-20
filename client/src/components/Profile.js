@@ -39,9 +39,16 @@ function Profile() {
     const [user, setUser] = useState(null);
     const [userEvents, setUserEvents] = useState([])
     const [userPosts, setUserPosts] = useState([])
+    const [attendedEvents, setAttendedEvents] = useState([])
+    const [createdOrgs, setCreatedOrgs] = useState([])
     const [userOrgs, setUserOrgs] = useState([])
     const [purdueEmail, setPurdueEmail] = useState(false)
     const [dropdownVisible, setDropdownVisible] = useState({});
+    const [activeTab, setActiveTab] = useState('events');
+
+    const handleTabChange = (tabName) => {
+        setActiveTab(tabName);
+    };
 
     useEffect(() => {
         async function fetchUser() {
@@ -50,6 +57,7 @@ function Profile() {
 
                 const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
                 setUser(userResponse.data);
+                console.log(userResponse.data)
 
                 if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
@@ -59,6 +67,12 @@ function Profile() {
 
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
                 setUserPosts(postsResponse.data);
+
+                const attendedResponse = await axios.get(`http://localhost:8000/events/user-attended-events/${userId}`);
+                setAttendedEvents(attendedResponse.data)
+
+                const orgsCreatedResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);
+                setCreatedOrgs(orgsCreatedResponse.data)
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
@@ -122,6 +136,29 @@ function Profile() {
           }
         });
       };
+
+      const handleDeleteOrg = (orgId) => {      
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await axios.delete(`http://localhost:8000/orgs/delete/${orgId}`);
+              Swal.fire('Deleted!', 'Your org has been deleted.', 'success');
+              console.log('Org deleted successfully:', response.data);
+            } catch (error) {
+              Swal.fire('Error!', 'There was a problem deleting your org.', 'error');
+              console.error('Error deleting org:', error);
+            }
+          }
+        });
+      };
     
     const toggleDropdown = (eventId) => {
         setDropdownVisible(prevState => ({
@@ -138,51 +175,94 @@ function Profile() {
                 <h1>{name}</h1>
                 {purdueEmail ? (<img className="verified-checkmark" src={checkmark} />)  : <></>}  
             </div>
-            <div className='hosted-events'>
-                <h1>Hosted Events:</h1>
-                {userEvents ? (
-                    userEvents.map(event => (
-                        <div className='hosted-event'>
-                            <p>{event.title}</p>
-                            <div className='attendants'>
-                                <button onClick={() => toggleDropdown(event._id)}>
-                                    Users attending: {event.usersInterested.length}
-                                </button>
-                                <div className={`dropdown ${dropdownVisible[event._id] ? 'show' : ''}`}>
-                                    {event.usersInterested.map(userInterested => (
-                                        <p key={userInterested._id}>{userInterested.name}</p>
-                                    ))}
+            <div className='profile-header'>
+                <button onClick={() => handleTabChange('events')} className={activeTab === 'events' ? 'active' : ''}>Events</button>
+                <button onClick={() => handleTabChange('orgs')} className={activeTab === 'orgs' ? 'active' : ''}>Orgs</button>
+                <button onClick={() => handleTabChange('settings')} className={activeTab === 'settings' ? 'active' : ''}>Settings</button>
+            </div>
+            <div className={`highlight ${activeTab}`}></div>
+            {activeTab === 'events' && (
+                <div className='hosted-events'>
+                    <h1>Hosted Events:</h1>
+                    {userEvents.length > 0 ? (
+                        userEvents.map(event => (
+                            <div className='hosted-event'>
+                                <p>{event.title}</p>
+                                <div className='attendants'>
+                                    <button onClick={() => toggleDropdown(event._id)}>
+                                        Users attending: {event.usersInterested.length}
+                                    </button>
+                                    <div className={`dropdown ${dropdownVisible[event._id] ? 'show' : ''}`}>
+                                        {event.usersInterested.map(userInterested => (
+                                            <p key={userInterested._id}>{userInterested.name}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <Link to={`/event/${event._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-eye' icon={faEye} />
+                                    </Link>
+                                    <Link to={`/edit-event/${event._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-edit' icon={faEdit} />
+                                    </Link>
+                                    <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeleteEvent(event._id)}/>
                                 </div>
                             </div>
-                            <div>
-                                <Link to={`/event/${event._id}`} style={{ marginRight: '10px' }}>       
-                                    <FontAwesomeIcon className='fa-eye' icon={faEye} />
-                                </Link>
-                                <Link to={`/edit-event/${event._id}`} style={{ marginRight: '10px' }}>       
-                                    <FontAwesomeIcon className='fa-edit' icon={faEdit} />
-                                </Link>
-                                <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeleteEvent(event._id)}/>
+                        ))
+                    ) : (
+                        <p>No events hosted.</p>
+                    )}
+                    <h1>Attended Events:</h1>
+                    {attendedEvents.length > 0 ? (
+                        attendedEvents.map(event => (
+                            <div className='hosted-event'>
+                                <p>{event.title}</p>
+                                <div>
+                                    <Link to={`/event/${event._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-eye' icon={faEye} />
+                                    </Link>
+                                </div>
                             </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No events hosted.</p>
-                )}
-            </div>
-            <div className='hosted-events'>
-                <h1>Your Posts:</h1>
-                {console.log(userPosts)}
-                {userPosts ? (
-                    userPosts.map(post => (
-                        <div className='hosted-event'>
-                            <p>{post.title}</p>
-                            <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeletePost(post.postId)}/>
-                        </div>
-                    ))
-                ) : (
-                    <p>No posts created.</p>
-                )}
-            </div>
+                        ))
+                    ) : (
+                        <p>No events attended.</p>
+                    )}
+                </div>
+            )}
+            {activeTab === 'orgs' && (
+                <div className='hosted-events'>
+                    <h1>Your Orgs:</h1>
+                    {createdOrgs.length > 0 ? (
+                        createdOrgs.map(org => (
+                            <div className='hosted-event'>
+                                <p>{org.name}</p>
+                                <div>
+                                    <Link to={`/org/${org._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-eye' icon={faEye} />
+                                    </Link>
+                                    <Link to={`/org-edit/${org._id}`} style={{ marginRight: '10px' }}>       
+                                        <FontAwesomeIcon className='fa-edit' icon={faEdit} />
+                                    </Link>
+                                    <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeleteOrg(org._id)}/>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No orgs created.</p>
+                    )}
+                    <h1>Your Posts:</h1>
+                    {userPosts.length > 0 ? (
+                        userPosts.map(post => (
+                            <div className='hosted-event'>
+                                <p>{post.title}</p>
+                                <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeletePost(post.postId)}/>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No posts created.</p>
+                    )}
+                </div>
+            )}
             <div className='profile-button-container'>
                 <Link to={`/create-event`} className='profile-page-button'>Create Event</Link>
                 <Link to={`/create-post`} className='profile-page-button'>Create Post</Link>

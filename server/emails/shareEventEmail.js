@@ -6,7 +6,7 @@ import { transporter, convertDateToEST } from "./emailUtil.js";
 import { allDataPresent } from "../verif/endpoints.js";
 
 const router = express.Router();
-const emailTemplate = fs.readFileSync("./emails/shareEventTemplate.html", "utf8");
+const emailTemplate = fs.readFileSync("./emails/emailTemplates/shareEventTemplate.html", "utf8");
 
 /*
     Description: Share an event through email

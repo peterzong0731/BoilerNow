@@ -3,6 +3,7 @@ import fs from "fs";
 import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 import { allDataPresent } from "../../verif/endpoints.js";
+import { sendNewPostEmail } from "../../emails/newPostEmail.js";
 
 const router = express.Router();
 const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTemplate.json", "utf8");
@@ -210,6 +211,8 @@ router.post('/create/:userId', async (req, res) => {
 
         console.log("Post published with postId: " + newPostObj.postId);
         res.status(200).send('Post published successfully with id: ' + newPostObj.postId);
+
+        sendNewPostEmail(newPostObj, userId);
 
     } catch (e) {
         console.log(e);

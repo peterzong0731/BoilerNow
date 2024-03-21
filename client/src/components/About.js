@@ -52,6 +52,8 @@ function About() {
           <div className='individual-stat-container'>
             <img id="orgs" src={Orgs} alt="org img" />
             <span>{orgCount} Organizations</span>
+            <br />
+            <span>{Math.floor((eventCount*10)/orgCount)/10} Average events per org</span>
           </div>
         </div>
       </div>

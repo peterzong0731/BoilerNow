@@ -8,6 +8,8 @@ import checkmark from './images/yellow_checkmark.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faEye, faTrashAlt, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { Toaster, toast } from 'sonner'
+import Switch from 'react-switch';
 
 function Profile() {
     const navigate = useNavigate();
@@ -45,6 +47,11 @@ function Profile() {
     const [purdueEmail, setPurdueEmail] = useState(false)
     const [dropdownVisible, setDropdownVisible] = useState({});
     const [activeTab, setActiveTab] = useState('events');
+    const [preferences, setPreferences] = useState({
+        newEventByOrg: false,
+        newPostForEvent: false,
+        upcomingEvents: false,
+      });
 
     const handleTabChange = (tabName) => {
         setActiveTab(tabName);
@@ -53,16 +60,13 @@ function Profile() {
     useEffect(() => {
         async function fetchUser() {
             try {
-                console.log(userId)
-
                 const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
                 setUser(userResponse.data);
-                console.log(userResponse.data)
+                setPreferences(userResponse.data.emailNotifs)
 
                 if (userResponse.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
                 const eventsResponse = await axios.get(`http://localhost:8000/events/user-events/${userId}`);
-                console.log(eventsResponse.data)
                 setUserEvents(eventsResponse.data);
 
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
@@ -193,10 +197,26 @@ function Profile() {
         }));
     };
 
+    const handleToggleChange = (checked, event, id) => {
+        setPreferences({ ...preferences, [id]: checked });
+    };
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          await axios.patch(`http://localhost:8000/update-user-notif-prefs/${userId}`, preferences);
+          toast.success('Notification preferences updated successfully');
+        } catch (error) {
+          console.error('Error updating notification preferences:', error);
+          toast.error('Failed to update notification preferences.');
+        }
+    };
+
     const { name, bio, emailNotifs, createdDatetime, followingOrgs, prevInterestedEvents, posts } = user;
 
     return (
         <div className="profile">
+            <Toaster richColors position="top-center"/>
             <div className='profile-name-container'>
                 <h1>{name}</h1>
                 {purdueEmail ? (<img className="verified-checkmark" src={checkmark} />)  : <></>}  
@@ -253,6 +273,11 @@ function Profile() {
                     ) : (
                         <p>No events attended.</p>
                     )}
+                    <div className='profile-button-container'>
+                        <Link to={`/create-event`} className='profile-page-button'>Create Event</Link>
+                        <Link to={`/create-post`} className='profile-page-button'>Create Post</Link>
+                        <Link to={`/create-org`} className='profile-page-button'>Create Org</Link>
+                    </div>
                 </div>
             )}
             {activeTab === 'orgs' && (
@@ -303,13 +328,79 @@ function Profile() {
                     ) : (
                         <p>No posts created.</p>
                     )}
+                    <div className='profile-button-container'>
+                        <Link to={`/create-event`} className='profile-page-button'>Create Event</Link>
+                        <Link to={`/create-post`} className='profile-page-button'>Create Post</Link>
+                        <Link to={`/create-org`} className='profile-page-button'>Create Org</Link>
+                    </div>
                 </div>
             )}
-            <div className='profile-button-container'>
-                <Link to={`/create-event`} className='profile-page-button'>Create Event</Link>
-                <Link to={`/create-post`} className='profile-page-button'>Create Post</Link>
-                <Link to={`/create-org`} className='profile-page-button'>Create Org</Link>
-            </div>
+            {activeTab === 'settings' && (
+                <div className="notification-preferences-container">
+                    <h2>Notification Preferences</h2>
+                    <form onSubmit={handleSubmit}>
+                      <div>
+                        <label>
+                          <p>New event by organizations I follow</p>
+                          <Switch 
+                            checked={preferences.newEventByOrg} 
+                            onChange={(checked, event) => handleToggleChange(checked, event, 'newEventByOrg')} 
+                            onColor="#86d3ff"
+                            offColor="#ccc"
+                            onHandleColor="#2693e6"
+                            handleDiameter={30}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                            height={20}
+                            width={48}
+                            marginLeft={10}
+                          />
+                        </label>
+                      </div>
+                      <div>
+                        <label>
+                          <p>New posts for events I've joined</p>
+                          <Switch 
+                            checked={preferences.newPostForEvent} 
+                            onChange={(checked, event) => handleToggleChange(checked, event, 'newPostForEvent')} 
+                            onColor="#86d3ff"
+                            offColor="#ccc"
+                            onHandleColor="#2693e6"
+                            handleDiameter={30}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                            height={20}
+                            width={48}
+                          />
+                        </label>
+                      </div>
+                      <div>
+                        <label>
+                          <p>Upcoming events reminders</p>
+                          <Switch 
+                            checked={preferences.upcomingEvents} 
+                            onChange={(checked, event) => handleToggleChange(checked, event, 'upcomingEvents')} 
+                            onColor="#86d3ff"
+                            offColor="#ccc"
+                            onHandleColor="#2693e6"
+                            handleDiameter={30}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                            height={20}
+                            width={48}
+                          />
+                        </label>
+                      </div>
+                      <button type="submit">Update Preferences</button>
+                    </form>
+                </div>
+            )}   
             <div className='profile-sign-out' onClick={() => handleSignOut()}>Sign Out</div>
         </div>
     )

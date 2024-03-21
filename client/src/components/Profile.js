@@ -68,7 +68,7 @@ function Profile() {
                 const postsResponse = await axios.get(`http://localhost:8000/posts/${userId}`);
                 setUserPosts(postsResponse.data);
 
-                const attendedResponse = await axios.get(`http://localhost:8000/events/user-attended-events/${userId}`);
+                const attendedResponse = await axios.get(`http://localhost:8000/user-attended-events/${userId}`);
                 setAttendedEvents(attendedResponse.data)
 
                 const orgsCreatedResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);

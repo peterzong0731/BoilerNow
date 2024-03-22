@@ -18,20 +18,10 @@
   margin-left: 1%;
 }
 
-.org-images #org-pfp:hover {
-  cursor: pointer;
-  filter: brightness(120%);
-}
-
 .org-banner {
   width: 100%;
   height: 240px;
 }
-
-.org-banner:hover {
-  cursor: pointer;
-}
-
 
 .org-text {
   display: flex;

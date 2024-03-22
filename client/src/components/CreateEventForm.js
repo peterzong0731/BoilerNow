@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner'
@@ -6,6 +6,21 @@ import { Toaster, toast } from 'sonner'
 function CreateEventForm() {
   const userId = localStorage.getItem('user');
   const userName = localStorage.getItem('name');
+
+  const [orgs, setOrgs] = useState([])
+
+  useEffect(() => {
+    async function fetchOrgs() {
+      try {
+        const orgResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);
+        console.log(orgResponse.data)
+        setOrgs(orgResponse.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchOrgs();
+  }, []);
 
   const [eventData, setEventData] = useState({
     title: '',
@@ -23,12 +38,15 @@ function CreateEventForm() {
     usersInterested: [],
     usersInterestedNames: [],
     images: [],
-    ageRequirement: 0
+    ageRequirement: 0,
+    belongsToOrg: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
+    if (name === "belongsToOrg") {
+      setEventData({ ...eventData, [name]: value });
+    } else if (files) {
       setEventData({ ...eventData, images: [...files] });
     } else {
       setEventData({ ...eventData, [name]: value });
@@ -204,6 +222,21 @@ function CreateEventForm() {
               private
             </label>
           </div>
+          {orgs.length > 0 && (
+            <label>
+              Assign to Organization:
+              <select
+                name="belongsToOrg"
+                value={eventData.belongsToOrg}
+                onChange={handleInputChange}
+              >
+                <option value="">Select an Organization</option>
+                {orgs.map((org) => (
+                  <option key={org._id} value={org._id}>{org.name}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
         
         <button type="submit" className="submit-button">submit</button>

@@ -3,7 +3,7 @@ import db from "../conn.js"
 import { transporter } from "./emailUtil.js";
 
 
-const emailTemplate = fs.readFileSync("./emails/eventReminderTemplate.html", "utf8");
+const emailTemplate = fs.readFileSync("./emails/emailTemplates/eventReminderTemplate.html", "utf8");
 
 async function checkEvents() {
     // Emails set to send 1 day +- 5 minutes before event starts. Milliseconds and seconds are ignored

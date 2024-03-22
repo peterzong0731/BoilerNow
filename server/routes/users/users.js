@@ -434,4 +434,69 @@ router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
 });
 
 
+/*
+    Description: Get all events attended by a user
+    Incoming data:
+        params:
+            userId: string | ObjectId
+    Outgoing data:
+        [
+            {
+                "_id": string,
+                "title": string,
+                "category": string
+            }
+        ]
+    On Success:
+        - 200 : [Partial event objects] -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : User not found. -> The given userId was not found in the db.
+        - 500 : Error retrieving events. -> There was a db error when trying to retrieve the user's events.
+*/
+router.get('/user-attended-events/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const userId = new ObjectId(req.params.userId);
+
+    try {
+        const user = await db.collection('users').findOne({ _id: userId });
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        const { interestedEventHistory } = user;
+        if (!interestedEventHistory || interestedEventHistory.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const eventIds = interestedEventHistory.map(id => new ObjectId(id));
+
+        const events = await db.collection('events').find(
+            { _id: { $in: eventIds } },
+            {
+                projection: {
+                    _id: 1,
+                    title: 1,
+                    category: 1
+                }
+            }
+        ).toArray();
+
+        res.status(200).json(events);
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Error retrieving events.');
+    }
+});
+
+
 export default router;

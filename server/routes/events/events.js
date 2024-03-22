@@ -4,6 +4,7 @@ import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 import multer from 'multer';
 import { allDataPresent } from "../../verif/endpoints.js";
+import { sendNewEventEmail } from "../../emails/newEventEmail.js";
 
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
@@ -82,7 +83,8 @@ router.get('/', async (req, res) => {
                 "capacity": string | number (optional),
                 "visibility": string,
                 "ageRequirement": number,
-                "createdBy": ObjectId,
+                "belongsToOrg": string | ObjectId,
+                "createdBy": string | ObjectId,
                 "createdByName": string
             }
         files:
@@ -108,7 +110,7 @@ router.get('/', async (req, res) => {
 router.post('/create', upload.array('images'), async (req, res) => {
     const inputDataCheck = allDataPresent(
 		[],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "ageRequirement", "createdBy", "createdByName"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "ageRequirement", "belongsToOrg", "createdBy", "createdByName"],
         req
 	);
 
@@ -125,6 +127,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
     const capacity = +req.body.capacity || null;
     const visibility = req.body.visibility;
     const ageRequirement = +req.body.ageRequirement;
+    const belongsToOrg = new ObjectId(req.body.belongsToOrg);
     const createdBy = new ObjectId(req.body.createdBy);
     const createdByName = req.body.createdByName;
 
@@ -144,7 +147,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
     newEventObj.usersInterested = [{"userId": createdBy, "name": createdByName}];
     newEventObj.visibility = visibility;
     newEventObj.ageRequirement = ageRequirement;
-    newEventObj.belongsToOrg = new ObjectId();
+    newEventObj.belongsToOrg = belongsToOrg;
     newEventObj.createdBy = createdBy;
     newEventObj.createdDatetime = new Date();
 
@@ -161,6 +164,8 @@ router.post('/create', upload.array('images'), async (req, res) => {
 
         console.log("Created new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event with id: " + results.insertedId);
+
+        sendNewEventEmail(newEventObj);
 
     } catch (e) {
         if (e.name === "MongoServerError" && e.code === 121) {

@@ -291,7 +291,7 @@ function Profile() {
                                     <Link to={`/org/${org._id}`} style={{ marginRight: '10px' }}>       
                                         <FontAwesomeIcon className='fa-eye' icon={faEye} />
                                     </Link>
-                                    <Link to={`/org-edit/${org._id}`} style={{ marginRight: '10px' }}>       
+                                    <Link to={`/edit-org/${org._id}`} style={{ marginRight: '10px' }}>       
                                         <FontAwesomeIcon className='fa-edit' icon={faEdit} />
                                     </Link>
                                     <FontAwesomeIcon className='fa-delete' icon={faTrashAlt} onClick={() => handleDeleteOrg(org._id)}/>

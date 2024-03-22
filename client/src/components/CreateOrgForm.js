@@ -129,7 +129,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          organization picture (optional)
+          organization picture
           <input
             type="file"
             name="orgImg"
@@ -138,7 +138,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          organization banner (optional)
+          organization banner
           <input
             type="file"
             name="bannerImg"

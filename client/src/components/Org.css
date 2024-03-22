@@ -23,19 +23,31 @@
   height: 240px;
 }
 
-.org-text {
+.org-text-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   padding-left: 1%;
   margin-top: 16px;
 }
 
-.org-text #org-name {
+.org-text-container #org-name {
   font-weight: bold;
   font-size: 32px;
 }
 
-.org-text #org-bio {
+.org-text-container #org-bio {
   font-size: 16px;
   margin-top: 4px;
+}
+
+.org-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.updates-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 15px;
 }

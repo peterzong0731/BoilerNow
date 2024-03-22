@@ -186,17 +186,17 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error updating org. -> There was a db error when trying to update the org.
 */
-router.patch('/update/:orgId', async (req, res) => {
+router.patch('/update/:orgId', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: 'bannerImg', maxCount: 1 }]), async (req, res) => {
     const inputDataCheck = allDataPresent(
-        ["orgId"],
-        ["name", "shorthand", "bio", "email", "owner"],
-        req
+      ["orgId"],
+      ["name", "shorthand", "bio", "email", "owner"],
+      req
     );
-
+  
     if (!inputDataCheck.correct) {
-        return res.status(400).send(inputDataCheck.message);
+      return res.status(400).send(inputDataCheck.message);
     }
-
+  
     const orgId = new ObjectId(req.params.orgId);
     const name = req.body.name;
     const shorthand = req.body.shorthand;
@@ -206,43 +206,53 @@ router.patch('/update/:orgId', async (req, res) => {
     const twitter = req.body.twitter || "";
     const discord = req.body.discord || "";
     const phoneNumber = req.body.phoneNumber || "";
-
+    const orgImgPath = req.files && req.files['orgImg'] ? req.files['orgImg'][0].path : "";
+    const bannerImgPath = req.files && req.files['bannerImg'] ? req.files['bannerImg'][0].path : "";
+  
     // Set org details
     const orgData = {
-        "name": name,
-        "shorthand": shorthand,
-        "bio": bio,
-        "contactInfo": {
-            "email": email,
-            "twitter": twitter,
-            "discord": discord,
-            "phoneNumber": phoneNumber
-        },
-        "owner": owner,
-        "lastActive": new Date()
+      "name": name,
+      "shorthand": shorthand,
+      "bio": bio,
+      "contactInfo": {
+        "email": email,
+        "twitter": twitter,
+        "discord": discord,
+        "phoneNumber": phoneNumber
+      },
+      "owner": owner,
+      "lastActive": new Date()
     };
-
-    try {   
-        const updateResult = await db.collection('orgs').updateOne(
-            { _id: orgId },
-            { $set: orgData }
-        );
-    
-        if (updateResult.matchedCount === 0) {
-            return res.status(404).send('Org not found.');
-        }
-    
-        if (updateResult.modifiedCount === 0) {
-            throw new Error();
-        }
-    
-        res.status(200).send('Org updated successfully.');
-
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('Error updating org.');
+  
+    if (orgImgPath) {
+      orgData.orgImg = orgImgPath;
     }
-});
+  
+    if (bannerImgPath) {
+      orgData.bannerImg = bannerImgPath;
+    }
+  
+    try {
+      const updateResult = await db.collection('orgs').updateOne(
+        { _id: orgId },
+        { $set: orgData }
+      );
+  
+      if (updateResult.matchedCount === 0) {
+        return res.status(404).send('Org not found.');
+      }
+  
+      if (updateResult.modifiedCount === 0) {
+        throw new Error();
+      }
+  
+      res.status(200).send('Org updated successfully.');
+  
+    } catch (e) {
+      console.log(e);
+      res.status(500).send('Error updating org.');
+    }
+  });
 
 
 /*

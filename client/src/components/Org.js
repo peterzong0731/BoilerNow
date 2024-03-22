@@ -112,23 +112,36 @@ function Org() {
         <div className='org-images'>
           {orgData.orgImg && <img src={orgData.orgImg} alt="Organization Image" id='org-pfp'/>}
         </div>
-        <div className='org-text'>
-          <span id='org-name'>{orgData.name}</span>
-          <span id='org-bio'>{orgData.bio}</span>
+        <div className='org-text-container'>
+          <div className='org-text'>
+            <span id='org-name'>{orgData.name}</span>
+            <span id='org-bio'>{orgData.bio}</span>
+          </div>
+          <div>
+            {currentUser ? (
+              hasFollowed ? (
+                <>
+                    <button className="event-join-button-disabled" disabled>Followed</button>
+                    <button className="event-unregister-button" onClick={handleUnfollow}>Unfollow</button>
+                  </>
+                ) : (
+                  <button className="event-join-button" onClick={handleFollow}>Follow</button>
+                )
+                ) : (
+                  <button className="event-join-button-disabled" disabled>Log in to follow</button>
+              )
+            }
+          </div>
         </div>
-        {currentUser ? (
-          hasFollowed ? (
-            <>
-                <button className="event-join-button-disabled" disabled>Followed</button>
-                <button className="event-unregister-button" onClick={handleUnfollow}>Unfollow</button>
-              </>
-            ) : (
-              <button className="event-join-button" onClick={handleFollow}>Follow</button>
-            )
-            ) : (
-              <button className="event-join-button-disabled" disabled>Log in to follow</button>
+        {currentUser && hasFollowed ? (
+            <div className='updates-container'>
+              <h2>Updates</h2>
+            </div>
+          ) : (
+            <></>
           )
         }
+        
         {/* <input type="file" accept="image/*" onChange={handleOrgImgClick} />
         <input type="file" accept="image/*" onChange={handleBannerImgClick} /> */}
       </div>

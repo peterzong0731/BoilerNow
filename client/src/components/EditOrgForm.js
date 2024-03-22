@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { Toaster, toast } from 'sonner'
 
 function EditOrgForm() {
   const { id } = useParams();
@@ -63,23 +64,22 @@ function EditOrgForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    Object.keys(orgData).forEach(key => {
+      formData.append(key, orgData[key]);
+    });
     try {
-      const response = await axios.patch(`http://localhost:8000/orgs/update/${id}`, {
-        name: orgData.name,
-        shorthand: orgData.shorthand,
-        bio: orgData.bio,
-        email: orgData.email,
-        owner: orgData.owner,
-        contactInfo: {
-          email: orgData.email,
-          twitter: orgData.twitter || '',
-          discord: orgData.discord || '',
-          phoneNumber: orgData.phoneNumber || ''
+      const response = await axios.patch(`http://localhost:8000/orgs/update/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-        orgImg: orgData.orgImg,
-        bannerImg: orgData.bannerImg
       });
-      window.alert('Organization updated successfully!');
+      toast.success('Org updated successfully!', {
+        action: {
+          label: 'View',
+          onClick: () => window.location.href = '/org/' + response.data
+        }
+      });      
       window.location.href = `/org/${id}`;
       console.log('Successfully updated the organization', response.data);
     } catch (error) {
@@ -157,7 +157,7 @@ function EditOrgForm() {
           />
         </label>
         <label>
-          Organization Picture (Optional)
+          Organization Picture
           <input
             type="file"
             name="orgImg"
@@ -166,7 +166,7 @@ function EditOrgForm() {
             />
           </label>
           <label>
-            Organization Banner (Optional)
+            Organization Banner
             <input
               type="file"
               name="bannerImg"

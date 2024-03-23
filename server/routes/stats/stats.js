@@ -216,8 +216,8 @@ router.get('/stats/:eventId', async (req, res) => {
             "academicCnt": 0,
             "socialCnt": 0,
             "otherCnt": 0,
-            "avgUsersInterestedCnt": 0,
-            "avgCommentCnt": 0,
+            "usersInterestedCnt": 0,
+            "commentCnt": 0,
         };
 
         if (event.visibility === "Public") eventStats.publicCnt = 1;
@@ -225,10 +225,8 @@ router.get('/stats/:eventId', async (req, res) => {
         if (event.category === "Academic") eventStats.academicCnt = 1;
         if (event.category === "Social") eventStats.socialCnt = 1;
         if (event.category === "Other") eventStats.otherCnt = 1;
-        eventStats.avgUsersInterestedCnt += event.usersInterested.length;
-        eventStats.avgCommentCnt += event.comments.length;
-        eventStats.avgUsersInterestedCnt /= eventStats.totalEventCnt;
-        eventStats.avgCommentCnt /= eventStats.totalEventCnt;
+        eventStats.usersInterestedCnt += event.usersInterested.length;
+        eventStats.commentCnt += event.comments.length;
 
         res.status(200).json(eventStats);
 

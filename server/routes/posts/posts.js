@@ -274,5 +274,89 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
     }
 });
 
+/*
+    Description: Get all posts for a specific org
+    Incoming data:
+        params:
+            orgId: string | ObjectId
+    Outgoing data: 
+        [
+            {
+                "postId": ObjectId,
+                "title": string
+                "content": string,
+                "postedDatetime": UTC Date,
+                "likedBy": [ObjectId],
+                "replies": [Object],
+                "event": Object
+            }
+        ]
+    On Success:
+        - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : <message> -> If org is not found.
+        - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
+*/
+router.get('/posts/:orgId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["orgId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+
+    try {
+        var org = await db.collection("orgs").findOne({ _id: orgId });
+
+        if (!org) {
+            console.log("Org not found.");
+            return res.status(404).send("Org not found.");
+        }
+
+        var eventIds = org.events;
+
+        const results = await db.collection("users").aggregate([
+            { $unwind: "$posts" },
+            { 
+                $match: {
+                    "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
+                }
+            },
+            { 
+                $lookup: {
+                    from: "events",
+                    localField: "posts.eventId",
+                    foreignField: "_id",
+                    as: "event"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "posts.postsId": 1,
+                    "posts.title": 1,
+                    "posts.content": 1,
+                    "posts.postedDatetime": 1,
+                    "posts.likedBy": 1,
+                    "posts.replies": 1,
+                    "posts.event": { $first: "$event" }
+                }
+            },
+            { $replaceWith: "$posts" }
+        ]).toArray();
+
+        res.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error retrieving data.");
+    }
+});
 
 export default router;

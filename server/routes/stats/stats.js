@@ -172,12 +172,10 @@ router.get('/', async (req, res) => {
             eventId: string | ObjectId
     Outgoing data:
         {
-            "totalEventCnt": number,
-            "publicCnt": number,
-            "privateCnt": number,
-            "academicCnt": number,
-            "socialCnt": number,
-            "otherCnt": number,
+            "visibility": string,
+            "category": string,
+            "imgCnt": number,
+            "usedCapacityPct": string,
             "avgUsersInterestedCnt": number,
             "avgCommentCnt": number,
         }
@@ -188,7 +186,7 @@ router.get('/', async (req, res) => {
         - 404 : Event not found. -> The event with the given event id does not exist in the db.
         - 500 : Error retrieving stats. -> There was a db error when trying to retrieve stats.
 */
-router.get('/stats/:eventId', async (req, res) => {
+router.get('/event/:eventId', async (req, res) => {
     const inputDataCheck = allDataPresent(
         ["eventId"],
         [],
@@ -210,21 +208,18 @@ router.get('/stats/:eventId', async (req, res) => {
         }
 
         let eventStats = {
-            "totalEventCnt": 1,
-            "publicCnt": 0,
-            "privateCnt": 0,
-            "academicCnt": 0,
-            "socialCnt": 0,
-            "otherCnt": 0,
+            "visibility": "",
+            "category": "",
+            "imgCnt": 0,
+            "usedCapacityPct": "",
             "usersInterestedCnt": 0,
             "commentCnt": 0,
         };
 
-        if (event.visibility === "Public") eventStats.publicCnt = 1;
-        if (event.visibility === "Private") eventStats.privateCnt = 1;
-        if (event.category === "Academic") eventStats.academicCnt = 1;
-        if (event.category === "Social") eventStats.socialCnt = 1;
-        if (event.category === "Other") eventStats.otherCnt = 1;
+        eventStats.visibility = event.visibility;
+        eventStats.category = event.category;
+        eventStats.imgCnt = event.images.length;
+        eventStats.usedCapacityPct = ((event.usersInterested.length / event.capacity) * 100).toFixed(2) + "%";
         eventStats.usersInterestedCnt += event.usersInterested.length;
         eventStats.commentCnt += event.comments.length;
 

@@ -182,8 +182,12 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
     const twitter = req.body.twitter || "";
     const discord = req.body.discord || "";
     const phoneNumber = req.body.phoneNumber || "";
-    const orgImgPath = req.files['orgImg'] ? req.files['orgImg'][0].path : "";
-    const bannerImgPath = req.files['bannerImg'] ? req.files['bannerImg'][0].path : "";
+    let orgImgPath = "";
+    let bannerImgPath = "";
+    if (req.files) {
+        orgImgPath = req.files['orgImg'] ? req.files['orgImg'][0].path : "";
+        bannerImgPath = req.files['bannerImg'] ? req.files['bannerImg'][0].path : "";
+    }
 
     const newOrgObj = JSON.parse(newOrgTemplate);
 

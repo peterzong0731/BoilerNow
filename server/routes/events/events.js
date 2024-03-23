@@ -162,6 +162,11 @@ router.post('/create', upload.array('images'), async (req, res) => {
             }
         );
 
+        const org = await db.collection("orgs").updateOne(
+            { _id: belongsToOrg },
+            { $addToSet: { events: results.insertedId } }
+        );
+
         console.log("Created new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event with id: " + results.insertedId);
 

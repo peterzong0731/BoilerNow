@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    "posts.postsId": 1,
+                    "posts.postId": 1,
                     "posts.title": 1,
                     "posts.content": 1,
                     "posts.postedDatetime": 1,
@@ -295,10 +295,10 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
         - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
-        - 404 : <message> -> If org is not found.
+        - 404 : Org not found. -> The given org id does not exist in the db.
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
 */
-router.get('/posts/:orgId', async (req, res) => {
+router.get('/orgPosts/:orgId', async (req, res) => {
     const inputDataCheck = allDataPresent(
         ["orgId"],
         [],
@@ -339,7 +339,7 @@ router.get('/posts/:orgId', async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    "posts.postsId": 1,
+                    "posts.postId": 1,
                     "posts.title": 1,
                     "posts.content": 1,
                     "posts.postedDatetime": 1,
@@ -355,7 +355,7 @@ router.get('/posts/:orgId', async (req, res) => {
 
     } catch (e) {
         console.log(e);
-        res.status(500).send("Error retrieving data.");
+        res.status(500).send("Error retrieving all posts.");
     }
 });
 

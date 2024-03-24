@@ -7,13 +7,15 @@
     },
     "name": "",
     "bio": "",
+    "age": null,
     "emailNotifs": {
-        "orgAlerts": false,
+        "newEventByOrg": true,
+        "newPostForEvent": true,
         "upcomingEvents": true
     },
     "createdDatetime": null,
     "followingOrgs": [],
-    "prevInterestedEvents": [],
+    "interestedEventHistory": [],
     "hostedEvents": [],
     "posts": []
 }

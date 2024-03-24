@@ -5,15 +5,7 @@ import { useParams } from 'react-router-dom';
 
 function EditEventForm() {
   const { id } = useParams();
-  const userStr = localStorage.getItem('user');
-  var userId;
-  
-  if (userStr) {
-      const userObj = JSON.parse(userStr);
-      userId = userObj._id;
-  } else {
-      console.log("User not found in localStorage.");
-  }
+  const userId = localStorage.getItem('user');
 
   const [eventData, setEventData] = useState({
     title: '',
@@ -24,6 +16,7 @@ function EditEventForm() {
     location: '',
     capacity: 0,
     status: '',
+    ageRequirement: 0,
     createdBy: userId
   });
 
@@ -32,7 +25,7 @@ function EditEventForm() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
         console.log(response.data)
-        const { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, createdByUser } = response.data;
+        let { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, ageRequirement, createdByUser } = response.data;
        
         const convertUTCtoLocal = (datetime) => {
           let dateObj = new Date(datetime);
@@ -41,8 +34,8 @@ function EditEventForm() {
           return dateObj;
         }
 
-        let startDatetime = convertUTCtoLocal(eventStartDatetime);
-        let endDatetime = convertUTCtoLocal(eventEndDatetime);
+        eventStartDatetime = convertUTCtoLocal(eventStartDatetime);
+        eventEndDatetime = convertUTCtoLocal(eventEndDatetime);
         
         console.log(response.data)
         setEventData({
@@ -55,6 +48,7 @@ function EditEventForm() {
             location,
             capacity,
             status,
+            ageRequirement,
             createdBy: createdByUser
         });
       } catch (error) {
@@ -99,6 +93,15 @@ function EditEventForm() {
           <textarea
             name="description"
             value={eventData.description}
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          age requirement
+          <input
+            type="text"
+            name="ageRequirement"
+            value={eventData.ageRequirement}
             onChange={handleInputChange}
           />
         </label>

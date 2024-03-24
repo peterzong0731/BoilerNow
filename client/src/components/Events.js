@@ -20,7 +20,7 @@ const getLastDayOfMonth = (year, month) => {
 };
     
 const calculateEmptySlotsAfterLastDay = (lastDayOfWeek) => {
-    return lastDayOfWeek === 6 ? 0 : 7 - lastDayOfWeek - 1; // Adjust for Sunday being the last day
+    return lastDayOfWeek === 6 ? 0 : 7 - lastDayOfWeek - 1;
 };
 
 function Events() {
@@ -65,6 +65,13 @@ function Events() {
         setSelectedCategory(e.target.value);
         console.log(selectedCategory)
     };
+
+    const isNewEvent = (eventStartDatetime) => {
+        const eventDate = new Date(eventStartDatetime);
+        const now = new Date();
+        const hoursDiff = (now - eventDate) / (1000 * 60 * 60);
+        return hoursDiff <= 24;
+    };      
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -128,7 +135,10 @@ function Events() {
                             {day && <div className="day-number">{day}</div>}
                             {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
-                                    <div className={`event ${event.category}`}>{event.title}</div>
+                                    <div className={`event ${event.category}`}>
+                                    {isNewEvent(event.eventStartDatetime) && <span className="new-event-indicator">🔥</span>}
+                                    {event.title}
+                                    </div>
                                 </Link>
                             ))}
                         </div>

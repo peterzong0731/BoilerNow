@@ -128,3 +128,7 @@
     }
   }
   
+.new-event-indicator {
+    margin-right: 5px;
+    color: red;
+}

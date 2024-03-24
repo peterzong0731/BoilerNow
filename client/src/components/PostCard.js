@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import './PostCard.css';
 
 function PostCard({ post }) {
-    const formattedDate = formatDistanceToNow(new Date(post.postedDatetime), { addSuffix: true }).replace('about ', '');
+  const formattedDate = formatDistanceToNow(new Date(post.postedDatetime), { addSuffix: true }).replace('about ', '');
 
   return (
     <div className="post-card-container">

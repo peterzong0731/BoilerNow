@@ -1,8 +1,6 @@
 import db from "../conn.js";
 import fs from "fs";
 
-// NOTE: Indexes are used to ensure uniqueness of fields. To view, add, and drop indexes, you can do so on the Atlas dashboard
-
 // Booleans to control which schema to update
 const updateEventsSchema = true;
 const updateOrgsSchema = true;
@@ -18,10 +16,8 @@ if (updateEventsSchema) {
             validator: {
                 $jsonSchema: eventsSchema
             },
-
-            validationLevel: "off",
-            additionalProperties: false
-
+            //validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"events\" collection schema.");
     } catch (e) {
@@ -37,10 +33,10 @@ if (updateOrgsSchema) {
         await db.command({
             collMod: "orgs",
             validator: {
-                $jsonSchema: orgsSchema,
-                additionalProperties: false
+                $jsonSchema: orgsSchema
             },
-            validationLevel: "off"
+            // validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"orgs\" collection schema.");
     } catch (e) {
@@ -56,15 +52,37 @@ if (updateUsersSchema) {
         await db.command({
             collMod: "users",
             validator: {
-                $jsonSchema: usersSchema,
-                additionalProperties: false
+                $jsonSchema: usersSchema
             },
-            validationLevel: "off"
+            // validationLevel: "off"
+            validationLevel: "strict"
         });
         console.log("Successfully updated \"users\" collection schema.");
     } catch (e) {
         console.log(e);
     }
+}
+
+
+// Used for clearing the collections
+const deleteEvent = false;
+const deleteOrgs = false;
+const deleteUsers = false;
+
+
+if (deleteEvent) {
+    db.collection("events").deleteMany({});
+    console.log("Deleted all events.");
+}
+
+if (deleteOrgs) {
+    db.collection("orgs").deleteMany({});
+    console.log("Deleted all orgs.");
+}
+
+if (deleteUsers) {
+    db.collection("users").deleteMany({});
+    console.log("Deleted all users.");
 }
 
 process.exit(1);

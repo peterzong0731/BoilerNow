@@ -1,17 +1,15 @@
 {
     "title": "eventsSchema",
+    "additionalProperties": false,
     "bsonType": "object",
     "properties": {
         "_id": {
             "bsonType": "objectId"
         },
-        "name": {
+        "title": {
             "bsonType": "string"
         },
         "description": {
-            "bsonType": "string"
-        },
-        "image": {
             "bsonType": "string"
         },
         "category": {
@@ -25,44 +23,53 @@
         "location": {
             "bsonType": "string"
         },
+        "images": {
+            "bsonType": "array",
+            "items": {
+                "bsonType": "string"
+            }
+        },
         "eventStartDatetime": {
             "bsonType": "date"
         },
         "eventEndDatetime": {
             "bsonType": "date"
         },
-        "capacityLimit": {
-            "bsonType": "int"
+        "capacity": {
+            "bsonType": ["int", "null"]
         },
         "usersInterested": {
             "bsonType": "array",
             "items": {
-                "bsonType": "objectId"
+                "bsonType": "object",
+                "properties": {
+                    "userId": {
+                        "bsonType": "objectId"
+                    },
+                    "name": {
+                        "bsonType": "string"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "name"
+                ]
             }
         },
         "visibility": {
-            "bsonType": "object",
-            "properties": {
-                "type": {
-                    "bsonType": "string",
-                    "enum": ["Public", "Private"]
-                },
-                "allowedUsers": {
-                    "bsonType": "array",
-                    "items": {
-                        "bsonType": "objectId"
-                    }
-                }
-            },
-            "required": [
-                "type",
-                "allowedUsers"
+            "bsonType": "string",
+            "enum": [
+                "Public",
+                "Private"
             ]
+        },
+        "ageRequirement": {
+            "bsonType": "int"
         },
         "belongsToOrg": {
             "bsonType": "objectId"
         },
-        "createdByUser": {
+        "createdBy": {
             "bsonType": "objectId"
         },        
         "createdDatetime": {
@@ -142,17 +149,19 @@
     },
     "required": [
         "_id",
-        "name",
+        "title",
         "description",
         "category",
         "location",
+        "images",
         "eventStartDatetime",
         "eventEndDatetime",
-        "capacityLimit",
+        "capacity",
         "usersInterested",
         "visibility",
+        "ageRequirement",
         "belongsToOrg",
-        "createdByUser",
+        "createdBy",
         "createdDatetime",
         "comments"
     ]

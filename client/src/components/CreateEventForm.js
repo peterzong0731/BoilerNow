@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
+import { Toaster, toast } from 'sonner'
 
 function CreateEventForm() {
-  const userStr = localStorage.getItem('user');
-  var userId;
-  
-  if (userStr) {
-      const userObj = JSON.parse(userStr);
-      userId = userObj._id;
-  } else {
-      console.log("User not found in localStorage.");
-  }
+  const userId = localStorage.getItem('user');
+  const userName = localStorage.getItem('name');
+
+  const [orgs, setOrgs] = useState([])
+
+  useEffect(() => {
+    async function fetchOrgs() {
+      try {
+        const orgResponse = await axios.get(`http://localhost:8000/orgs/owner/${userId}`);
+        console.log(orgResponse.data)
+        setOrgs(orgResponse.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchOrgs();
+  }, []);
 
   const [eventData, setEventData] = useState({
     title: '',
@@ -22,30 +31,26 @@ function CreateEventForm() {
     location: '',
     capacity: 0,
     status: '',
+    visibility: "Public",
+    ageRequirement: 0,
     createdBy: userId,
+    createdByName: userName,
     usersInterested: [],
     usersInterestedNames: [],
-    images: []
+    images: [],
+    ageRequirement: 0,
+    belongsToOrg: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
+    if (name === "belongsToOrg") {
+      setEventData({ ...eventData, [name]: value });
+    } else if (files) {
       setEventData({ ...eventData, images: [...files] });
     } else {
       setEventData({ ...eventData, [name]: value });
     }
-  };
-
-  const handleFileInputChange = (e) => {
-    const files = Array.from(e.target.files);
-    setEventData({ ...eventData, images: [...eventData.images, ...files] });
-  };
-
-  const removeImage = (index) => {
-    const newImages = [...eventData.images];
-    newImages.splice(index, 1);
-    setEventData({ ...eventData, images: newImages });
   };
 
   const handleSubmit = async(e) => {
@@ -62,14 +67,19 @@ function CreateEventForm() {
         formData.append(key, eventData[key]);
       }
     });
+    
     try {
       const response = await axios.post('http://localhost:8000/events/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      window.alert('Event created successfully!');
-      window.location.href = '/events';
+      toast.success('Event created successfully!', {
+        action: {
+          label: 'Undo',
+          onClick: () => window.location.href = '/events'
+        }
+      })
       console.log('Successfully created the event', response.data);
     } catch (error) {
       console.error('Error during event creation', error);
@@ -78,6 +88,7 @@ function CreateEventForm() {
 
   return (
     <div className="create-event-form-container">
+      <Toaster richColors position="top-center"/>
       <h1>Create Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -94,6 +105,15 @@ function CreateEventForm() {
           <textarea
             name="description"
             value={eventData.description}
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          age requirement
+          <input
+            type="text"
+            name="ageRequirement"
+            value={eventData.ageRequirement}
             onChange={handleInputChange}
           />
         </label>
@@ -202,18 +222,23 @@ function CreateEventForm() {
               private
             </label>
           </div>
+          {orgs.length > 0 && (
+            <label>
+              Assign to Organization:
+              <select
+                name="belongsToOrg"
+                value={eventData.belongsToOrg}
+                onChange={handleInputChange}
+              >
+                <option value="">Select an Organization</option>
+                {orgs.map((org) => (
+                  <option key={org._id} value={org._id}>{org.name}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
-        <div>
-          {eventData.images.map((image, index) => (
-            <img
-              key={index}
-              src={URL.createObjectURL(image)}
-              alt={`Preview ${index}`}
-              className="image-preview"
-              onClick={() => removeImage(index)}
-            />
-          ))}
-        </div>
+        
         <button type="submit" className="submit-button">submit</button>
       </form>
     </div>

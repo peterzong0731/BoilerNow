@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './Event.css'
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
-import { getUserInfo } from './authUtils';
 import checkmark from './images/yellow_checkmark.png'
+import { Toaster, toast } from 'sonner'
 
 function Event() {
   const { id } = useParams();
@@ -14,14 +14,18 @@ function Event() {
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
   const [capacity, setCapacity] = useState(0)
+  const [ageRequirement, setAgeRequirement] = useState(0);
   const [status, setStatus] = useState('')
+  const [userAge, setUserAge] = useState(0);
   const [usersInterested, setUsersInterested] = useState([])
   const [eventCreatedByUser, setEventCreatedByUser] = useState({})
   const [hasJoined, setHasJoined] = useState(false);
   const [images, setImages] = useState([]);
+  const [showShareBox, setShowShareBox] = useState(false);
+  const [shareEmail, setShareEmail] = useState('');
 
   const currentUserFromStorage = localStorage.getItem('user');
-  const currentUser = currentUserFromStorage ? JSON.parse(currentUserFromStorage) : null;
+  const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
 
   function formatDateRange(startDateStr, endDateStr) {
@@ -40,11 +44,20 @@ function Event() {
   }
 
   useEffect(() => {
+    async function fetchUser() {
+      try {
+        var userId = localStorage.getItem('user');
+        const userResponse = await axios.get(`http://localhost:8000/user/${userId}`);
+        setUserAge(userResponse.data.age);
+      } catch (error) {
+        console.log(error);
+      }
+    }
     async function fetchEvent() {
       try {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
           console.log(response.data)
-          const { _id, title, description, category, location, eventStartDatetime, eventEndDatetime, 
+          const { _id, title, description, category, location, ageRequirement, eventStartDatetime, eventEndDatetime, 
           capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments, images} = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
@@ -56,6 +69,7 @@ function Event() {
           setDateRange(formatDateRange(eventStartDatetime, eventEndDatetime))
           setTitle(title)
           setLocation(location)
+          setAgeRequirement(ageRequirement)
           setCapacity(capacity)
           setStatus(status)
           setUsersInterested(usersInterested)
@@ -64,46 +78,86 @@ function Event() {
           if (userOfEvent.data.login.email.includes('purdue.edu')) setPurdueEmail(true)
 
           console.log(usersInterested)
-          const isInterested = usersInterested.includes(currentUser._id);
+          const isInterested = usersInterested.some(user => user.userId === currentUser);
           setHasJoined(isInterested);
 
       } catch (error) {
         console.error(error);
       }
     }
+    fetchUser();
     fetchEvent();
   }, [id]);
 
   const handleJoin = async () => {
     try {
-        const response = await axios.patch(`http://localhost:8000/events/join/${id}/${currentUser._id}`);
+      console.log(id + " ", currentUser)
+        const response = await axios.patch(`http://localhost:8000/events/follow/${id}/${currentUser}`);
         
-        setUsersInterested(prevUsers => [...prevUsers, currentUser._id]);
+        setUsersInterested(prevUsers => [...prevUsers, currentUser]);
+        console.log(usersInterested)
         setHasJoined(true); 
         
-        console.log("Successfully joined")
+        toast.success("Successfully joined event!")
     } catch (error) {
-        console.error('Error joining event:', error);
+        toast.error('Error joining event.');
     }
   }
 
   const handleUnregister = async () => {  
     try {
-        const response = await axios.patch(`http://localhost:8000/events/unregister/${id}/${currentUser._id}`);
+        const response = await axios.patch(`http://localhost:8000/events/unfollow/${id}/${currentUser}`);
         
-        setUsersInterested(prevUsers => prevUsers.filter(userId => userId !== currentUser._id));
+        setUsersInterested(prevUsers => prevUsers.filter(userId => userId !== currentUser));
         setHasJoined(false);
         
-        console.log("Successfully unregistered");
+        toast.success("Successfully unregistered from event.");
     } catch (error) {
-        console.error('Error unregistering from event:', error);
+        toast.error('Error unregistering from event.');
     }
   };
 
+  const isNewEvent = (createdDatetime) => {
+    const now = new Date();
+    const createdDate = new Date(createdDatetime);
+    const diff = now - createdDate;
+    const hours = diff / (1000 * 60 * 60);
+    return hours <= 24;
+  };
+
+  const handleShareClick = () => {
+    setShowShareBox(!showShareBox);
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = `http://localhost:8000/shareEvent/${currentUser}/${id}`;
+      
+      await axios.post(url, { email: shareEmail });
+
+      console.log(`Email sent to: ${shareEmail}`);
+      toast.success("Event shared successfully!");
+      
+      setShareEmail('');
+      setShowShareBox(false);
+    } catch (error) {
+      console.error('Error sharing event:', error);
+      toast.error("Failed to share the event.");
+    }
+  };
   return (
     <div className="event-container">
+      <Toaster richColors position="top-center"/>
       <h1 className="event-title">{title}</h1>
-      <div className={`event-category ${category}`}>{category}</div>
+      <div className={`event-category ${category}`}>
+        {category}
+        {isNewEvent(createdDatetime) && (
+          <span className="emoji-tooltip-container">
+            🔥
+            <span className="emoji-tooltip-text">New event</span>
+          </span>
+        )}
+      </div>
       <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
@@ -115,10 +169,32 @@ function Event() {
             <button className="event-unregister-button" onClick={handleUnregister}>Unregister</button>
           </>
         ) : (
-          <button className="event-join-button" onClick={handleJoin}>Join</button>
+          (userAge >= ageRequirement) ? (
+            <button className="event-join-button" onClick={handleJoin}>Join</button>
+          ) : (
+            <button className="event-join-button-disabled" disabled>Not old enough</button>
+          )
         )
       ) : (
         <button className="event-join-button-disabled" disabled>Log in to join</button>
+      )}
+            {currentUser ? (
+        <>
+          <button className="event-share-button" onClick={handleShareClick}>Share</button>
+          {showShareBox && (
+            <div className="share-box">
+              <input 
+                type="email" 
+                value={shareEmail} 
+                onChange={(e) => setShareEmail(e.target.value)} 
+                placeholder="Enter email to share" 
+              />
+              <button className="share-box-button" onClick={handleShare}>Send</button>
+            </div>
+          )}
+        </>
+      ) : (
+        <button className="event-join-button-disabled" disabled>Log in to share</button>
       )}
       <div className="event-dates">
         <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>

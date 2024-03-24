@@ -2,8 +2,6 @@ import fs from "fs";
 import db from "../conn.js"
 import { transporter, convertDateToEST } from "./emailUtil.js";
 
-const emailTemplate = fs.readFileSync("./emails/emailTemplates/newEventTemplate.html", "utf8");
-
 const sendNewEventEmail = async (eventObj) => {
     try {
         const org = await db.collection("orgs").findOne({ "_id": eventObj.belongsToOrg});
@@ -11,6 +9,25 @@ const sendNewEventEmail = async (eventObj) => {
             followingOrgs: { $elemMatch: { $eq: eventObj.belongsToOrg } },
             "emailNotifs.newEventByOrg": true 
         },).toArray();
+
+        let emailTemplate = fs.readFileSync("./emails/emailTemplates/newEventTemplate.html", "utf8");
+        let eventImgs = []
+        let imgHTML = ""
+        let cid = 0
+        
+        eventObj.images.forEach((img) => {
+            let imgPath = `uploads/${img.replace('uploads\\', '')}`;
+            let imageContent = fs.readFileSync(imgPath);
+            eventImgs.push({
+                filename: imgPath,
+                content: imageContent,
+                cid: 'image' + cid.toString() 
+            });
+            imgHTML += "<p><img src='cid:image" + cid.toString() + "'></p>\n";
+            cid++;
+        });
+        
+        emailTemplate = emailTemplate.replace("{{images}}", imgHTML);
 
         users.forEach(user => {
             let email = user.login.email;
@@ -25,7 +42,8 @@ const sendNewEventEmail = async (eventObj) => {
                                 .replace("{{description}}", eventObj.description)
                                 .replace("{{location}}", eventObj.location)
                                 .replace("{{startTime}}", startTime)
-                                .replace("{{endTime}}", endTime)
+                                .replace("{{endTime}}", endTime),
+                attachments: eventImgs
             };
             transporter.sendMail(mailOptions);
             console.log("New event email sent to: " + email);

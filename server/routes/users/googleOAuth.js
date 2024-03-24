@@ -52,6 +52,8 @@ passport.use(
 				// Set user details
 				newUserObj.login.email = profile.emails[0].value.toLowerCase();
 				newUserObj.login.googleId = profile.id;
+				newUserObj.login.password = "notrequired";
+				newUserObj.login.isPurdueEmail = newUserObj.login.email.endsWith("@purdue.edu");
 				newUserObj.name = profile.displayName;
 				newUserObj.age = 25; // TODO: Needs to be changed to calculate age from Google profile's dob
 				newUserObj.createdDatetime = new Date();

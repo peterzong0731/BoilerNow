@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import './Event.css'
 import axios from 'axios'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import checkmark from './images/yellow_checkmark.png'
 import { Toaster, toast } from 'sonner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 
 function Event() {
   const { id } = useParams();
@@ -27,6 +29,9 @@ function Event() {
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   const [purdueEmail, setPurdueEmail] = useState(false)
+  const [org, setOrg] = useState()
+  const [orgName, setOrgName] = useState("Org")
+  const navigate = useNavigate();
 
   function formatDateRange(startDateStr, endDateStr) {
     const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -80,6 +85,11 @@ function Event() {
           console.log(usersInterested)
           const isInterested = usersInterested.some(user => user.userId === currentUser);
           setHasJoined(isInterested);
+
+          const orgResponse = await axios.get(`http://localhost:8000/orgs/${belongsToOrg}`);
+          console.log(orgResponse)
+          setOrg(orgResponse.data)
+          setOrgName(orgResponse.data.name)
 
       } catch (error) {
         console.error(error);
@@ -145,6 +155,11 @@ function Event() {
       toast.error("Failed to share the event.");
     }
   };
+
+  const handleAnalyticsClick = () => {
+    navigate(`/event-analytics/${id}`);
+  }
+
   return (
     <div className="event-container">
       <Toaster richColors position="top-center"/>
@@ -158,7 +173,7 @@ function Event() {
           </span>
         )}
       </div>
-      <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | Club</h2>
+      <h2 className="event-organizer">by {eventCreatedByUser.name} {purdueEmail ? (<img className="verified-checkmark-event" src={checkmark} alt='Test'/>)  : <></>} | {orgName}</h2>
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}
@@ -178,7 +193,7 @@ function Event() {
       ) : (
         <button className="event-join-button-disabled" disabled>Log in to join</button>
       )}
-            {currentUser ? (
+      {currentUser ? (
         <>
           <button className="event-share-button" onClick={handleShareClick}>Share</button>
           {showShareBox && (
@@ -196,6 +211,7 @@ function Event() {
       ) : (
         <button className="event-join-button-disabled" disabled>Log in to share</button>
       )}
+      <button className="event-data-button" onClick={handleAnalyticsClick}><FontAwesomeIcon icon={faChartBar} /></button>
       <div className="event-dates">
         <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>
       </div>

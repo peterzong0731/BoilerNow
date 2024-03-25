@@ -17,6 +17,7 @@ import EditOrgForm from './components/EditOrgForm';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword'
 import About from './components/About';
+import EventAnalytics from './components/EventAnalytics';
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-password/:email/:token" element={<ResetPassword />} />
         <Route path="/about" element={<About />} />
+        <Route path="/event-analytics/:id" element={<EventAnalytics />} />
       </Routes>
     </BrowserRouter>
   );

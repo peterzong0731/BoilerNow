@@ -2,9 +2,9 @@ import db from "../conn.js";
 import fs from "fs";
 
 // Booleans to control which schema to update
-const updateEventsSchema = true;
-const updateOrgsSchema = true;
-const updateUsersSchema = true;
+const updateEventsSchema = false;
+const updateOrgsSchema = false;
+const updateUsersSchema = false;
 
 
 // Update schema for "events" collection
@@ -71,17 +71,17 @@ const deleteUsers = false;
 
 
 if (deleteEvent) {
-    db.collection("events").deleteMany({});
+    await db.collection("events").deleteMany({});
     console.log("Deleted all events.");
 }
 
 if (deleteOrgs) {
-    db.collection("orgs").deleteMany({});
+    await db.collection("orgs").deleteMany({});
     console.log("Deleted all orgs.");
 }
 
 if (deleteUsers) {
-    db.collection("users").deleteMany({});
+    await db.collection("users").deleteMany({});
     console.log("Deleted all users.");
 }
 

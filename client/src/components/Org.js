@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import './Org.css'
 import { Toaster, toast } from 'sonner'
+import PostCard from './PostCard';
 
 function Org() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ function Org() {
   const [isLoading, setIsLoading] = useState(true);
   const [usersFollowed, setUsersFollowed] = useState([])
   const [hasFollowed, setHasFollowed] = useState(false);
+  const [orgPosts, setOrgPosts] = useState([])
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   
@@ -24,6 +26,10 @@ function Org() {
 
       const isFollowing = followers.some(user => user === currentUser);
       setHasFollowed(isFollowing);
+
+      const postsResponse = await axios.get(`http://localhost:8000/posts/orgPosts/${id}`);
+      console.log(postsResponse.data)
+      setOrgPosts(postsResponse.data)
 
       setIsLoading(false);
     } catch (error) {
@@ -136,6 +142,11 @@ function Org() {
         {currentUser && hasFollowed ? (
             <div className='updates-container'>
               <h2>Updates</h2>
+              <div className="org-posts-container">
+                {orgPosts.map(post => (
+                  <PostCard key={post._id} post={post} />
+                ))}
+              </div>
             </div>
           ) : (
             <></>

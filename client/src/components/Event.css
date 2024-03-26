@@ -276,3 +276,27 @@
     background-color: #004094;
     transform: scale(1);
 }
+
+.event-data-button {
+    font-family: 'Calistoga', sans-serif;
+    background-color: #ff8800;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+    margin-left: 5px;
+}
+  
+.event-data-button:hover, .event-data-button:focus {
+    background-color: #df7700;
+    transform: scale(1.05);
+}
+  
+.event-data-button:active {
+    background-color: #d87300;
+    transform: scale(1);
+}

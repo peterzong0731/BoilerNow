@@ -10,6 +10,7 @@ function About() {
     const [userCount, setUserCount] = useState([]);
     const [eventCount, setEventCount] = useState([]);
     const [orgCount, setOrgCount] = useState([]);
+    const [postCount, setPostCount] = useState([]);
 
     useEffect(() => {
         async function fetchStats() {
@@ -19,6 +20,7 @@ function About() {
                 setUserCount(data.events.totalEventCnt);
                 setEventCount(data.users.totalUserCnt);
                 setOrgCount(data.orgs.totalOrgCnt);
+                setPostCount(data.users.totalPostCnt);
             } catch (error) {
                 console.error(error);
             }
@@ -44,16 +46,20 @@ function About() {
           <div className='individual-stat-container'>
           <img id="events" src={Event} alt="event img" />
             <span>{eventCount} Events</span>
+            <br />
+            <span>{Math.floor((postCount*10)/eventCount)/10} average posts per event</span>
           </div>
           <div className='individual-stat-container'>
             <img id="users" src={Users} alt="users img" />
             <span>{userCount} Users</span>
+            <br />
+            <span>{postCount} total user posts</span>
           </div>
           <div className='individual-stat-container'>
             <img id="orgs" src={Orgs} alt="org img" />
             <span>{orgCount} Organizations</span>
             <br />
-            <span>{Math.floor((eventCount*10)/orgCount)/10} Average events per org</span>
+            <span>{Math.floor((eventCount*10)/orgCount)/10} average events per org</span>
           </div>
         </div>
       </div>

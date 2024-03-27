@@ -26,7 +26,8 @@ const router = express.Router();
                 "avgHostedEventsCnt": number,
                 "avgEventsInterestedCnt": number,
                 "avgFollowingOrgsCnt": number,
-                "avgPostCnt": number
+                "avgPostCnt": number,
+                "totalPostCnt": number
             },
             "org": {
                 "totalOrgCnt": number,
@@ -93,7 +94,8 @@ router.get('/', async (req, res) => {
             "avgHostedEventsCnt": 0,
             "avgEventsInterestedCnt": 0,
             "avgFollowingOrgsCnt": 0,
-            "avgPostCnt": 0
+            "avgPostCnt": 0,
+            "totalPostCnt": 0
         };
 
         users.forEach((user) => {
@@ -102,6 +104,7 @@ router.get('/', async (req, res) => {
             userStats.avgEventsInterestedCnt += user.interestedEventHistory.length;
             userStats.avgFollowingOrgsCnt += user.followingOrgs.length;
             userStats.avgPostCnt += user.posts.length;
+            userStats.totalPostCnt += user.posts.length;
         });
 
         if (userStats.totalUserCnt != 0) {

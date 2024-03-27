@@ -15,7 +15,7 @@ function EditEventForm() {
     category: '',
     location: '',
     capacity: 0,
-    status: '',
+    visibility: '',
     ageRequirement: 0,
     createdBy: userId
   });
@@ -25,7 +25,7 @@ function EditEventForm() {
       try {
         const response = await axios.get(`http://localhost:8000/events/${id}`);
         console.log(response.data)
-        let { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, status, ageRequirement, createdByUser } = response.data;
+        let { _id, category, createdDatetime, description, eventStartDatetime, eventEndDatetime, title, location, capacity, visibility, ageRequirement, createdByUser } = response.data;
        
         const convertUTCtoLocal = (datetime) => {
           let dateObj = new Date(datetime);
@@ -47,7 +47,7 @@ function EditEventForm() {
             category,
             location,
             capacity,
-            status,
+            visibility,
             ageRequirement,
             createdBy: createdByUser
         });
@@ -184,9 +184,9 @@ function EditEventForm() {
             <label>
               <input
                 type="radio"
-                name="status"
+                name="visibility"
                 value="public"
-                checked={eventData.status === 'public'}
+                checked={eventData.visibility === 'public'}
                 onChange={handleInputChange}
               />
               Public
@@ -194,9 +194,9 @@ function EditEventForm() {
             <label>
               <input
                 type="radio"
-                name="status"
+                name="visibility"
                 value="private"
-                checked={eventData.status === 'private'}
+                checked={eventData.visibility === 'private'}
                 onChange={handleInputChange}
               />
               Private

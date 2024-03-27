@@ -136,7 +136,7 @@ function Events() {
                             {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
                                 <Link key={event._id} to={`/event/${event._id}`}>
                                     <div className={`event ${event.category}`}>
-                                    {isNewEvent(event.eventStartDatetime) && <span className="new-event-indicator">🔥</span>}
+                                    {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
                                     {event.title}
                                     </div>
                                 </Link>

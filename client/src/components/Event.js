@@ -177,6 +177,7 @@ function Event() {
       {capacity !== '0' && (
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}
+        <div className={`event-capacity ${category}`}>Age requirement: {ageRequirement}</div>
       {currentUser ? (
         hasJoined ? (
           <>

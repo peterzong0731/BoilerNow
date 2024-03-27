@@ -271,7 +271,7 @@ router.get('/user-events/:userId', async (req, res) => {
 router.patch('/update/:eventId', async (req, res) => {
     const inputDataCheck = allDataPresent(
 		["eventId"],
-		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "category", "visibility", "ageRequirement"],
+		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "capacity", "category", "visibility", "ageRequirement"],
         req
 	);
 

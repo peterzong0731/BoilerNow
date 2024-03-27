@@ -27,10 +27,9 @@ function CreateEventForm() {
     description: '',
     eventStartDatetime: '',
     eventEndDatetime: '',
-    category: '',
+    category: 'Academic',
     location: '',
-    capacity: 0,
-    status: '',
+    capacity: 1,
     visibility: "Public",
     ageRequirement: 0,
     createdBy: userId,
@@ -92,7 +91,7 @@ function CreateEventForm() {
       <h1>Create Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          event title
+          Event Title
           <input
             type="text"
             name="title"
@@ -101,7 +100,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          description
+          Description
           <textarea
             name="description"
             value={eventData.description}
@@ -109,16 +108,18 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          age requirement
+          Age Requirement
           <input
-            type="text"
+            type="number"
             name="ageRequirement"
+            min="0"
+            autocomplete="off"
             value={eventData.ageRequirement}
             onChange={handleInputChange}
           />
         </label>
         <label>
-          start date
+          Start Date
           <input
             type="datetime-local"
             name="eventStartDatetime"
@@ -127,7 +128,7 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          end date
+          End Date
           <input
             type="datetime-local"
             name="eventEndDatetime"
@@ -136,10 +137,11 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          location
+          Location
           <input
             type="text"
             name="location"
+            autocomplete="off"
             value={eventData.location}
             onChange={handleInputChange}
           />
@@ -156,7 +158,7 @@ function CreateEventForm() {
         </label>
         <div className='last-row-container'>
           <div className='category-container'>
-            category
+            Category
             <label>
               <input
                 type="radio"
@@ -165,7 +167,7 @@ function CreateEventForm() {
                 checked={eventData.category === 'Academic'}
                 onChange={handleInputChange}
               />
-              academic
+              Academic
             </label>
             <label>
               <input
@@ -175,7 +177,7 @@ function CreateEventForm() {
                 checked={eventData.category === 'Social'}
                 onChange={handleInputChange}
               />
-              social
+              Social
             </label>
             <label>
               <input
@@ -185,58 +187,57 @@ function CreateEventForm() {
                 checked={eventData.category === 'Other'}
                 onChange={handleInputChange}
               />
-              other
+              Other
             </label>
           </div>
           <div className='category-container'>
-            capacity
+            Capacity
             <label>
               <input
                 type="number"
                 name="capacity"
+                min="1"
                 value={eventData.capacity}
                 onChange={handleInputChange}
               />
             </label>
           </div>
           <div className='category-container'>
-            status
+            Visibility
             <label>
               <input
                 type="radio"
-                name="status"
-                value="public"
-                checked={eventData.status === 'public'}
+                name="visibility"
+                value="Public"
+                checked={eventData.visibility === 'Public'}
                 onChange={handleInputChange}
               />
-              public
+              Public
             </label>
             <label>
               <input
                 type="radio"
-                name="status"
-                value="private"
-                checked={eventData.status === 'private'}
+                name="visibility"
+                value="Private"
+                checked={eventData.visibility === 'Private'}
                 onChange={handleInputChange}
               />
-              private
+              Private
             </label>
           </div>
-          {orgs.length > 0 && (
-            <label>
-              Assign to Organization:
-              <select
-                name="belongsToOrg"
-                value={eventData.belongsToOrg}
-                onChange={handleInputChange}
-              >
-                <option value="">Select an Organization</option>
-                {orgs.map((org) => (
-                  <option key={org._id} value={org._id}>{org.name}</option>
-                ))}
-              </select>
-            </label>
-          )}
+          <label>
+            Assign to Organization:
+            <select
+              name="belongsToOrg"
+              value={eventData.belongsToOrg}
+              onChange={handleInputChange}
+            >
+              <option value="">Select an Organization</option>
+              {orgs.map((org) => (
+                <option key={org._id} value={org._id}>{org.name}</option>
+              ))}
+            </select>
+          </label>
         </div>
         
         <button type="submit" className="submit-button">submit</button>

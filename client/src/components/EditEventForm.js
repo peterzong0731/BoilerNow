@@ -14,7 +14,7 @@ function EditEventForm() {
     eventEndDatetime: '',
     category: '',
     location: '',
-    capacity: 0,
+    capacity: 1,
     visibility: '',
     ageRequirement: 0,
     createdBy: userId
@@ -97,10 +97,12 @@ function EditEventForm() {
           />
         </label>
         <label>
-          age requirement
+          Age Requirement
           <input
-            type="text"
+            type="number"
             name="ageRequirement"
+            min="0"
+            autocomplete="off"
             value={eventData.ageRequirement}
             onChange={handleInputChange}
           />
@@ -118,7 +120,7 @@ function EditEventForm() {
           End Date
           <input
             type="datetime-local"
-            name="endDate"
+            name="eventEndDatetime"
             value={eventData.eventEndDatetime}
             onChange={handleInputChange}
           />
@@ -128,6 +130,7 @@ function EditEventForm() {
           <input
             type="text"
             name="location"
+            autocomplete="off"
             value={eventData.location}
             onChange={handleInputChange}
           />
@@ -180,13 +183,13 @@ function EditEventForm() {
             </label>
           </div>
           <div className='category-container'>
-            Status
+            Visibility
             <label>
               <input
                 type="radio"
                 name="visibility"
-                value="public"
-                checked={eventData.visibility === 'public'}
+                value="Public"
+                checked={eventData.visibility === 'Public'}
                 onChange={handleInputChange}
               />
               Public
@@ -195,8 +198,8 @@ function EditEventForm() {
               <input
                 type="radio"
                 name="visibility"
-                value="private"
-                checked={eventData.visibility === 'private'}
+                value="Private"
+                checked={eventData.visibility === 'Private'}
                 onChange={handleInputChange}
               />
               Private

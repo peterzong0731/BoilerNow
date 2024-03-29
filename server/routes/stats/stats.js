@@ -18,6 +18,8 @@ const router = express.Router();
                 "academicCnt": number,
                 "socialCnt": number,
                 "otherCnt": number,
+                "futureCnt": number,
+                "pastCnt": number,
                 "avgUsersInterestedCnt": number,
                 "avgCommentCnt": number,
             },
@@ -69,6 +71,8 @@ router.get('/', async (req, res) => {
             "academicCnt": 0,
             "socialCnt": 0,
             "otherCnt": 0,
+            "futureCnt": 0,
+            "pastCnt": 0,
             "avgUsersInterestedCnt": 0,
             "avgCommentCnt": 0,
         };
@@ -76,10 +80,12 @@ router.get('/', async (req, res) => {
         events.forEach((event) => {
             eventStats.totalEventCnt += 1;
             if (event.visibility === "Public") eventStats.publicCnt += 1;
-            if (event.visibility === "Private") eventStats.privateCnt += 1;
+            else if (event.visibility === "Private") eventStats.privateCnt += 1;
             if (event.category === "Academic") eventStats.academicCnt += 1;
-            if (event.category === "Social") eventStats.socialCnt += 1;
-            if (event.category === "Other") eventStats.otherCnt += 1;
+            else if (event.category === "Social") eventStats.socialCnt += 1;
+            else if (event.category === "Other") eventStats.otherCnt += 1;
+            if (event.eventStartDatetime >= new Date()) eventStats.futureCnt += 1;
+            else if (event.eventStartDatetime < new Date()) eventStats.pastCnt += 1;
             eventStats.avgUsersInterestedCnt += event.usersInterested.length;
             eventStats.avgCommentCnt += event.comments.length;
         });

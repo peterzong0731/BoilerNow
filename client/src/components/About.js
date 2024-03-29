@@ -8,19 +8,33 @@ import './About.css'
 
 function About() {
     const [userCount, setUserCount] = useState([]);
+    const [avgFollowingOrgs, setAvgFollowingOrgs] = useState([]);
     const [eventCount, setEventCount] = useState([]);
     const [orgCount, setOrgCount] = useState([]);
+    const [averageFollowerCount, setAverageFollowerCount] = useState([]);
     const [postCount, setPostCount] = useState([]);
+    const [academicCount, setAcademicCount] = useState([]);
+    const [socialCount, setSocialCount] = useState([]);
+    const [otherCount, setOtherCount] = useState([]);
+    const [futureCount, setFutureCount] = useState([]);
+    const [pastCount, setPastCount] = useState([]);
 
     useEffect(() => {
         async function fetchStats() {
             try {
                 const response = await axios.get('http://localhost:8000/stats');
                 const data = await response.data;
-                setUserCount(data.events.totalEventCnt);
-                setEventCount(data.users.totalUserCnt);
+                setEventCount(data.events.totalEventCnt);
+                setAvgFollowingOrgs(data.users.avgFollowingOrgsCnt);
+                setUserCount(data.users.totalUserCnt);
                 setOrgCount(data.orgs.totalOrgCnt);
+                setAverageFollowerCount(data.orgs.avgFollowerCnt);
                 setPostCount(data.users.totalPostCnt);
+                setAcademicCount(data.events.academicCnt);
+                setSocialCount(data.events.socialCnt);
+                setOtherCount(data.events.otherCnt);
+                setFutureCount(data.events.futureCnt);
+                setPastCount(data.events.pastCnt);
             } catch (error) {
                 console.error(error);
             }
@@ -48,18 +62,32 @@ function About() {
             <span>{eventCount} Events</span>
             <br />
             <span>{Math.floor((postCount*10)/eventCount)/10} average posts per event</span>
+            <br />
+            <span>{academicCount} "Academic" Events</span>
+            <br />
+            <span>{socialCount} "Social" Events</span>
+            <br />
+            <span>{otherCount} "Other" Events</span>
+            <br />
+            <span>{futureCount} Future Events</span>
+            <br />
+            <span>{pastCount} Past Events</span>
           </div>
           <div className='individual-stat-container'>
             <img id="users" src={Users} alt="users img" />
             <span>{userCount} Users</span>
             <br />
             <span>{postCount} total user posts</span>
+            <br />
+            <span>{Math.floor(avgFollowingOrgs)} average orgs followed by a user</span>
           </div>
           <div className='individual-stat-container'>
             <img id="orgs" src={Orgs} alt="org img" />
             <span>{orgCount} Organizations</span>
             <br />
             <span>{Math.floor((eventCount*10)/orgCount)/10} average events per org</span>
+            <br />
+            <span>{Math.floor(averageFollowerCount)} average followers per org</span>
           </div>
         </div>
       </div>

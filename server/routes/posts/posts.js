@@ -81,19 +81,17 @@ router.get('/', async (req, res) => {
         params:
             postId: string | ObjectId
     Outgoing data: 
-        [
-            {
-                "postId": ObjectId,
-                "title": string
-                "content": string,
-                "postedDatetime": UTC Date,
-                "likedBy": [ObjectId],
-                "replies": [Object],
-                "event": Object
-            }
-        ]
+        {
+            "postId": ObjectId,
+            "title": string
+            "content": string,
+            "postedDatetime": UTC Date,
+            "likedBy": [ObjectId],
+            "replies": [Object],
+            "event": Object
+        }
     On Success:
-        - 200 : {Array of one post object} -> Data will be sent following the Outgoing data structure.
+        - 200 : {Post object} -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error retrieving post. -> There was a db error when trying to retrieve the specific post.
@@ -147,7 +145,7 @@ router.get('/post/:postId', async (req, res) => {
             { $replaceWith: "$posts" }
         ]).toArray();
 
-        res.status(200).json(results);
+        res.status(200).json(results[0]);
 
     } catch (e) {
         console.log("Get specific post error:");

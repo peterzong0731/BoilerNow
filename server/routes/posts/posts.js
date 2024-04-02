@@ -17,6 +17,7 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
                 "postId": ObjectId,
                 "title": string
                 "content": string,
+                "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
                 "replies": [Object],
@@ -24,7 +25,7 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
             }
         ]
     On Success:
-        - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+        - 200 : [Post Objects] -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
@@ -44,23 +45,9 @@ router.get('/', async (req, res) => {
         const results = await db.collection("users").aggregate([
             { $unwind: "$posts" },
             {
-                $lookup: {
-                    from: "events",
-                    localField: "posts.eventId",
-                    foreignField: "_id",
-                    as: "event"
-                }
-            },
-            {
                 $project: {
                     _id: 0,
-                    "posts.postId": 1,
-                    "posts.title": 1,
-                    "posts.content": 1,
-                    "posts.postedDatetime": 1,
-                    "posts.likedBy": 1,
-                    "posts.replies": 1,
-                    "posts.event": { $first: "$event" }
+                    "posts": 1
                 }
             },
             { $replaceWith: "$posts" }
@@ -85,15 +72,16 @@ router.get('/', async (req, res) => {
             "postId": ObjectId,
             "title": string
             "content": string,
+            "eventId": ObjectId,
             "postedDatetime": UTC Date,
             "likedBy": [ObjectId],
-            "replies": [Object],
-            "event": Object
+            "replies": [Object]
         }
     On Success:
-        - 200 : {Post object} -> Data will be sent following the Outgoing data structure.
+        - 200 : Post object -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Post not found. -> The post id is not found in the db.
         - 500 : Error retrieving post. -> There was a db error when trying to retrieve the specific post.
 */
 router.get('/post/:postId', async (req, res) => {
@@ -110,42 +98,20 @@ router.get('/post/:postId', async (req, res) => {
     const postId = new ObjectId(req.params.postId);
 
     try {
-        const results = await db.collection("users").aggregate([
-            {
-                $match: {
-                    "posts.postId": postId
-                }
-            },
-            { $unwind: "$posts" },
-            {
-                $match: {
-                    "posts.postId": postId
-                }
-            },
-            {
-                $lookup: {
-                    from: "events",
-                    localField: "posts.eventId",
-                    foreignField: "_id",
-                    as: "event"
-                }
-            },
-            {
-                $project: {
+        const post = await db.collection("users").findOne(
+            { "posts.postId": postId },
+            { 
+                projection: { 
                     _id: 0,
-                    "posts.postId": 1,
-                    "posts.title": 1,
-                    "posts.content": 1,
-                    "posts.postedDatetime": 1,
-                    "posts.likedBy": 1,
-                    "posts.replies": 1,
-                    "posts.event": { $first: "$event" }
-                }
-            },
-            { $replaceWith: "$posts" }
-        ]).toArray();
+                    "posts.$": 1 
+                } 
+            }
+        );
+        if (!post) {
+            return res.status(404).send("Post not found.");
+        }
 
-        res.status(200).json(results[0]);
+        res.status(200).json(post["posts"][0]);
 
     } catch (e) {
         console.log("Get specific post error:");
@@ -166,14 +132,14 @@ router.get('/post/:postId', async (req, res) => {
                 "postId": ObjectId,
                 "title": string
                 "content": string,
+                "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object],
-                "event": Object
+                "replies": [Object]
             }
         ]
     On Success:
-        - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+        - 200 : [Post Objects] -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
@@ -196,23 +162,9 @@ router.get('/:userId', async (req, res) => {
             { $match: { _id: userId } },
             { $unwind: "$posts" },
             {
-                $lookup: {
-                    from: "events",
-                    localField: "posts.eventId",
-                    foreignField: "_id",
-                    as: "event"
-                }
-            },
-            {
                 $project: {
                     _id: 0,
-                    "posts.postId": 1,
-                    "posts.title": 1,
-                    "posts.content": 1,
-                    "posts.postedDatetime": 1,
-                    "posts.likedBy": 1,
-                    "posts.replies": 1,
-                    "posts.event": { $first: "$event" }
+                    "posts": 1
                 }
             },
             { $replaceWith: "$posts" }
@@ -364,14 +316,14 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
                 "postId": ObjectId,
                 "title": string
                 "content": string,
+                "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object],
-                "event": Object
+                "replies": [Object]
             }
         ]
     On Success:
-        - 200 : {Array of post objects} -> Data will be sent following the Outgoing data structure.
+        - 200 : [Post Objects] -> Data will be sent following the Outgoing data structure.
     On Error:
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 404 : Org not found. -> The given org id does not exist in the db.
@@ -401,34 +353,20 @@ router.get('/orgPosts/:orgId', async (req, res) => {
         var eventIds = org.events;
 
         const results = await db.collection("users").aggregate([
-            { $unwind: "$posts" },
-            {
-                $match: {
-                    "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
-                }
-            },
-            {
-                $lookup: {
-                    from: "events",
-                    localField: "posts.eventId",
-                    foreignField: "_id",
-                    as: "event"
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    "posts.postId": 1,
-                    "posts.title": 1,
-                    "posts.content": 1,
-                    "posts.postedDatetime": 1,
-                    "posts.likedBy": 1,
-                    "posts.replies": 1,
-                    "posts.event": { $first: "$event" }
-                }
-            },
-            { $replaceWith: "$posts" }
-        ]).toArray();
+                { $unwind: "$posts" },
+                {
+                    $match: {
+                        "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        "posts": 1
+                    }
+                },
+                { $replaceWith: "$posts" }
+            ]).toArray();
 
         res.status(200).json(results);
 

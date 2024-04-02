@@ -65,11 +65,12 @@ function EditEventForm() {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    
     try {
       const response = await axios.patch(`http://localhost:8000/events/update/${id}`, eventData);
-      window.alert('Event updated successfully!');
-      window.location.href = `/event/${id}`;
-      console.log('Successfully updated the event', response.data);
+  
+      //toast.success('Event updated successfully!');
+      console.log('Successfully edited the event!', response.data);
     } catch (error) {
       console.error('Error during event update', error);
     }

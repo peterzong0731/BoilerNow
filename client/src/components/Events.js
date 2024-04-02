@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import './Events.css';
+import EventCard from './EventCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 
@@ -25,6 +26,7 @@ const calculateEmptySlotsAfterLastDay = (lastDayOfWeek) => {
 
 function Events() {
     const currentDate = new Date();
+    const [events, setEvents] = useState([])
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth());
     const daysInMonth = getDaysInMonth(year, month);
@@ -35,6 +37,11 @@ function Events() {
     const daySlots = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
     const userStr = localStorage.getItem('user');
+    const [viewMode, setViewMode] = useState('calendar');
+
+    const toggleViewMode = () => {
+        setViewMode(viewMode === 'calendar' ? 'list' : 'calendar');
+    };
 
     const handleMonthNext = () => {
         if (month === 11) {
@@ -79,11 +86,12 @@ function Events() {
                 const response = await axios.get('http://localhost:8000/events', {
                     params: { year: year, month: month }
                 });
-                const events = response.data;
-                console.log(events)
+                setEvents(response.data)
+                const eventsRes = response.data;
+                console.log(eventsRes)
                 const eventsMappedByDay = {};
 
-                events.forEach(event => {
+                eventsRes.forEach(event => {
                     const dayOfMonth = new Date(event.eventStartDatetime).getDate();
                     if (!eventsMappedByDay[dayOfMonth]) {
                         eventsMappedByDay[dayOfMonth] = [];
@@ -101,50 +109,63 @@ function Events() {
 
     return (
         <div className="calendar-container">
-            <div className="filters">
-                {categories.map((category) => (
-                    <label key={category}>
-                        <input
-                            type="radio"
-                            name="category"
-                            value={category}
-                            checked={selectedCategory === category}
-                            onChange={handleCategoryChange}
-                        />
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </label>
-                ))}
+            <div className='options-container'>
+                <div className="filters">
+                    {categories.map((category) => (
+                        <label key={category}>
+                            <input
+                                type="radio"
+                                name="category"
+                                value={category}
+                                checked={selectedCategory === category}
+                                onChange={handleCategoryChange}
+                            />
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </label>
+                    ))}
+                </div>
+                <button className="toggle-view-button" onClick={toggleViewMode}>
+                    {viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View'}
+                </button>
             </div>
-            <div className="month-view">
-                <div className="month-header">
-                    <h2>{`${monthNames[month]} ${year}`}</h2>
-                    <div className="month-navigation">
-                        <button onClick={handleMonthPrev}>←</button>
-                        <button onClick={handleMonthNext}>→</button>
+            {viewMode === 'calendar' ? (
+                <div className="month-view">
+                    <div className="month-header">
+                        <h2>{`${monthNames[month]} ${year}`}</h2>
+                        <div className="month-navigation">
+                            <button onClick={handleMonthPrev}>←</button>
+                            <button onClick={handleMonthNext}>→</button>
+                        </div>
+                    </div>
+                    <div className="days-of-week">
+                        {daysOfWeek.map(day => (
+                            <div key={day} className="week-day">{day}</div>
+                        ))}
+                    </div>
+                    <div className="days-grid">
+                        {console.log(eventsData)}
+                        {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
+                            <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
+                                {day && <div className="day-number">{day}</div>}
+                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
+                                    <Link key={event._id} to={`/event/${event._id}`}>
+                                        <div className={`event ${event.category}`}>
+                                        {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
+                                        {event.title}
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ))}
                     </div>
                 </div>
-                <div className="days-of-week">
-                    {daysOfWeek.map(day => (
-                        <div key={day} className="week-day">{day}</div>
+            ) : (
+                <div className="list-view">
+                    {events.map(event => (
+                        <EventCard key={event._id} event={event} />
                     ))}
                 </div>
-                <div className="days-grid">
-                    {console.log(eventsData)}
-                    {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
-                        <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
-                            {day && <div className="day-number">{day}</div>}
-                            {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
-                                <Link key={event._id} to={`/event/${event._id}`}>
-                                    <div className={`event ${event.category}`}>
-                                    {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
-                                    {event.title}
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            </div>
+            )}
         </div>
     );
 }

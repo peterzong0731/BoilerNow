@@ -15,6 +15,7 @@ import postRouter from "./routes/posts/posts.js";
 import orgRouter from "./routes/orgs/orgs.js";
 import shareEventRouter from "./emails/shareEventEmail.js";
 import statRouter from "./routes/stats/stats.js";
+import reportOrgRouter from "./emails/reportOrgEmail.js";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,6 +34,7 @@ app.use('/posts', postRouter);
 app.use("/orgs", orgRouter);
 app.use("/shareEvent", shareEventRouter);
 app.use("/stats", statRouter);
+app.use("/reportOrg", reportOrgRouter);
 
 // Start the server
 const port = process.env.PORT || 5000;

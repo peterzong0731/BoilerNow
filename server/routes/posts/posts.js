@@ -31,19 +31,19 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
 */
 router.get('/', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		[],
-		[],
-		req
-	);
+        [],
+        [],
+        req
+    );
 
-	if (!inputDataCheck.correct) {
-		return res.status(400).send(inputDataCheck.message);
-	}
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
 
     try {
         const results = await db.collection("users").aggregate([
             { $unwind: "$posts" },
-            { 
+            {
                 $lookup: {
                     from: "events",
                     localField: "posts.eventId",
@@ -75,6 +75,87 @@ router.get('/', async (req, res) => {
     }
 });
 
+/*  
+    Description: Get single post by post-id
+    Incoming data:
+        params:
+            postId: string | ObjectId
+    Outgoing data: 
+        [
+            {
+                "postId": ObjectId,
+                "title": string
+                "content": string,
+                "postedDatetime": UTC Date,
+                "likedBy": [ObjectId],
+                "replies": [Object],
+                "event": Object
+            }
+        ]
+    On Success:
+        - 200 : {Array of one post object} -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error retrieving post. -> There was a db error when trying to retrieve the specific post.
+*/
+router.get('/post/:postId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["postId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const postId = new ObjectId(req.params.postId);
+
+    try {
+        const results = await db.collection("users").aggregate([
+            {
+                $match: {
+                    "posts.postId": postId
+                }
+            },
+            { $unwind: "$posts" },
+            {
+                $match: {
+                    "posts.postId": postId
+                }
+            },
+            {
+                $lookup: {
+                    from: "events",
+                    localField: "posts.eventId",
+                    foreignField: "_id",
+                    as: "event"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "posts.postId": 1,
+                    "posts.title": 1,
+                    "posts.content": 1,
+                    "posts.postedDatetime": 1,
+                    "posts.likedBy": 1,
+                    "posts.replies": 1,
+                    "posts.event": { $first: "$event" }
+                }
+            },
+            { $replaceWith: "$posts" }
+        ]).toArray();
+
+        res.status(200).json(results);
+
+    } catch (e) {
+        console.log("Get specific post error:");
+        console.log(e);
+        res.status(500).send("Error retrieving the specific post.");
+    }
+});
+
 
 /*  
     Description: Get all posts by one userId
@@ -101,14 +182,14 @@ router.get('/', async (req, res) => {
 */
 router.get('/:userId', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		["userId"],
-		[],
-		req
-	);
+        ["userId"],
+        [],
+        req
+    );
 
-	if (!inputDataCheck.correct) {
-		return res.status(400).send(inputDataCheck.message);
-	}
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
 
     const userId = new ObjectId(req.params.userId);
 
@@ -116,7 +197,7 @@ router.get('/:userId', async (req, res) => {
         const results = await db.collection("users").aggregate([
             { $match: { _id: userId } },
             { $unwind: "$posts" },
-            { 
+            {
                 $lookup: {
                     from: "events",
                     localField: "posts.eventId",
@@ -137,7 +218,7 @@ router.get('/:userId', async (req, res) => {
                 }
             },
             { $replaceWith: "$posts" }
-         ]).toArray();
+        ]).toArray();
 
         res.status(200).json(results)
 
@@ -169,15 +250,15 @@ router.get('/:userId', async (req, res) => {
 */
 router.post('/create/:userId', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		["userId"],
-		["title", "content", "eventId"],
-		req
-	);
+        ["userId"],
+        ["title", "content", "eventId"],
+        req
+    );
 
-	if (!inputDataCheck.correct) {
-		return res.status(400).send(inputDataCheck.message);
-	}
-    
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
     const userId = new ObjectId(req.params.userId);
     const title = req.body.title;
     const content = req.body.content;
@@ -204,7 +285,7 @@ router.post('/create/:userId', async (req, res) => {
         if (results.matchedCount === 0) {
             return res.status(404).send("UserId does not match an existing user.");
         }
-    
+
         if (results.modifiedCount === 0) {
             throw new Error('Post was not published.');
         }
@@ -244,15 +325,15 @@ router.patch('/update', async (req, res) => {
 */
 router.delete('/delete/:userId/:postId', async (req, res) => {
     const inputDataCheck = allDataPresent(
-		["userId", "postId"],
-		[],
-		req
-	);
+        ["userId", "postId"],
+        [],
+        req
+    );
 
-	if (!inputDataCheck.correct) {
-		return res.status(400).send(inputDataCheck.message);
-	}
-    
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
     const userId = new ObjectId(req.params.userId);
     const postId = new ObjectId(req.params.postId);
 
@@ -323,12 +404,12 @@ router.get('/orgPosts/:orgId', async (req, res) => {
 
         const results = await db.collection("users").aggregate([
             { $unwind: "$posts" },
-            { 
+            {
                 $match: {
                     "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
                 }
             },
-            { 
+            {
                 $lookup: {
                     from: "events",
                     localField: "posts.eventId",

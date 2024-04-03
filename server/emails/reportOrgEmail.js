@@ -2,11 +2,12 @@ import fs from "fs";
 import db from "../conn.js"
 import express from "express";
 import { ObjectId } from "mongodb";
-import { transporter } from "./emailUtil.js";
+import { transporter, convertDateToEST } from "./emailUtil.js";
 import { allDataPresent } from "../verif/endpoints.js";
 
 const router = express.Router();
-const emailTemplate = fs.readFileSync("./emails/emailTemplates/reportOrgTemplate.html", "utf8");
+const adminEmailTemplate = fs.readFileSync("./emails/emailTemplates/reportOrgAdminTemplate.html", "utf8");
+const orgEmailTemplate = fs.readFileSync("./emails/emailTemplates/reportOrgTemplate.html", "utf8");
 
 /*
     Description: Report an organization through email to BoilerNow and Org Owner
@@ -49,22 +50,33 @@ router.post('/:userId/:orgId', async (req, res) => {
         }
 
         const orgOwner = await db.collection("users").findOne({ "_id": org.owner});
-        const reportTime = new Date();
+        const reportTime = convertDateToEST(new Date());
         
-        const mailOptions = {
+        const adminMailOptions = {
             from: '"Team BoilerNow" boilernow2023@gmail.com',
-            to: 'boilernow2023@gmail.com', 
-            bcc: [orgOwner.login.email, user.login.email],
+            to: 'boilernow2023@gmail.com',
             subject: `Organization Reported!`,
-            html: emailTemplate.replace("{{reporterName}}", user.name)
+            html: adminEmailTemplate.replace("{{reporterName}}", user.name)
                             .replace("{{reporterEmail}}", user.login.email)
                             .replace("{{time}}", reportTime)
                             .replace("{{reason}}", reportReason)
                             .replace("{{name}}", org.name)
                             .replace("{{owner}}", orgOwner.name)
         };
+
+        const orgMailOptions = {
+            from: '"Team BoilerNow" boilernow2023@gmail.com',
+            to: orgOwner.login.email,
+            subject: `Your Organization Was Reported!`,
+            html: orgEmailTemplate.replace("{{name}}", org.name)
+                            .replace("{{time}}", reportTime)
+                            .replace("{{reason}}", reportReason) 
+        };
         
-        await transporter.sendMail(mailOptions);
+        await transporter.sendMail(adminMailOptions);
+        await transporter.sendMail(orgMailOptions);
+        
+        console.log("Report email sent to: boilernow2023@gmail.com, " + orgOwner.login.email);
         res.status(200).send("Org Report Email Shared.");
 
     } catch (e) {

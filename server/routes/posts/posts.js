@@ -20,8 +20,7 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object],
-                "event": Object
+                "replies": [Object]
             }
         ]
     On Success:
@@ -63,7 +62,7 @@ router.get('/', async (req, res) => {
 });
 
 /*  
-    Description: Get single post by post-id
+    Description: Get single post by postId
     Incoming data:
         params:
             postId: string | ObjectId

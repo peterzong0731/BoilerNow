@@ -10,7 +10,10 @@
         "discord": "",
         "phoneNumber": ""
     },
-    "rating": null,
+    "rating": {
+        "ratedBy": null,
+        "value": 0
+    },
     "owner": null,
     "contributors": [],
     "lastActive": null,

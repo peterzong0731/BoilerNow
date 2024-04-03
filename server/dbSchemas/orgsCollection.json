@@ -46,7 +46,19 @@
             ]
         },
         "rating": {
-            "bsonType": ["double", "null"]
+            "bsonType": "object",
+            "properties": {
+                "ratedBy": {
+                    "bsonType": "objectId"
+                },
+                "value": {
+                    "bsonType": "int"
+                }
+            },
+            "required": [
+                "ratedBy",
+                "value"
+            ]
         },
         "owner": {
             "bsonType": "objectId"

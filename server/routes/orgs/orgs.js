@@ -760,6 +760,11 @@ router.patch('/rate/:orgId/:userId', async (req, res) => {
     const orgId = new ObjectId(req.params.orgId);
     const userId = new ObjectId(req.params.userId);
     const ratingValue = parseFloat(req.body.value);
+
+    if (ratingValue > 5.0 || ratingValue < 1.0) {
+        return res.status(500).json('Rating Out of Bound');
+    }
+    
     try {
         let result = await db.collection("orgs").updateOne(
             {

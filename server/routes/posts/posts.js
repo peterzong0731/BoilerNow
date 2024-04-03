@@ -391,7 +391,7 @@ router.get('/orgPosts/:orgId', async (req, res) => {
         - 400 : <message> -> The incoming request does not contain the required data fields.
         - 500 : Error liking/unliking the post. -> There was a db error when trying to like/unlike the specific post.
 */
-router.post('/like/:postId/:userId', async (req, res) => {
+router.patch('/like/:postId/:userId', async (req, res) => {
     const inputDataCheck = allDataPresent(
         ["postId", "userId"],
         [],

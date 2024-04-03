@@ -54,7 +54,8 @@
                         "bsonType": "objectId"
                     },
                     "value": {
-                        "bsonType": "double"
+                        "bsonType": "number",
+                        "multipleOf": 0.1
                     }
                 },
                 "required": [

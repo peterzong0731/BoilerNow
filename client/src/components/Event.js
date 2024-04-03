@@ -6,25 +6,31 @@ import checkmark from './images/yellow_checkmark.png'
 import { Toaster, toast } from 'sonner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { google, outlook } from "calendar-link";
 
 function Event() {
   const { id } = useParams();
-  const [category, setCategory] = useState('')
-  const [createdDatetime, setCreatedDatetime] = useState('')
-  const [description, setDescription] = useState('')
-  const [dateRange, setDateRange] = useState('')
-  const [title, setTitle] = useState('')
-  const [location, setLocation] = useState('')
-  const [capacity, setCapacity] = useState(0)
+  const [category, setCategory] = useState('');
+  const [createdDatetime, setCreatedDatetime] = useState('');
+  const [description, setDescription] = useState('');
+  const [dateRange, setDateRange] = useState('');
+  const [startDatetime, setStartDatetime] = useState('');
+  const [endDatetime, setEndDatetime] = useState('');
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [capacity, setCapacity] = useState(0);
   const [ageRequirement, setAgeRequirement] = useState(0);
-  const [status, setStatus] = useState('')
+  const [visiblity, setVisibility] = useState('');
   const [userAge, setUserAge] = useState(0);
-  const [usersInterested, setUsersInterested] = useState([])
-  const [eventCreatedByUser, setEventCreatedByUser] = useState({})
+  const [usersInterested, setUsersInterested] = useState([]);
+  const [eventCreatedByUser, setEventCreatedByUser] = useState({});
   const [hasJoined, setHasJoined] = useState(false);
   const [images, setImages] = useState([]);
   const [showShareBox, setShowShareBox] = useState(false);
   const [shareEmail, setShareEmail] = useState('');
+  const [showCopyBox, setShowCopyBox] = useState(false);
+  const [copyLink, setCopyLink] = useState('');
+  const [lastClickedCalendarType, setLastClickedCalendarType] = useState('');
 
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
@@ -38,6 +44,9 @@ function Event() {
   
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
+
+    setStartDatetime(startDate);
+    setEndDatetime(endDate);
   
     const startFormatted = startDate.toLocaleString('en-US', options);
     const endFormatted = endDate.toLocaleString('en-US', options);
@@ -63,7 +72,7 @@ function Event() {
           const response = await axios.get(`http://localhost:8000/events/${id}`);
           console.log(response.data)
           const { _id, title, description, category, location, ageRequirement, eventStartDatetime, eventEndDatetime, 
-          capacity, usersInterested, status, belongsToOrg, createdBy, createdDatetime, comments, images} = response.data;
+          capacity, usersInterested, visibility, belongsToOrg, createdBy, createdDatetime, comments, images} = response.data;
 
           const userOfEvent = await axios.get(`http://localhost:8000/user/${createdBy}`);
 
@@ -76,7 +85,7 @@ function Event() {
           setLocation(location)
           setAgeRequirement(ageRequirement)
           setCapacity(capacity)
-          setStatus(status)
+          setVisibility(visibility)
           setUsersInterested(usersInterested)
           setImages(images.map(image => `http://localhost:8000/${image}`));
           
@@ -158,7 +167,48 @@ function Event() {
 
   const handleAnalyticsClick = () => {
     navigate(`/event-analytics/${id}`);
-  }
+  };
+
+  const handleAddToExtCalendarClick = (type) => {
+    if ((lastClickedCalendarType === "" || type === lastClickedCalendarType) || !showCopyBox) {
+      setShowCopyBox(!showCopyBox);
+    }
+
+    setLastClickedCalendarType(type);
+
+    const event = {
+      "title": title,
+      "description": description,
+      "location": location,
+      "start": startDatetime,
+      "end": endDatetime
+    };
+
+    if (type === "Google") {
+      setCopyLink(google(event));
+    } else if (type === "Outlook") {
+      setCopyLink(outlook(event));
+    }
+
+    setTimeout(handleCopyToClipboard, 0);
+  };
+
+  const handleCopyToClipboard = () => {
+    let textToChange = document.getElementById('copied-to-clipboard');
+    let inputText = document.getElementById('add-to-ext-calendar-input');
+
+    if (textToChange) {
+      textToChange.style.color = 'green'; 
+      setTimeout(function() {
+          textToChange.style.color = 'black';
+      }, 1000);
+    }
+
+    if (inputText) {
+      inputText.select();
+      document.execCommand('copy');
+    }
+  };
 
   return (
     <div className="event-container">
@@ -213,6 +263,21 @@ function Event() {
         <button className="event-join-button-disabled" disabled>Log in to share</button>
       )}
       <button className="event-data-button" onClick={handleAnalyticsClick}><FontAwesomeIcon icon={faChartBar} /></button>
+      <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Google")}>Add to Google Calendar</button>
+      <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Outlook")}>Add to Outlook Calendar</button>
+      {showCopyBox && (
+        <div className="external-calendar-box">
+          <p id="copied-to-clipboard">Copied to clipboard!</p>
+          <div>
+            <input id="add-to-ext-calendar-input"
+              type="url"
+              value={copyLink}
+              readOnly
+            />
+            <button className="copy-to-clipboard-button" onClick={handleCopyToClipboard}>Copy</button>
+          </div>
+        </div>
+      )}
       <div className="event-dates">
         <div className="event-date">{'\u{1F4C5}'} {dateRange}</div>
       </div>

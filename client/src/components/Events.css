@@ -137,12 +137,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
+
 
 .view-mode-toggle {
   display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: right;
 }
 
 .toggle-button {
@@ -170,4 +171,38 @@
 
 .events-container {
   text-align: center;
+}
+
+.filter {
+  display: flex;
+}
+
+.filter-text {
+  transform: translateY(6px);
+  margin-right: 5px;
+}
+
+.filterTerms {
+  border: 3px solid #3182ce;
+  border-right: none;
+  padding: 5px;
+  height: 20px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+.filterButton {
+  width: 40px;
+  height: 36px;
+  border: 1px solid #3182ce;
+  background: #3182ce;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.no-orgs-text{
+  margin-top: 20px;
 }

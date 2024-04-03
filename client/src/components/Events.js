@@ -4,7 +4,7 @@ import EventCard from './EventCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faList } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faList, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -40,6 +40,7 @@ function Events() {
     const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
     const userStr = localStorage.getItem('user');
     const [viewMode, setViewMode] = useState('calendar');
+    const [filterKeywords, setFilterKeywords] = useState([]);
 
     const toggleViewMode = () => {
         setViewMode(viewMode === 'calendar' ? 'list' : 'calendar');
@@ -80,7 +81,22 @@ function Events() {
         const now = new Date();
         const hoursDiff = (now - eventDate) / (1000 * 60 * 60);
         return hoursDiff <= 24;
-    };      
+    };
+
+    const handleEnterKeypress = (event) => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            filterEvents();
+        }
+    };
+
+    const filterEvents = () => {
+        const filterString = document.getElementById("filterTerms").value;
+
+        let keywords = filterString.split(";").map(keyword => keyword.trim());
+        setFilterKeywords(keywords);
+        console.log(keywords)
+    };
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -111,7 +127,7 @@ function Events() {
 
     return (
         <div className="calendar-container">
-            <div className='options-container'>
+            <div className='options-container'>                
                 <div className="filters">
                     {categories.map((category) => (
                         <label key={category}>
@@ -134,6 +150,13 @@ function Events() {
                         <FontAwesomeIcon icon={faList} />
                     </button>
                 </div>
+                <div class="filter">
+                    <div className="filter-text">Filter:</div>
+                    <input type="text" class="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
+                    <button type="submit" class="filterButton" onClick={filterEvents}>
+                        <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                </div>
             </div>
             {viewMode === 'calendar' ? (
                 <div className="month-view">
@@ -154,7 +177,7 @@ function Events() {
                         {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                             <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                                 {day && <div className="day-number">{day}</div>}
-                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
+                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr) && (filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length).map((event, idx) => (
                                     <Link key={event._id} to={`/event/${event._id}`}>
                                         <div className={`event ${event.category}`}>
                                         {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
@@ -168,9 +191,9 @@ function Events() {
                 </div>
             ) : (
                 <div className="list-view">
-                    {events.map(event => (
+                    {events.length ? events.map(event => (
                         <EventCard key={event._id} event={event} />
-                    ))}
+                    )) : <div className='no-orgs-text'>There are no orgs to display.</div>}
                 </div>
             )}
         </div>

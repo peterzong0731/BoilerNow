@@ -731,4 +731,69 @@ router.get('/following/:userId', async (req, res) => {
     }
 });
 
+/*
+    Description: Rate an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+        body:
+            value: integer
+    Outgoing data: None
+    On Success:
+        - 200 : User's rating has been added to the org.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error rating an org. -> There was a db error when trying to rate the org.
+*/
+router.patch('/rate/:orgId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["orgId", "userId"],
+        ["value"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+    const ratingValue = parseFloat(req.body.value);
+    try {
+        let result = await db.collection("orgs").updateOne(
+            {
+                "_id": orgId, 
+                "ratings": { 
+                    "$elemMatch": { "ratedBy": userId } 
+                }
+            },
+            {
+                "$set": {
+                    "ratings.$.value": ratingValue
+                }
+            }
+        );
+        // Step 2: If no document was updated, insert a new rating
+        if (result.matchedCount === 0) {
+            await db.collection("orgs").updateOne(
+                { "_id": orgId },
+                {
+                    "$push": {
+                        "ratings": { 
+                            "ratedBy": userId,
+                            "value": ratingValue
+                        }
+                    }
+                }
+            );
+        }
+        res.status(200).json('Updated Rating');
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Error rating an org.');
+        console.log(e.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied);
+    }
+});
+
 export default router;

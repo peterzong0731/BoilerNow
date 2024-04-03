@@ -11,8 +11,8 @@
         "phoneNumber": ""
     },
     "rating": {
-        "ratedBy": null,
-        "value": 0
+        "ratedBy": [],
+        "value": null
     },
     "owner": null,
     "contributors": [],

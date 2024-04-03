@@ -52,7 +52,7 @@
                     "bsonType": "objectId"
                 },
                 "value": {
-                    "bsonType": "int"
+                    "bsonType": ["double", "null"]
                 }
             },
             "required": [

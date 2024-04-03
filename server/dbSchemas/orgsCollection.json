@@ -57,11 +57,7 @@
                         "bsonType": "int"
                     }
                 }
-            },
-            "required": [
-                "ratedBy",
-                "value"
-            ]
+            }
         },
         "owner": {
             "bsonType": "objectId"

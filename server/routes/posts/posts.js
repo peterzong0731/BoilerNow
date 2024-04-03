@@ -381,10 +381,7 @@ router.get('/orgPosts/:orgId', async (req, res) => {
         params:
             postId: string | ObjectId
             userId: string | ObjectId
-    Outgoing data: 
-        [
-            ObjectId
-        ]
+    Outgoing data: None
     On Success:
         - 200 : Array of type User Id -> Data will be sent following the Outgoing data structure.
     On Error:
@@ -440,7 +437,7 @@ router.patch('/like/:postId/:userId', async (req, res) => {
             throw new Error('Post Update Failed')
         }
 
-        return res.status(200).json(post.likedBy);
+        res.status(200).json(post.likedBy);
 
     } catch (e) {
         console.log(e);

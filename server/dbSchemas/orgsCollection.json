@@ -46,15 +46,6 @@
             ]
         },
         "rating": {
-<<<<<<< Updated upstream
-            "bsonType": "object",
-            "properties": {
-                "ratedBy": {
-                    "bsonType": "objectId"
-                },
-                "value": {
-                    "bsonType": ["double", "null"]
-=======
             "bsonType": ["array"],
             "items": {
                 "bsonType": ["object"],
@@ -65,7 +56,6 @@
                     "value": {
                         "bsonType": "int"
                     }
->>>>>>> Stashed changes
                 }
             },
             "required": [

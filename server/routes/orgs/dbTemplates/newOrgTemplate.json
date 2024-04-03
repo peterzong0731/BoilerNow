@@ -10,14 +10,7 @@
         "discord": "",
         "phoneNumber": ""
     },
-<<<<<<< Updated upstream
-    "rating": {
-        "ratedBy": [],
-        "value": null
-    },
-=======
     "rating": [],
->>>>>>> Stashed changes
     "owner": null,
     "contributors": [],
     "lastActive": null,

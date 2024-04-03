@@ -41,6 +41,7 @@ function Events() {
     const userStr = localStorage.getItem('user');
     const [viewMode, setViewMode] = useState('calendar');
     const [filterKeywords, setFilterKeywords] = useState([]);
+    const [sortOption, setSortOption] = useState('soon');
 
     const toggleViewMode = () => {
         setViewMode(viewMode === 'calendar' ? 'list' : 'calendar');
@@ -73,7 +74,6 @@ function Events() {
     
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
-        console.log(selectedCategory)
     };
 
     const isNewEvent = (eventStartDatetime) => {
@@ -104,9 +104,9 @@ function Events() {
                 const response = await axios.get('http://localhost:8000/events', {
                     params: { year: year, month: month }
                 });
-                setEvents(response.data)
+                const sortedEvents = sortEvents(response.data, sortOption);
+                setEvents(sortedEvents);
                 const eventsRes = response.data;
-                console.log(eventsRes)
                 const eventsMappedByDay = {};
 
                 eventsRes.forEach(event => {
@@ -123,11 +123,41 @@ function Events() {
             }
         };
         fetchEvents();
-    }, [year, month]);
+    }, [sortOption]);
+
+    const handleSortChange = (event) => {
+        setSortOption(event.target.value);
+    };
+
+    const sortEvents = (events, option) => {
+        return events.sort((a, b) => {
+          const dateA = new Date(a.eventStartDatetime);
+          const dateB = new Date(b.eventStartDatetime);
+          const dateC = new Date(a.createdDatetime);
+          const dateD = new Date(b.createdDatetime);
+
+          if (option === 'late') {
+            return dateB - dateA;
+          } else if (option === 'oldest') {
+            return dateC - dateD;
+          } else if (option === 'latest') {
+            return dateD - dateC;
+          } else {
+            return dateA - dateB;
+          }
+        });
+    };
 
     return (
         <div className="calendar-container">
-            <div className='options-container'>                
+            <div className='options-container'>    
+                <div class="filter">
+                    <div className="filter-text">Filter:</div>
+                    <input type="text" class="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
+                    <button type="submit" class="filterButton" onClick={filterEvents}>
+                        <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                </div>            
                 <div className="filters">
                     {categories.map((category) => (
                         <label key={category}>
@@ -142,19 +172,23 @@ function Events() {
                         </label>
                     ))}
                 </div>
+                {viewMode === 'list' ? (
+                    <div className="sort-options">
+                        <label>Sort by:</label>
+                        <select onChange={handleSortChange} value={sortOption}>
+                        <option value="soon">Soon</option>
+                        <option value="late">Late</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="latest">Latest</option>
+                        </select>
+                    </div>
+                ) : (<></>)}
                 <div className="view-mode-toggle">
                     <button className={`toggle-button ${viewMode === 'calendar' ? 'active' : ''}`} onClick={() => setViewMode('calendar')} >
                         <FontAwesomeIcon icon={faCalendar} />
                     </button>
                     <button className={`toggle-button ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')} >
                         <FontAwesomeIcon icon={faList} />
-                    </button>
-                </div>
-                <div class="filter">
-                    <div className="filter-text">Filter:</div>
-                    <input type="text" class="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
-                    <button type="submit" class="filterButton" onClick={filterEvents}>
-                        <FontAwesomeIcon icon={faSearch} />
                     </button>
                 </div>
             </div>

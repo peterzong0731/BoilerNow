@@ -24,7 +24,7 @@ function Posts() {
     return posts.sort((a, b) => {
       const dateA = new Date(a.postedDatetime);
       const dateB = new Date(b.postedDatetime);
-      return option === 'mostRecent' ? dateB - dateA : dateA - dateB;
+      return option === 'soon' ? dateB - dateA : dateA - dateB;
     });
   };
 

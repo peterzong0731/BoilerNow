@@ -797,7 +797,7 @@ router.patch('/rate/:orgId/:userId', async (req, res) => {
 });
 
 /*
-    Description: Unate an org
+    Description: Unrate an org
     Incoming data:
         params:
             orgId: string | ObjectId,

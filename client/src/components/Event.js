@@ -228,43 +228,50 @@ function Event() {
         <div className={`event-capacity ${category}`}>Available: {capacity - usersInterested.length} / {capacity}</div>
       )}
         <div className={`event-capacity ${category}`}>Age requirement: {ageRequirement}</div>
-      {currentUser ? (
-        hasJoined ? (
-          <>
-            <button className="event-join-button-disabled" disabled>Joined</button>
-            <button className="event-unregister-button" onClick={handleUnregister}>Unregister</button>
-          </>
-        ) : (
-          (userAge >= ageRequirement) ? (
-            <button className="event-join-button" onClick={handleJoin}>Join</button>
+      <div className='event-buttons-container'>
+        <div className='first-row-buttons'>
+          {currentUser ? (
+            hasJoined ? (
+              <>
+                <button className="event-join-button-disabled" disabled>Joined</button>
+                <button className="event-unregister-button" onClick={handleUnregister}>Unregister</button>
+              </>
+            ) : (
+              (userAge >= ageRequirement) ? (
+                <button className="event-join-button" onClick={handleJoin}>Join</button>
+              ) : (
+                <button className="event-join-button-disabled" disabled>Not old enough</button>
+              )
+            )
           ) : (
-            <button className="event-join-button-disabled" disabled>Not old enough</button>
-          )
-        )
-      ) : (
-        <button className="event-join-button-disabled" disabled>Log in to join</button>
-      )}
-      {currentUser ? (
-        <>
-          <button className="event-share-button" onClick={handleShareClick}>Share</button>
-          {showShareBox && (
-            <div className="share-box">
-              <input 
-                type="email" 
-                value={shareEmail} 
-                onChange={(e) => setShareEmail(e.target.value)} 
-                placeholder="Enter email to share" 
-              />
-              <button className="share-box-button" onClick={handleShare}>Send</button>
-            </div>
+            <button className="event-join-button-disabled" disabled>Log in to join</button>
           )}
-        </>
-      ) : (
-        <button className="event-join-button-disabled" disabled>Log in to share</button>
-      )}
-      <button className="event-data-button" onClick={handleAnalyticsClick}><FontAwesomeIcon icon={faChartBar} /></button>
-      <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Google")}>Add to Google Calendar</button>
-      <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Outlook")}>Add to Outlook Calendar</button>
+          <button className="event-data-button" onClick={handleAnalyticsClick}><FontAwesomeIcon icon={faChartBar} /></button>
+        </div>
+        <div className='second-row-buttons'>
+          {currentUser ? (
+            <>
+              <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Google")}>Add to Google Calendar</button>
+              <button className="event-external-calendar-button" onClick={() => handleAddToExtCalendarClick("Outlook")}>Add to Outlook Calendar</button>
+              <button className="event-share-button" onClick={handleShareClick}>Share</button>
+              {showShareBox && (
+                <div className="share-box">
+                  <input 
+                    type="email" 
+                    value={shareEmail} 
+                    onChange={(e) => setShareEmail(e.target.value)} 
+                    placeholder="Enter email to share" 
+                  />
+                  <button className="share-box-button" onClick={handleShare}>Send</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button className="event-join-button-disabled" disabled>Log in to share</button>
+          )}
+        </div>
+      </div>
+
       {showCopyBox && (
         <div className="external-calendar-box">
           <p id="copied-to-clipboard">Copied to clipboard!</p>

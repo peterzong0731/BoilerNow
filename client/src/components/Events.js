@@ -3,6 +3,8 @@ import './Events.css';
 import EventCard from './EventCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar, faList } from '@fortawesome/free-solid-svg-icons';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -124,9 +126,14 @@ function Events() {
                         </label>
                     ))}
                 </div>
-                <button className="toggle-view-button" onClick={toggleViewMode}>
-                    {viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View'}
-                </button>
+                <div className="view-mode-toggle">
+                    <button className={`toggle-button ${viewMode === 'calendar' ? 'active' : ''}`} onClick={() => setViewMode('calendar')} >
+                        <FontAwesomeIcon icon={faCalendar} />
+                    </button>
+                    <button className={`toggle-button ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')} >
+                        <FontAwesomeIcon icon={faList} />
+                    </button>
+                </div>
             </div>
             {viewMode === 'calendar' ? (
                 <div className="month-view">

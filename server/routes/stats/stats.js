@@ -138,10 +138,10 @@ router.get('/', async (req, res) => {
             if (org.contactInfo.discord != "") orgStats.orgsWithDiscordCnt += 1;
             if (org.contactInfo.twitter != "") orgStats.orgsWithTwitterCnt += 1;
             if (org.contactInfo.phoneNumber != "") orgStats.orgsWithPhoneNumberCnt += 1;
-            if (org.rating) {
-                orgStats.avgNonNullRating += org.rating;
+            org.ratings.forEach((rating) => {
+                orgStats.avgNonNullRating += rating;
                 nonNullRatingCnt += 1;
-            }
+            });
             orgStats.avgContributorCnt += org.contributors.length;
             orgStats.avgFollowerCnt += org.followers.length;
             orgStats.avgEventCnt += org.events.length;

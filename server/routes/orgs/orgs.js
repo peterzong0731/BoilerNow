@@ -26,8 +26,13 @@ const newOrgTemplate = fs.readFileSync("./routes/orgs/dbTemplates/newOrgTemplate
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
-                "owner": string | ObjectId,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
+                "owner": ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,
                 "followers": [ObjectId],
@@ -90,7 +95,12 @@ router.get('/', async (req, res) => {
                 "discord": string,
                 "phoneNumber": string
             },
-            "rating": double,
+            "ratings": [
+                {
+                    "ratedBy": ObjectId
+                    "rating": number
+                }
+            ],
             "owner": string | ObjectId,
             "contributors": [ObjectId],
             "lastActive": UTC Date,
@@ -606,7 +616,12 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
                 "owner": string | ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,
@@ -673,7 +688,12 @@ router.get('/owner/:userId', async (req, res) => {
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
                 "owner": string | ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,

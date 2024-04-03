@@ -796,4 +796,57 @@ router.patch('/rate/:orgId/:userId', async (req, res) => {
     }
 });
 
+/*
+    Description: Unate an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+    Outgoing data: None
+    On Success:
+        - 200 : User's rating has been removed from the org.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error unrating an org. -> There was a db error when trying to unrate the org.
+*/
+router.patch('/unrate/:orgId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["orgId", "userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+    try {
+        let result = await db.collection("orgs").updateOne(
+            {
+                "_id": orgId,
+                "ratings": {
+                    "$elemMatch": { "ratedBy": userId }
+                }
+            },
+            {
+                "$pull": { "ratings": { "ratedBy": userId } }
+            }
+        );
+
+        if (result.modifiedCount === 0) {
+            console.log("No rating matched.");
+            res.status(200).json('No Rating Found');
+        } else {
+            res.status(200).json('Removed Rating');
+        }
+
+        
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Error removing rating for the org.');
+    }
+});
+
 export default router;

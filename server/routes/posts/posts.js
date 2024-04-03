@@ -375,4 +375,77 @@ router.get('/orgPosts/:orgId', async (req, res) => {
     }
 });
 
+/*  
+    Description: Like/Unlike a post by post-id
+    Incoming data:
+        params:
+            postId: string | ObjectId
+            userId: string | ObjectId
+    Outgoing data: 
+        [
+            ObjectId
+        ]
+    On Success:
+        - 200 : Array of type User Id -> Data will be sent following the Outgoing data structure.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error liking/unliking the post. -> There was a db error when trying to like/unlike the specific post.
+*/
+router.post('/like/:postId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["postId", "userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const postId = new ObjectId(req.params.postId);
+    const userId = new ObjectId(req.params.userId);
+
+    try {
+        const results = await db.collection("users").findOne(
+            { "posts.postId": postId },
+            { 
+                projection: { 
+                    _id: 0,
+                    "posts.$": 1 
+                } 
+            }
+        );
+        if (!results) {
+            return res.status(404).send("Post not found.");
+        }
+        const post = results["posts"][0];
+
+        const isLikedByUser = post.likedBy.some(id => id.toString() === userId.toString());
+        if (isLikedByUser) {
+            post.likedBy = post.likedBy.filter(id => !id.equals(userId));
+        } else {
+            post.likedBy.push(userId);
+        }
+
+        const updatedResults = db.collection("users").updateOne(
+            { "posts.postId": postId },
+            {
+              $set: {
+                "posts.$.likedBy": post.likedBy
+              }
+            }
+        );
+
+        if (updatedResults.modifiedCount === 0) {
+            throw new Error('Post Update Failed')
+        }
+
+        return res.status(200).json(post.likedBy);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error liking/unliking the post.");
+    }
+});
+
 export default router;

@@ -500,4 +500,53 @@ router.patch('/comment/:postId/:userId', async (req, res) => {
     }
 });
 
+/*  
+    Description: Remove a comment from a post
+    Incoming data:
+        params:
+            postId: string | ObjectId
+            replyId: string | ObjectId 
+    Outgoing data:
+    On Success:
+        - 200 : Comment was removed from the post successfully.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error removing comment from the post. -> There was a db error when trying to remove the comment.
+*/
+router.patch('/uncomment/:postId/:replyId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["postId", "replyId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const postId = new ObjectId(req.params.postId);
+    const replyId = new ObjectId(req.params.replyId);
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.postId": postId },
+            {
+                $pull: {
+                    "posts.$.replies": { replyId: replyId }
+                }
+            }
+        );
+        if (results.matchedCount === 0) {
+            res.status(500).send("Post with id " + postId + " not found.");
+        } else if (results.modifiedCount === 0) {
+            res.status(500).send("Comment with comment id " + replyId + " was not found.");
+        } else {
+            res.status(200).send("Comment removed successfully");
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error removing the comment from the post.");
+    }
+});
+
 export default router;

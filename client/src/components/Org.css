@@ -56,3 +56,36 @@
   display: flex;
   flex-direction: column;
 }
+
+.org-report-button {
+  font-family: 'Calistoga', sans-serif;
+  background-color: #f01a0b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 10px 0 0 5px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.report-box {
+  margin: 10px;
+}
+
+.report-box button {
+  font-family: 'Calistoga', sans-serif;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  outline: none;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+}

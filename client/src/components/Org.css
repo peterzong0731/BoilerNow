@@ -95,3 +95,9 @@
   color: #666666;
   cursor: not-allowed;
 }
+
+.report-box {
+  position: absolute;
+  right: 8%
+}
+

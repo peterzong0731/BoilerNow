@@ -162,31 +162,32 @@ function Org() {
                   <button className="event-join-button" onClick={handleFollow}>Follow</button>
                 )}
                 <button className="org-report-button" onClick={handleReport}>Report</button>
-                {showReportBox && (
-                  <div className="report-box">
-                    <textarea
-                      value={reportContent}
-                      onChange={handleChange}
-                      rows={6}
-                      cols={50}
-                      placeholder="Enter report reason..."
-                    />
-                    <div>
-                      <button 
-                        disabled={reportContent.trim() === ''} 
-                        className={reportContent.trim() === '' ? 'report-box-disabled-button' : 'report-box-enabled-button'} 
-                        onClick={handleReportSubmit}>
-                          Submit
-                      </button>
-                    </div>
-                  </div>
-                )}
+                
               </>
             ) : (
               <button className="event-join-button-disabled" disabled>Log in to follow</button>
             )}
           </div>
         </div>
+        {showReportBox && (
+          <div className="report-box">
+            <textarea
+              value={reportContent}
+              onChange={handleChange}
+              rows={6}
+              cols={50}
+              placeholder="Enter report reason..."
+            />
+            <div className="report-content">
+              <button 
+                disabled={reportContent.trim() === ''} 
+                className={reportContent.trim() === '' ? 'report-box-disabled-button' : 'report-box-enabled-button'} 
+                onClick={handleReportSubmit}>
+                  Submit
+              </button>
+            </div>
+          </div>
+        )}
         {currentUser && hasFollowed ? (
           <div className='updates-container'>
             <h2>Updates</h2>

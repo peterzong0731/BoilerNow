@@ -10,9 +10,11 @@
 }
   
 .event-card-image {
-    width: 150px;
-    height: 100px;
+    width: 210px;
+    height: 210px;
     object-fit: cover;
+    margin-left: 20px;
+    border-radius: 10px;
 }
   
 .event-card-content {

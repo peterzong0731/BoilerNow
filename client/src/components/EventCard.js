@@ -11,7 +11,7 @@ function EventCard({ event }) {
   return (
     <div className="event-card">
       {event.images && event.images.length > 0 && (
-        <img src={event.images[0]} alt={event.title} className="event-card-image" />
+        <img src={`http://localhost:8000/${event.images[0]}`} alt={event.title} className="event-card-image" />
       )}
       <div className="event-card-content">
         <h3 className="event-card-title">{event.title}</h3>

@@ -15,6 +15,7 @@ function Org() {
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
   const [showReportBox, setShowReportBox] = useState(false);
+  const [reportContent, setReportContent] = useState('');
 
   const fetchOrg = async () => {
     try {
@@ -112,6 +113,10 @@ function Org() {
     setShowReportBox(!showReportBox);
   };
 
+  const handleChange = (event) => {
+    setReportContent(event.target.value);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -143,6 +148,8 @@ function Org() {
                 {showReportBox && (
                   <div className="report-box">
                     <textarea
+                      value={reportContent}
+                      onChange={handleChange}
                       rows={6}
                       cols={50}
                       placeholder="Enter report reason..."

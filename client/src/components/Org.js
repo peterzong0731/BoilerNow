@@ -117,12 +117,29 @@ function Org() {
     setReportContent(event.target.value);
   };
 
+  const handleReportSubmit = async () => {
+    try {
+      const url = `http://localhost:8000/reportOrg/${currentUser}/${id}`;
+
+      const response = await axios.post(url, { reason: reportContent });
+
+      toast.success("Successfully submitted report.");
+
+      setReportContent('');
+      setShowReportBox(!showReportBox);
+
+    } catch (error) {
+      toast.error('Error in submitting report.');
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className='org-page-outer-container'>
+      <Toaster richColors position="top-center"/>
       {orgData.bannerImg && <img src={orgData.bannerImg} alt="Banner Image" className='org-banner' />}
       <div className='org-page-inner-container'>
         <div className='org-images'>
@@ -154,7 +171,14 @@ function Org() {
                       cols={50}
                       placeholder="Enter report reason..."
                     />
-                    <div><button className="report-box-button">Submit</button></div>
+                    <div>
+                      <button 
+                        disabled={reportContent.trim() === ''} 
+                        className={reportContent.trim() === '' ? 'report-box-disabled-button' : 'report-box-enabled-button'} 
+                        onClick={handleReportSubmit}>
+                          Submit
+                      </button>
+                    </div>
                   </div>
                 )}
               </>

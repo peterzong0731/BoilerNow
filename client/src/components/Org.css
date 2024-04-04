@@ -76,16 +76,22 @@
 
 .report-box button {
   font-family: 'Calistoga', sans-serif;
-  padding: 5px 10px;
+  padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
   border: none;
-  padding: 10px 15px;
-  font-size: 14px;
-  cursor: pointer;
   border-radius: 5px;
   outline: none;
   transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.report-box-enabled-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.report-box-disabled-button {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
 }

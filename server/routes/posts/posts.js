@@ -7,6 +7,7 @@ import { sendNewPostEmail } from "../../emails/newPostEmail.js";
 
 const router = express.Router();
 const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTemplate.json", "utf8");
+const newReplyTemplate = fs.readFileSync("./routes/posts/dbTemplates/newReplyTemplate.json", "utf8");
 
 /*  
     Description: Get all posts
@@ -99,11 +100,11 @@ router.get('/post/:postId', async (req, res) => {
     try {
         const post = await db.collection("users").findOne(
             { "posts.postId": postId },
-            { 
-                projection: { 
+            {
+                projection: {
                     _id: 0,
-                    "posts.$": 1 
-                } 
+                    "posts.$": 1
+                }
             }
         );
         if (!post) {
@@ -352,20 +353,20 @@ router.get('/orgPosts/:orgId', async (req, res) => {
         var eventIds = org.events;
 
         const results = await db.collection("users").aggregate([
-                { $unwind: "$posts" },
-                {
-                    $match: {
-                        "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        "posts": 1
-                    }
-                },
-                { $replaceWith: "$posts" }
-            ]).toArray();
+            { $unwind: "$posts" },
+            {
+                $match: {
+                    "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "posts": 1
+                }
+            },
+            { $replaceWith: "$posts" }
+        ]).toArray();
 
         res.status(200).json(results);
 
@@ -405,11 +406,11 @@ router.patch('/like/:postId/:userId', async (req, res) => {
     try {
         const results = await db.collection("users").findOne(
             { "posts.postId": postId },
-            { 
-                projection: { 
+            {
+                projection: {
                     _id: 0,
-                    "posts.$": 1 
-                } 
+                    "posts.$": 1
+                }
             }
         );
         if (!results) {
@@ -427,9 +428,9 @@ router.patch('/like/:postId/:userId', async (req, res) => {
         const updatedResults = db.collection("users").updateOne(
             { "posts.postId": postId },
             {
-              $set: {
-                "posts.$.likedBy": post.likedBy
-              }
+                $set: {
+                    "posts.$.likedBy": post.likedBy
+                }
             }
         );
 
@@ -442,6 +443,60 @@ router.patch('/like/:postId/:userId', async (req, res) => {
     } catch (e) {
         console.log(e);
         res.status(500).send("Error liking/unliking the post.");
+    }
+});
+
+/*  
+    Description: Add a comment to a post
+    Incoming data:
+        params:
+            postId: string | ObjectId
+            userId: string | ObjectId
+        body:
+            content: string 
+    Outgoing data:
+    On Success:
+        - 200 : Comment was added to the post successfully.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error adding comment to post. -> There was a db error when trying to add a comment.
+*/
+router.patch('/comment/:postId/:userId', async (req, res) => {
+    const inputDataCheck = allDataPresent(
+        ["postId", "userId"],
+        ["content"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const newComment = JSON.parse(newReplyTemplate);
+    newComment.replyId = new ObjectId();
+    newComment.postedDatetime = new Date();
+    newComment.content = req.body.content;
+    newComment.authorId = new ObjectId(req.params.userId);
+
+    const postId = new ObjectId(req.params.postId);
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.postId": postId },
+            {
+                $push: {
+                    "posts.$.replies": newComment
+                }
+            }
+        );
+        if (results.matchedCount === 0) {
+            res.status(500).send("Post with id " + postId + " not found.");
+        } else {
+            res.status(200).send("Comment added successfully with id " + newComment.replyId);
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error adding a comment the post.");
     }
 });
 

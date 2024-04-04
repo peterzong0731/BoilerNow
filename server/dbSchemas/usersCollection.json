@@ -123,9 +123,6 @@
                                 "authorId": {
                                     "bsonType": "objectId"
                                 },
-                                "replyingToUserId": {
-                                    "bsonType": "objectId"
-                                },
                                 "postedDatetime": {
                                     "bsonType": "date"
                                 },
@@ -140,7 +137,6 @@
                                 "replyId",
                                 "content",
                                 "authorId",
-                                "replyingToUserId",
                                 "postedDatetime",
                                 "likedBy"
                             ]

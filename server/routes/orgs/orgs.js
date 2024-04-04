@@ -841,8 +841,8 @@ router.patch('/unrate/:orgId/:userId', async (req, res) => {
         );
 
         if (result.modifiedCount === 0) {
-            console.log("No rating matched.");
-            res.status(200).json('No Rating Found');
+            console.log('No User Rating Found for user id ' + userId);
+            res.status(500).json('No User Rating Found');
         } else {
             res.status(200).json('Removed Rating');
         }

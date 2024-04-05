@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import './Org.css'
 import { Toaster, toast } from 'sonner'
 import PostCard from './PostCard';
+import EventCard from './EventCard';
 
 function Org() {
   const { id } = useParams();
@@ -14,19 +15,26 @@ function Org() {
   const [orgPosts, setOrgPosts] = useState([])
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
+  const currentUserNameFromStorage = localStorage.getItem('name');
+  const currentUserName = currentUserNameFromStorage ? localStorage.getItem('name') : null;
   const [showReportBox, setShowReportBox] = useState(false);
   const [reportContent, setReportContent] = useState('');
+  const [orgEvents, setOrgEvents] = useState([])
 
   const fetchOrg = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/orgs/${id}`);
 
-      const { followers } = response.data;
-      console.log(response.data);
+      const { followers, events } = response.data;
+
       setOrgData(response.data);
       setUsersFollowed(followers)
+      setOrgEvents(events)
 
-      const isFollowing = followers.some(user => user === currentUser);
+      console.log(followers)
+      console.log(currentUser)
+      const isFollowing = followers.some(user => user.userId === currentUser);
+      console.log(isFollowing)
       setHasFollowed(isFollowing);
 
       const postsResponse = await axios.get(`http://localhost:8000/posts/orgPosts/${id}`);
@@ -87,7 +95,7 @@ function Org() {
       const response = await axios.patch(`http://localhost:8000/orgs/follow/${id}/${currentUser}`);
       console.log(response.data)
 
-      setUsersFollowed(prevUsers => [...prevUsers, currentUser]);
+      setUsersFollowed(prevUsers => [...prevUsers, { userId: currentUser, name: currentUserName }]);
       setHasFollowed(true);
 
       toast.success("Successfully followed org!")
@@ -190,18 +198,30 @@ function Org() {
         )}
         {currentUser && hasFollowed ? (
           <div className='updates-container'>
-            <h2>Updates</h2>
+            <h2>Updates:</h2>
             <div className="org-posts-container">
-              {orgPosts.map(post => (
+              {orgPosts.length ? orgPosts.map(post => (
                 <PostCard key={post._id} post={post} />
-              ))}
+              )) : <p>No updates</p>}
             </div>
           </div>
         ) : (
           <></>
-        )
-        }
+        )}
+        <div className='updates-container'>
+          <h2>Events:</h2>
+          {orgEvents ? orgEvents.map((event, idx) => (
+            <EventCard key={event._id} event={event} />
+          )) : <div className='no-orgs-text'>There are no events to display.</div>}
+        </div>
 
+        <div className='updates-container'>
+          <h2>Members:</h2>
+          {usersFollowed ? usersFollowed.map((follower, idx) => (
+            <p>{follower.name}</p>
+          )) : <div className='no-orgs-text'>There are no members.</div>}
+        </div>
+        
         {/* <input type="file" accept="image/*" onChange={handleOrgImgClick} />
         <input type="file" accept="image/*" onChange={handleBannerImgClick} /> */}
       </div>

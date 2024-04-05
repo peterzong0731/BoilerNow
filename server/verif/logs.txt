@@ -1,0 +1,536 @@
+[4/4/2024, 8:48:00 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:00 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:00 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:00 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:03 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 8:48:03 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 8:48:03 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:03 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:04 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 8:48:04 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:04 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:04 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:04 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 8:48:12 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:12 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 8:48:14 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:14 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:14 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:14 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:16 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:16 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:16 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:48:16 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:48:17 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 8:48:17 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 8:48:17 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 8:48:17 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 8:49:24 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:49:24 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 8:49:24 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 8:49:24 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 10:34:43 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 10:34:43 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 10:34:43 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 10:34:43 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 10:34:55 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 10:34:55 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 10:34:55 PM EDT] GET /posts -> Get all posts.
+[4/4/2024, 10:34:55 PM EDT] SUCCESS -> Returned all posts.
+[4/4/2024, 10:34:56 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:34:56 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:34:56 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:34:56 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:35:08 PM EDT] GET /user/null -> Get user information for: null
+[4/4/2024, 10:35:08 PM EDT] GET /events/660de4cba195cb831f837289 -> Get specific event: 660de4cba195cb831f837289
+[4/4/2024, 10:35:08 PM EDT] 500 ERROR -> Error fetching user.
+[4/4/2024, 10:35:09 PM EDT] GET /user/null -> Get user information for: null
+[4/4/2024, 10:35:09 PM EDT] 500 ERROR -> Error fetching user.
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned event data for: 660de4cba195cb831f837289
+[4/4/2024, 10:35:09 PM EDT] GET /events/660de4cba195cb831f837289 -> Get specific event: 660de4cba195cb831f837289
+[4/4/2024, 10:35:09 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned event data for: 660de4cba195cb831f837289
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:35:09 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:35:09 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:35:09 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:35:09 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:09 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:36:09 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:36:09 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:36:09 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:36:39 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:36:39 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:36:39 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:36:39 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:36:39 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:39 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:40 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:41 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:36:41 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:36:41 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:36:41 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:36:44 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:36:44 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:37:11 PM EDT] POST /login -> Login user with email: antonyni123@gmail.com
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> User with email 'antonyni123@gmail.com' was logged in.
+[4/4/2024, 10:37:11 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 10:37:11 PM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all events created by a user.
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 10:37:11 PM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/4/2024, 10:38:37 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:37 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:37 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:37 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:38 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:38 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:40 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:40 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:40 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:40 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:41 PM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] GET /posts/orgPosts/660e29e715228e3d3edd3088 -> Get all posts by org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] SUCCESS -> Returned all posts by org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] GET /posts/orgPosts/660e29e715228e3d3edd3088 -> Get all posts by org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:41 PM EDT] SUCCESS -> Returned all posts by org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:38:42 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:42 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:42 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:38:42 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:38:43 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:38:43 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:02 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:34 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:34 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:34 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:41:34 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:43:28 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:04 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:24 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:24 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:24 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:24 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:25 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:25 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:25 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:44:25 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:17 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:45:24 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:45:24 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:45:24 PM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/4/2024, 10:45:24 PM EDT] SUCCESS -> All events returned.
+[4/4/2024, 10:46:27 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:46:27 PM EDT] GET /events/660e3623d50ffa55d2dd1c01 -> Get specific event: 660e3623d50ffa55d2dd1c01
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned event data for: 660e3623d50ffa55d2dd1c01
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:46:27 PM EDT] GET /events/660e3623d50ffa55d2dd1c01 -> Get specific event: 660e3623d50ffa55d2dd1c01
+[4/4/2024, 10:46:27 PM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/4/2024, 10:46:27 PM EDT] GET /user/660dbe526bef18b8c2b5233c -> Get user information for: 660dbe526bef18b8c2b5233c
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned event data for: 660e3623d50ffa55d2dd1c01
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned user data for: 660dbe526bef18b8c2b5233c
+[4/4/2024, 10:46:27 PM EDT] GET /user/660dbe526bef18b8c2b5233c -> Get user information for: 660dbe526bef18b8c2b5233c
+[4/4/2024, 10:46:27 PM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned user data for: 660dbe526bef18b8c2b5233c
+[4/4/2024, 10:46:27 PM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:46:27 PM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:46:28 PM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/4/2024, 10:46:58 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:46:58 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:46:58 PM EDT] GET /orgs -> Get all orgs.
+[4/4/2024, 10:46:58 PM EDT] SUCCESS -> All orgs returned.
+[4/4/2024, 10:46:59 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/4/2024, 10:46:59 PM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:30 AM EDT] GET /posts -> Get all posts.
+[4/5/2024, 6:36:30 AM EDT] SUCCESS -> Returned all posts.
+[4/5/2024, 6:36:30 AM EDT] GET /posts -> Get all posts.
+[4/5/2024, 6:36:30 AM EDT] SUCCESS -> Returned all posts.
+[4/5/2024, 6:36:34 AM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/5/2024, 6:36:34 AM EDT] SUCCESS -> All events returned.
+[4/5/2024, 6:36:34 AM EDT] GET /events?year=2024&month=3 -> Get all events
+[4/5/2024, 6:36:34 AM EDT] SUCCESS -> All events returned.
+[4/5/2024, 6:36:34 AM EDT] GET /orgs -> Get all orgs.
+[4/5/2024, 6:36:34 AM EDT] SUCCESS -> All orgs returned.
+[4/5/2024, 6:36:34 AM EDT] GET /orgs -> Get all orgs.
+[4/5/2024, 6:36:34 AM EDT] SUCCESS -> All orgs returned.
+[4/5/2024, 6:36:35 AM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] GET /orgs/660e29e715228e3d3edd3088 -> Get specific org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] GET /posts/orgPosts/660e29e715228e3d3edd3088 -> Get all posts by org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] SUCCESS -> Returned org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] SUCCESS -> Returned all posts by org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] GET /posts/orgPosts/660e29e715228e3d3edd3088 -> Get all posts by org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:35 AM EDT] SUCCESS -> Returned all posts by org: 660e29e715228e3d3edd3088
+[4/5/2024, 6:36:36 AM EDT] GET /orgs -> Get all orgs.
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> All orgs returned.
+[4/5/2024, 6:36:36 AM EDT] GET /orgs -> Get all orgs.
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> All orgs returned.
+[4/5/2024, 6:36:36 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:36:36 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:22 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:22 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:22 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:22 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:52 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:52 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:52 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:37:52 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:38:20 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:38:20 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:38:20 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:38:20 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:35 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:39:35 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:35 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:36 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:36 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:39:37 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:38 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:39:39 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:39:39 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:40:25 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:25 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:25 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:25 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:25 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:25 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:40:28 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:40:28 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:28 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:40:29 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:40:29 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:29 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:34 AM EDT] PATCH /orgs/unfollow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Unfollow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:35 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is no longer following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:37 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:39 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:39 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is now following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:43 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:44 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:44 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:44 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:40:45 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:40:45 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:41:44 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:44 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:44 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:44 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:53 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:54 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:41:56 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:41:56 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:43:24 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:24 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:24 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:24 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:27 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:27 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:27 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:27 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:31 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:32 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:43:34 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:34 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:36 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:36 AM EDT] 500 ERROR -> Error following org.
+[4/5/2024, 6:43:42 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:42 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:44 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /user/660de47fa195cb831f837287 -> Get user information for: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned user data for: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:43:44 AM EDT] GET /events/user-events/660de47fa195cb831f837287 -> Get all events created by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all events created by a user.
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /posts/660de47fa195cb831f837287 -> Get all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all posts by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /user-attended-events/660de47fa195cb831f837287 -> Get all events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned list of events attended by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /orgs/owner/660de47fa195cb831f837287 -> Get orgs the user '660de47fa195cb831f837287' is an owner of.
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all orgs owned by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] GET /orgs/following/660de47fa195cb831f837287 -> Get orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:44 AM EDT] SUCCESS -> Returned all orgs followed by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:48 AM EDT] PATCH /orgs/unfollow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Unfollow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:48 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is no longer following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:50 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:51 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:43:51 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is now following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:53 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:43:54 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:49 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:49 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:50 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:50 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:45:51 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:46:59 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:46:59 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:46:59 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:46:59 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:08 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:08 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:08 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:08 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:16 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:16 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:16 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:16 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:20 AM EDT] PATCH /orgs/unfollow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Unfollow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:47:20 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is no longer following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:21 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:47:21 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is now following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:22 AM EDT] PATCH /orgs/unfollow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Unfollow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:47:22 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is no longer following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:23 AM EDT] PATCH /orgs/follow/660de4a0a195cb831f837288/660de47fa195cb831f837287 -> Follow an org '660de4a0a195cb831f837288' by user: 660de47fa195cb831f837287
+[4/5/2024, 6:47:23 AM EDT] SUCCESS -> User '660de47fa195cb831f837287' is now following org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:46 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:46 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:46 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:47:47 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:48:39 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:48:39 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:48:39 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:48:39 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:10 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:10 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:10 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:10 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:33 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:33 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:33 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:33 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:39 AM EDT] GET /orgs/660de4a0a195cb831f837288 -> Get specific org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:39 AM EDT] SUCCESS -> Returned org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:39 AM EDT] GET /posts/orgPosts/660de4a0a195cb831f837288 -> Get all posts by org: 660de4a0a195cb831f837288
+[4/5/2024, 6:50:39 AM EDT] SUCCESS -> Returned all posts by org: 660de4a0a195cb831f837288

@@ -24,7 +24,7 @@ const newReplyTemplate = fs.readFileSync("./routes/posts/dbTemplates/newReplyTem
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
                 "replies": [Object],
-                "name": string
+                "postAuthorName": string
             }
         ]
     On Success:
@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
                     "posts": 1
                 }
             },
-            { $addFields: { "posts.name": "$name" } },
+            { $addFields: { "posts.postAuthorName": "$name" } },
             { $unset: "name" },
             { $replaceWith: "$posts" }
         ]).toArray();
@@ -282,7 +282,7 @@ router.get('/post/:postId', async (req, res) => {
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
                 "replies": [Object],
-                "name": string
+                "postAuthorName": string
             }
         ]
     On Success:
@@ -318,7 +318,7 @@ router.get('/:userId', async (req, res) => {
                     "posts": 1
                 }
             },
-            { $addFields: { "posts.name": "$name" } },
+            { $addFields: { "posts.postAuthorName": "$name" } },
             { $unset: "name" },
             { $replaceWith: "$posts" }
         ]).toArray();
@@ -485,7 +485,7 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
                 "replies": [Object],
-                "name": string
+                "postAuthorName": string
             }
         ]
     On Success:
@@ -536,7 +536,7 @@ router.get('/orgPosts/:orgId', async (req, res) => {
                     "posts": 1
                 }
             },
-            { $addFields: { "posts.name": "$name" } },
+            { $addFields: { "posts.postAuthorName": "$name" } },
             { $unset: "name" },
             { $replaceWith: "$posts" }
         ]).toArray();

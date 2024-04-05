@@ -2,8 +2,12 @@
 
 .nav a {
     text-decoration: none;
-    color: #FFDB5A;
+    color: #303030;
     font-family: 'Calistoga', sans-serif;
+}
+
+.nav a:hover {
+  color: #FFDB5A;
 }
   
 nav {
@@ -17,7 +21,7 @@ nav {
     color: #FFDB5A;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 3px solid #D2D2D2;
+    border-bottom: 3px solid #FFDB5A;
 }
   
     nav p {
@@ -56,10 +60,10 @@ nav {
   
   .login {
     font-family: 'Calistoga', sans-serif;
-    border: black 1px solid;
+    border: #303030 1px solid;
     background-color: white;
     border-radius: 6px;
-    color: #FFDB5A;
+    color: #303030;
     font-size: 22px;
     width: 100px;
   }

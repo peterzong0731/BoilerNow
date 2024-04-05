@@ -4,6 +4,7 @@ import express from "express";
 import { ObjectId } from "mongodb";
 import { transporter, convertDateToEST } from "./emailUtil.js";
 import { allDataPresent } from "../verif/endpoints.js";
+import { logEndpoint, logSuccess, logError, logEmail } from "../verif/logging.js";
 
 const router = express.Router();
 const adminEmailTemplate = fs.readFileSync("./emails/emailTemplates/reportOrgAdminTemplate.html", "utf8");
@@ -27,6 +28,8 @@ const orgEmailTemplate = fs.readFileSync("./emails/emailTemplates/reportOrgTempl
         - 500 : Error reporting org. -> There was an error when reporting the org.
 */
 router.post('/:userId/:orgId', async (req, res) => {
+    await logEndpoint(req, `User '${req.params.userId ?? ""} wants to report org: ${req.params.orgId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
         ["userId", "orgId"],
         ["reason"],
@@ -34,6 +37,7 @@ router.post('/:userId/:orgId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -46,6 +50,7 @@ router.post('/:userId/:orgId', async (req, res) => {
         const org = await db.collection("orgs").findOne({ "_id": orgId}); 
 
         if (!user || !org) {
+            await logError(404, `User '${req.params.userId}' or org '${req.params.orgId}' not found.`);
             return res.status(404).send("User or Org not found.");
         }
 
@@ -74,13 +79,17 @@ router.post('/:userId/:orgId', async (req, res) => {
         };
         
         await transporter.sendMail(adminMailOptions);
+        await logEmail("Report Org Admin Copy", ["boilernow2023@gmail.com"]);
         await transporter.sendMail(orgMailOptions);
+        await logEmail("Report Org Org Copy", [orgOwner.login.email]);
         
         console.log("Report email sent to: boilernow2023@gmail.com, " + orgOwner.login.email);
+        await logSuccess(`The org '${req.params.orgId}' was reported by user: ${req.params.userId}`);
         res.status(200).send("Org Report Email Shared.");
 
     } catch (e) {
         console.error(e);
+        await logError(500, "Error reporting org.");
         res.status(500).send('Error reporting org.');
     }
 });

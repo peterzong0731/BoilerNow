@@ -1,6 +1,7 @@
 import fs from "fs";
 import db from "../conn.js"
 import { transporter, convertDateToEST } from "./emailUtil.js";
+import { logError, logEmail } from "../verif/logging.js";
 
 const sendNewEventEmail = async (eventObj) => {
     try {
@@ -29,8 +30,11 @@ const sendNewEventEmail = async (eventObj) => {
         
         emailTemplate = emailTemplate.replace("{{images}}", imgHTML);
 
+        let listOfEmails = [];
+
         users.forEach(user => {
             let email = user.login.email;
+            listOfEmails.push(email);
             let startTime = convertDateToEST(eventObj.eventStartDatetime);
             let endTime = convertDateToEST(eventObj.eventEndDatetime);
             let mailOptions = {
@@ -46,11 +50,15 @@ const sendNewEventEmail = async (eventObj) => {
                 attachments: eventImgs
             };
             transporter.sendMail(mailOptions);
+
             console.log("New event email sent to: " + email);
         });
 
+        await logEmail("New Event", listOfEmails);
+
     } catch (e) {
         console.log("Error sending new event emails.")
+        await logError(500, "Error sending new event emails.");
         console.log(e);
     }
 };

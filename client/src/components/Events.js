@@ -3,6 +3,8 @@ import './Events.css';
 import EventCard from './EventCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar, faList, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -38,10 +40,8 @@ function Events() {
     const emptySlotsAtEnd = Array(emptySlotsAfterLastDay).fill(null);
     const userStr = localStorage.getItem('user');
     const [viewMode, setViewMode] = useState('calendar');
-
-    const toggleViewMode = () => {
-        setViewMode(viewMode === 'calendar' ? 'list' : 'calendar');
-    };
+    const [filterKeywords, setFilterKeywords] = useState([]);
+    const [sortOption, setSortOption] = useState('soon');
 
     const handleMonthNext = () => {
         if (month === 11) {
@@ -70,7 +70,6 @@ function Events() {
     
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
-        console.log(selectedCategory)
     };
 
     const isNewEvent = (eventStartDatetime) => {
@@ -78,7 +77,21 @@ function Events() {
         const now = new Date();
         const hoursDiff = (now - eventDate) / (1000 * 60 * 60);
         return hoursDiff <= 24;
-    };      
+    };
+
+    const handleEnterKeypress = (event) => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            filterEvents();
+        }
+    };
+
+    const filterEvents = () => {
+        const filterString = document.getElementById("filterTerms").value;
+
+        let keywords = filterString.split(";").map(keyword => keyword.trim());
+        setFilterKeywords(keywords);
+    };
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -86,9 +99,9 @@ function Events() {
                 const response = await axios.get('http://localhost:8000/events', {
                     params: { year: year, month: month }
                 });
-                setEvents(response.data)
+                const sortedEvents = sortEvents(response.data, sortOption);
+                setEvents(sortedEvents);
                 const eventsRes = response.data;
-                console.log(eventsRes)
                 const eventsMappedByDay = {};
 
                 eventsRes.forEach(event => {
@@ -105,11 +118,41 @@ function Events() {
             }
         };
         fetchEvents();
-    }, [year, month]);
+    }, [sortOption]);
+
+    const handleSortChange = (event) => {
+        setSortOption(event.target.value);
+    };
+
+    const sortEvents = (events, option) => {
+        return events.sort((a, b) => {
+          const dateA = new Date(a.eventStartDatetime);
+          const dateB = new Date(b.eventStartDatetime);
+          const dateC = new Date(a.createdDatetime);
+          const dateD = new Date(b.createdDatetime);
+
+          if (option === 'late') {
+            return dateB - dateA;
+          } else if (option === 'oldest') {
+            return dateC - dateD;
+          } else if (option === 'latest') {
+            return dateD - dateC;
+          } else {
+            return dateA - dateB;
+          }
+        });
+    };
 
     return (
         <div className="calendar-container">
-            <div className='options-container'>
+            <div className='options-container'>    
+                <div className="filter">
+                    <div className="filter-text">Filter:</div>
+                    <input type="text" className="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
+                    <button type="submit" class="filterButton" onClick={filterEvents}>
+                        <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                </div>            
                 <div className="filters">
                     {categories.map((category) => (
                         <label key={category}>
@@ -124,9 +167,25 @@ function Events() {
                         </label>
                     ))}
                 </div>
-                <button className="toggle-view-button" onClick={toggleViewMode}>
-                    {viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View'}
-                </button>
+                {viewMode === 'list' ? (
+                    <div className="sort-options">
+                        <label>Sort by:</label>
+                        <select onChange={handleSortChange} value={sortOption}>
+                        <option value="soon">Soon</option>
+                        <option value="late">Late</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="latest">Latest</option>
+                        </select>
+                    </div>
+                ) : (<></>)}
+                <div className="view-mode-toggle">
+                    <button className={`toggle-button ${viewMode === 'calendar' ? 'active' : ''}`} onClick={() => setViewMode('calendar')} >
+                        <FontAwesomeIcon icon={faCalendar} />
+                    </button>
+                    <button className={`toggle-button ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')} >
+                        <FontAwesomeIcon icon={faList} />
+                    </button>
+                </div>
             </div>
             {viewMode === 'calendar' ? (
                 <div className="month-view">
@@ -145,13 +204,19 @@ function Events() {
                     <div className="days-grid">
                         {console.log(eventsData)}
                         {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
-                            <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
+                            <div key={index} className={`day-cell ${(day === new Date().getDate() 
+                                                                 && (month === new Date().getMonth())
+                                                                 && (year === new Date().getFullYear())) ? "current-day" : ""}`}>
                                 {day && <div className="day-number">{day}</div>}
-                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status == 'public') || userStr)).map((event, idx) => (
+                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) 
+                                                                                          && ((event.visibility === 'Public') || userStr)
+                                                                                          && (filterKeywords.some(keyword => event.title.toLowerCase().includes(keyword.toLowerCase())) || !filterKeywords.length)
+                                                                                          && (new Date(event.eventStartDatetime).getMonth() == month)
+                                                                                          && (new Date(event.eventStartDatetime).getFullYear() == year)).map((event, idx) => (
                                     <Link key={event._id} to={`/event/${event._id}`}>
                                         <div className={`event ${event.category}`}>
-                                        {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
-                                        {event.title}
+                                            {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
+                                            {event.title}
                                         </div>
                                     </Link>
                                 ))}
@@ -161,9 +226,10 @@ function Events() {
                 </div>
             ) : (
                 <div className="list-view">
-                    {events.map(event => (
+                    {console.log(events[0])}
+                    {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.visibility === 'Public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
                         <EventCard key={event._id} event={event} />
-                    ))}
+                    )) : <div className='no-orgs-text'>There are no events to display.</div>}
                 </div>
             )}
         </div>

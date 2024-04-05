@@ -4,6 +4,7 @@ import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 import multer from 'multer';
 import { allDataPresent } from "../../verif/endpoints.js";
+import { logEndpoint, logSuccess, logError } from "../../verif/logging.js";
 
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
@@ -26,8 +27,13 @@ const newOrgTemplate = fs.readFileSync("./routes/orgs/dbTemplates/newOrgTemplate
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
-                "owner": string | ObjectId,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
+                "owner": ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,
                 "followers": [ObjectId],
@@ -42,6 +48,8 @@ const newOrgTemplate = fs.readFileSync("./routes/orgs/dbTemplates/newOrgTemplate
         - 500 : Error retrieving orgs. -> There was a db error when trying to retrieve the orgs.
 */
 router.get('/', async (req, res) => {
+    await logEndpoint(req, "Get all orgs.");
+
     const inputDataCheck = allDataPresent(
         [],
         [],
@@ -49,6 +57,7 @@ router.get('/', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -64,10 +73,12 @@ router.get('/', async (req, res) => {
             }
         });
 
+        await logSuccess("All orgs returned.");
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving orgs.");
         res.status(500).send("Error retrieving orgs.");
     }
 });
@@ -90,12 +101,20 @@ router.get('/', async (req, res) => {
                 "discord": string,
                 "phoneNumber": string
             },
-            "rating": double,
+            "ratings": [
+                {
+                    "ratedBy": ObjectId
+                    "rating": number
+                }
+            ],
             "owner": string | ObjectId,
             "contributors": [ObjectId],
             "lastActive": UTC Date,
-            "followers": [ObjectId],
-            "events": [ObjectId],
+            "followers": [{
+                "userId": ObjectID,
+                "name": string
+            }],
+            "events": [Event Objects],
             "dateCreated": UTC Date
         }
     On Success:
@@ -106,6 +125,8 @@ router.get('/', async (req, res) => {
         - 500 : Error retrieving org. -> There was a db error when trying to retrieve the org.
 */
 router.get('/:orgId', async (req, res) => {
+    await logEndpoint(req, "Get specific org: "+ (req.params.orgId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["orgId"],
         [],
@@ -113,18 +134,59 @@ router.get('/:orgId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
     const orgId = new ObjectId(req.params.orgId);
 
     try {
-        var results = await db.collection("orgs").findOne({ _id: orgId });
+        var results = await db.collection("orgs").aggregate([
+            { $match: { "_id": orgId } },
+            {
+                $lookup: {
+                    from: "events",
+                    localField: "events",
+                    foreignField: "_id",
+                    as: "events"
+                }
+            },
+            {
+                $addFields: {
+                    events: "$events"
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "followers",
+                    foreignField: "_id",
+                    as: "followers"
+                }
+            },
+            {
+                $addFields: {
+                    followers: {
+                        $map: {
+                            input: "$followers",
+                            as: "follower",
+                            in: {
+                                userId: "$$follower._id",
+                                name: "$$follower.name"
+                            }
+                        }
+                    }
+                }
+            }
+        ]).toArray();
 
-        if (!results) {
+        if (!results || results.length < 1) {
             console.log("Org not found.");
+            await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send("Org not found.");
         }
+
+        results = results[0];
 
         if (results.orgImg != "") {
             results.orgImg = `http://localhost:8000/uploads/${results.orgImg.replace('uploads\\', '')}`
@@ -133,10 +195,12 @@ router.get('/:orgId', async (req, res) => {
             results.bannerImg = `http://localhost:8000/uploads/${results.bannerImg.replace('uploads\\', '')}`
         }
         
+        await logSuccess("Returned org: " + req.params.orgId);
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving org.");
         res.status(500).send("Error retrieving org.");
     }
 });
@@ -164,6 +228,7 @@ router.get('/:orgId', async (req, res) => {
         - 500 : Error creating new org. -> There was a db error when trying to create the org.
 */
 router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: 'bannerImg', maxCount: 1 }]), async (req, res) => {
+    await logEndpoint(req, "Create new org. Created by: " + (req.body.createdBy ?? ""));
     const inputDataCheck = allDataPresent(
         [],
         ["createdBy", "name", "shorthand", "bio", "email"],
@@ -171,6 +236,7 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -206,8 +272,6 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
     newOrgObj.lastActive = new Date();
     newOrgObj.dateCreated = new Date();
 
-    console.log(newOrgObj)
-
     try {
         const results = await db.collection("orgs").insertOne(newOrgObj);
 
@@ -217,15 +281,12 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
         );
 
         console.log("Created new org with _id: " + results.insertedId);
+        await logSuccess("Created new org with _id: " + results.insertedId);
         res.status(201).send(results.insertedId);
 
     } catch (e) {
-        if (e.name === "MongoServerError" && e.code === 121) {
-            console.log("Document failed validation:");
-            console.log(e.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied);
-        } else {
-            console.log(e);
-        }
+        console.log(e);
+        await logEndpoint(500, "Error creating new org.");
         res.status(500).send("Error creating new org.");
     }
 });
@@ -234,6 +295,8 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
 /*  
     Description: Update existing org
     Incoming data:
+        params:
+            orgId: string | ObjectId
         body:
             {
                 "name": string,
@@ -253,14 +316,17 @@ router.post('/create', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: '
         - 500 : Error updating org. -> There was a db error when trying to update the org.
 */
 router.patch('/update/:orgId', upload.fields([{ name: 'orgImg', maxCount: 1 }, { name: 'bannerImg', maxCount: 1 }]), async (req, res) => {
+    await logEndpoint(req, "Update exiting org: " + (req.params.orgId ?? ""));
+
     const inputDataCheck = allDataPresent(
-      ["orgId"],
-      ["name", "shorthand", "bio", "email", "owner"],
-      req
+        ["orgId"],
+        ["name", "shorthand", "bio", "email", "owner"],
+        req
     );
   
     if (!inputDataCheck.correct) {
-      return res.status(400).send(inputDataCheck.message);
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
     }
   
     const orgId = new ObjectId(req.params.orgId);
@@ -291,34 +357,37 @@ router.patch('/update/:orgId', upload.fields([{ name: 'orgImg', maxCount: 1 }, {
     };
   
     if (orgImgPath) {
-      orgData.orgImg = orgImgPath;
+        orgData.orgImg = orgImgPath;
     }
   
     if (bannerImgPath) {
-      orgData.bannerImg = bannerImgPath;
+        orgData.bannerImg = bannerImgPath;
     }
   
     try {
-      const updateResult = await db.collection('orgs').updateOne(
-        { _id: orgId },
-        { $set: orgData }
-      );
+        const updateResult = await db.collection('orgs').updateOne(
+            { _id: orgId },
+            { $set: orgData }
+        );
   
-      if (updateResult.matchedCount === 0) {
-        return res.status(404).send('Org not found.');
-      }
+        if (updateResult.matchedCount === 0) {
+            await logError(404, `Org '${req.params.orgId}' not found.`);
+            return res.status(404).send('Org not found.');
+        }
   
-      if (updateResult.modifiedCount === 0) {
-        throw new Error();
-      }
-  
-      res.status(200).send('Org updated successfully.');
+        if (updateResult.modifiedCount === 0) {
+            throw new Error();
+        }
+
+        await logSuccess(`Org '${req.params.orgId}' updated.`);
+        res.status(200).send('Org updated successfully.');
   
     } catch (e) {
-      console.log(e);
-      res.status(500).send('Error updating org.');
+        console.log(e);
+        await logError(500, "Error updating org.");
+        res.status(500).send('Error updating org.');
     }
-  });
+});
 
 
 /*
@@ -335,6 +404,7 @@ router.patch('/update/:orgId', upload.fields([{ name: 'orgImg', maxCount: 1 }, {
         - 500 : Error deleting Org. -> There was a db error when trying to delete the org.
 */
 router.delete('/delete/:orgId', async (req, res) => {
+    await logEndpoint(req, "Delete org: " + (req.params.orgId ?? ""));
     const inputDataCheck = allDataPresent(
 		["orgId"],
 		[],
@@ -342,6 +412,7 @@ router.delete('/delete/:orgId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
     
@@ -362,6 +433,7 @@ router.delete('/delete/:orgId', async (req, res) => {
 
         if (!members) {
             console.log("Couldn't find org to delete.");
+            await logError(404, `Couldn't find org '${req.params.orgId}' to delete.`);
             return res.status(404).send("Org not found.");
         }
         
@@ -378,10 +450,12 @@ router.delete('/delete/:orgId', async (req, res) => {
         );
 
         console.log("Org deleted.");
+        await logSuccess("Deleted org: " + req.params.orgId);
         res.status(200).send("Org deleted.");
   
     } catch (e) {
         console.log(e);
+        await logError(500, "Error deleting org.");
         res.status(500).send("Error deleting org.");
     }
 });
@@ -406,6 +480,7 @@ router.delete('/delete/:orgId', async (req, res) => {
         - 500 : Error retrieving members. -> There was a db error when trying to retrieve the org's members.
 */
 router.get('/members/:orgId', async (req, res) => {
+    await logEndpoint(req, "Get list of members in org: " + (req.params.orgId ?? ""));
     const inputDataCheck = allDataPresent(
         ["orgId"],
         [],
@@ -413,6 +488,7 @@ router.get('/members/:orgId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -432,6 +508,7 @@ router.get('/members/:orgId', async (req, res) => {
 
         if (!members) {
             console.log("Couldn't find org to delete.");
+            await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send("Org not found.");
         }
 
@@ -450,15 +527,14 @@ router.get('/members/:orgId', async (req, res) => {
             }
         ).toArray();
 
+        await logSuccess("Returned list of members in org: " + req.params.orgId);
         res.status(200).json(userObjects);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving members.");
         res.status(500).send("Error retrieving members.");
     }
-
-
-
 });
 
 
@@ -478,6 +554,8 @@ router.get('/members/:orgId', async (req, res) => {
         - 500 : Error following org. -> There was a db error when trying to follow the org.
 */
 router.patch('/follow/:orgId/:userId', async (req, res) => {
+    await logEndpoint(req, `Follow an org '${req.params.orgId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
         ["orgId", "userId"],
         [],
@@ -485,6 +563,7 @@ router.patch('/follow/:orgId/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -499,6 +578,7 @@ router.patch('/follow/:orgId/:userId', async (req, res) => {
 
         if (updateUser.matchedCount === 0) {
             console.log("User not found.");
+            await logError(404, `User '${req.params.userId}' not found.`);
             return res.status(404).send('User not found.');
         }
 
@@ -509,6 +589,7 @@ router.patch('/follow/:orgId/:userId', async (req, res) => {
 
         if (result.matchedCount === 0) {
             console.log("Org not found.");
+            await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send('Org not found.');
         }
 
@@ -516,12 +597,13 @@ router.patch('/follow/:orgId/:userId', async (req, res) => {
             throw new Error("User is already following this org.");
         }
 
+        await logSuccess(`User '${req.params.userId}' is now following org: ${req.params.orgId}`);
         res.status(200).send('User is now following the org.');
     } catch (e) {
         console.log(e);
+        await logError(500, "Error following org.");
         res.status(500).send('Error following org.');
     }
-
 });
 
 
@@ -541,6 +623,8 @@ router.patch('/follow/:orgId/:userId', async (req, res) => {
         - 500 : Error unfollowing from org. -> There was a db error when trying to unfollow the org.
 */
 router.patch('/unfollow/:orgId/:userId', async (req, res) => {
+    await logEndpoint(req, `Unfollow an org '${req.params.orgId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
 		["orgId", "userId"],
 		[],
@@ -548,6 +632,7 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -562,6 +647,7 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
 
         if (updateUser.matchedCount === 0) {
             console.log("User not found.");
+            await logError(404, `User '${req.params.userId}' not found.`);
             return res.status(404).send('User not found.');
         }
 
@@ -572,6 +658,7 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
 
         if (result.matchedCount === 0) {
             console.log("Org not found.");
+            await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send('Org not found.');
         }
 
@@ -579,10 +666,12 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
             throw new Error("User was not following the org.");
         }
 
+        await logSuccess(`User '${req.params.userId}' is no longer following org: ${req.params.orgId}`);
         res.status(200).send('User is no longer following the org.');
 
     } catch (e) {
         console.error(e);
+        await logError(500, "Error unfollowing org.");
         res.status(500).send('Error unfollowing from org.');
     }
 });
@@ -606,7 +695,12 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
                 "owner": string | ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,
@@ -622,6 +716,8 @@ router.patch('/unfollow/:orgId/:userId', async (req, res) => {
         - 500 : Error retrieving list of orgs. -> There was a db error when trying to retrieve the orgs the user is an owner of.
 */
 router.get('/owner/:userId', async (req, res) => {
+    await logEndpoint(req, `Get orgs the user '${req.params.userId ?? ""}' is an owner of.`);
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         [],
@@ -629,6 +725,7 @@ router.get('/owner/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -646,10 +743,12 @@ router.get('/owner/:userId', async (req, res) => {
             }
         });
         
+        await logSuccess("Returned all orgs owned by user: " + req.params.userId);
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving list of orgs.");
         res.status(500).send("Error retrieving list of orgs.");
     }
 });
@@ -673,7 +772,12 @@ router.get('/owner/:userId', async (req, res) => {
                     "discord": string,
                     "phoneNumber": string
                 },
-                "rating": double,
+                "ratings": [
+                    {
+                        "ratedBy": ObjectId
+                        "rating": number
+                    }
+                ],
                 "owner": string | ObjectId,
                 "contributors": [ObjectId],
                 "lastActive": UTC Date,
@@ -689,6 +793,8 @@ router.get('/owner/:userId', async (req, res) => {
         - 500 : Error retrieving list of orgs. -> There was a db error when trying to retrieve the orgs the user is a member of.
 */
 router.get('/following/:userId', async (req, res) => {
+    await logEndpoint(req, `Get orgs followed by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         [],
@@ -696,6 +802,7 @@ router.get('/following/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message); 
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -704,10 +811,147 @@ router.get('/following/:userId', async (req, res) => {
     try {
         var results = await db.collection("orgs").find({ followers: { $in: [userId] } }).toArray();
 
+        await logSuccess("Returned all orgs followed by user: " + req.params.userId);
         res.status(200).json(results);
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving list of orgs.");
         res.status(500).send("Error retrieving list of orgs.");
+    }
+});
+
+/*
+    Description: Rate an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+        body:
+            value: integer
+    Outgoing data: None
+    On Success:
+        - 200 : User's rating has been added to the org.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error rating an org. -> There was a db error when trying to rate the org.
+*/
+router.patch('/rate/:orgId/:userId', async (req, res) => {
+    await logEndpoint(req, `Org '${req.params.orgId ?? ""}' rated by user: ${req.params.userId ?? ""}`);
+
+    const inputDataCheck = allDataPresent(
+        ["orgId", "userId"],
+        ["value"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+    const ratingValue = +parseFloat(req.body.value).toFixed(1);
+
+    if (ratingValue > 5.0 || ratingValue < 1.0) {
+        await logError(500, `Rating '${ratingValue}' by user '${req.params.userId}' for org '${req.params.orgId}' is out of bounds.`);
+        return res.status(500).json('Rating Out of Bound');
+    }
+    
+    try {
+        let result = await db.collection("orgs").updateOne(
+            {
+                "_id": orgId, 
+                "ratings": { 
+                    "$elemMatch": { "ratedBy": userId } 
+                }
+            },
+            {
+                "$set": {
+                    "ratings.$.value": ratingValue
+                }
+            }
+        );
+        // Step 2: If no document was updated, insert a new rating
+        if (result.matchedCount === 0) {
+            await db.collection("orgs").updateOne(
+                { "_id": orgId },
+                {
+                    "$push": {
+                        "ratings": { 
+                            "ratedBy": userId,
+                            "value": ratingValue
+                        }
+                    }
+                }
+            );
+        }
+
+        await logSuccess(`Org '${req.params.orgId}' was rated by user '${req.params.userId}' with a rating of: ${ratingValue}`);
+        res.status(200).json('Updated Rating');
+    } catch (e) {
+        console.error(e);
+        await logError(500, "Error rating an org.");
+        res.status(500).send('Error rating an org.');
+    }
+});
+
+/*
+    Description: Unrate an org
+    Incoming data:
+        params:
+            orgId: string | ObjectId,
+            userId: string | ObjectId
+    Outgoing data: None
+    On Success:
+        - 200 : User's rating has been removed from the org.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error unrating an org. -> There was a db error when trying to unrate the org.
+*/
+router.patch('/unrate/:orgId/:userId', async (req, res) => {
+    await logEndpoint(req, `Remove rating for org '${req.params.orgId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
+    const inputDataCheck = allDataPresent(
+        ["orgId", "userId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const orgId = new ObjectId(req.params.orgId);
+    const userId = new ObjectId(req.params.userId);
+    try {
+        let result = await db.collection("orgs").updateOne(
+            {
+                "_id": orgId,
+                "ratings": {
+                    "$elemMatch": { "ratedBy": userId }
+                }
+            },
+            {
+                "$pull": { "ratings": { "ratedBy": userId } }
+            }
+        );
+
+        if (result.modifiedCount === 0) {
+            console.log('No User Rating Found for user id ' + userId);
+            await logError(500, `User '${req.params.userId}' does not have a rating for org: ${req.params.orgId}`);
+            res.status(500).json('No User Rating Found');
+        } else {
+            await logSuccess(`Rating for org '${req.params.orgId}' was removed by user: ${req.params.userId}`);
+            res.status(200).json('Removed Rating');
+        }
+
+        
+    } catch (e) {
+        console.error(e);
+        await logError(500, "Error removing rating for the org.");
+        res.status(500).send('Error removing rating for the org.');
     }
 });
 

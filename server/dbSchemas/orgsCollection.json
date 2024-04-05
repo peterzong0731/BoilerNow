@@ -45,18 +45,23 @@
                 "phoneNumber"
             ]
         },
-        "rating": {
-            "bsonType": ["array"],
+        "ratings": {
+            "bsonType": "array",
             "items": {
-                "bsonType": ["object"],
+                "bsonType": "object",
                 "properties": {
                     "ratedBy": {
                         "bsonType": "objectId"
                     },
                     "value": {
-                        "bsonType": "int"
+                        "bsonType": "number",
+                        "multipleOf": 0.1
                     }
-                }
+                },
+                "required": [
+                    "ratedBy",
+                    "value"
+                ]
             }
         },
         "owner": {
@@ -95,7 +100,7 @@
         "bannerImg",
         "bio",
         "contactInfo",
-        "rating",
+        "ratings",
         "owner",
         "contributors",
         "lastActive",

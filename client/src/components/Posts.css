@@ -18,12 +18,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 12px;
 }
 
 .sort-options label {
   margin-right: 10px;
-  font-weight: bold;
   color: #333;
 }
 

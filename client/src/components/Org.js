@@ -14,7 +14,9 @@ function Org() {
   const [orgPosts, setOrgPosts] = useState([])
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
-  
+  const [showReportBox, setShowReportBox] = useState(false);
+  const [reportContent, setReportContent] = useState('');
+
   const fetchOrg = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/orgs/${id}`);
@@ -82,28 +84,52 @@ function Org() {
 
   const handleFollow = async () => {
     try {
-        const response = await axios.patch(`http://localhost:8000/orgs/follow/${id}/${currentUser}`);
-        console.log(response.data)
-        
-        setUsersFollowed(prevUsers => [...prevUsers, currentUser]);
-        setHasFollowed(true); 
-        
-        toast.success("Successfully followed org!")
+      const response = await axios.patch(`http://localhost:8000/orgs/follow/${id}/${currentUser}`);
+      console.log(response.data)
+
+      setUsersFollowed(prevUsers => [...prevUsers, currentUser]);
+      setHasFollowed(true);
+
+      toast.success("Successfully followed org!")
     } catch (error) {
-        toast.error('Error following org.');
+      toast.error('Error following org.');
     }
   }
 
-  const handleUnfollow = async () => {  
+  const handleUnfollow = async () => {
     try {
-        const response = await axios.patch(`http://localhost:8000/orgs/unfollow/${id}/${currentUser}`);
-        
-        setUsersFollowed(prevUsers => prevUsers.filter(userId => userId !== currentUser));
-        setHasFollowed(false);
-        
-        toast.success("Successfully unfollowed org.");
+      const response = await axios.patch(`http://localhost:8000/orgs/unfollow/${id}/${currentUser}`);
+
+      setUsersFollowed(prevUsers => prevUsers.filter(userId => userId !== currentUser));
+      setHasFollowed(false);
+
+      toast.success("Successfully unfollowed org.");
     } catch (error) {
-        toast.error('Error unregistering from event.');
+      toast.error('Error unregistering from event.');
+    }
+  };
+
+  const handleReport = () => {
+    setShowReportBox(!showReportBox);
+  };
+
+  const handleChange = (event) => {
+    setReportContent(event.target.value);
+  };
+
+  const handleReportSubmit = async () => {
+    try {
+      const url = `http://localhost:8000/reportOrg/${currentUser}/${id}`;
+
+      const response = await axios.post(url, { reason: reportContent });
+
+      toast.success("Successfully submitted report.");
+
+      setReportContent('');
+      setShowReportBox(!showReportBox);
+
+    } catch (error) {
+      toast.error('Error in submitting report.');
     }
   };
 
@@ -113,10 +139,11 @@ function Org() {
 
   return (
     <div className='org-page-outer-container'>
-      {orgData.bannerImg && <img src={orgData.bannerImg} alt="Banner Image" className='org-banner'/>}
+      <Toaster richColors position="top-center"/>
+      {orgData.bannerImg && <img src={orgData.bannerImg} alt="Banner Image" className='org-banner' />}
       <div className='org-page-inner-container'>
         <div className='org-images'>
-          {orgData.orgImg && <img src={orgData.orgImg} alt="Organization Image" id='org-pfp'/>}
+          {orgData.orgImg && <img src={orgData.orgImg} alt="Organization Image" id='org-pfp' />}
         </div>
         <div className='org-text-container'>
           <div className='org-text'>
@@ -125,34 +152,56 @@ function Org() {
           </div>
           <div>
             {currentUser ? (
-              hasFollowed ? (
-                <>
+              <>
+                {hasFollowed ? (
+                  <>
                     <button className="event-join-button-disabled" disabled>Followed</button>
                     <button className="event-unregister-button" onClick={handleUnfollow}>Unfollow</button>
                   </>
                 ) : (
                   <button className="event-join-button" onClick={handleFollow}>Follow</button>
-                )
-                ) : (
-                  <button className="event-join-button-disabled" disabled>Log in to follow</button>
-              )
-            }
+                )}
+                <button className="org-report-button" onClick={handleReport}>Report</button>
+                
+              </>
+            ) : (
+              <button className="event-join-button-disabled" disabled>Log in to follow</button>
+            )}
           </div>
         </div>
-        {currentUser && hasFollowed ? (
-            <div className='updates-container'>
-              <h2>Updates</h2>
-              <div className="org-posts-container">
-                {orgPosts.map(post => (
-                  <PostCard key={post._id} post={post} />
-                ))}
-              </div>
+        {showReportBox && (
+          <div className="report-box">
+            <textarea
+              value={reportContent}
+              onChange={handleChange}
+              rows={6}
+              cols={50}
+              placeholder="Enter report reason..."
+            />
+            <div className="report-content">
+              <button 
+                disabled={reportContent.trim() === ''} 
+                className={reportContent.trim() === '' ? 'report-box-disabled-button' : 'report-box-enabled-button'} 
+                onClick={handleReportSubmit}>
+                  Submit
+              </button>
             </div>
-          ) : (
-            <></>
-          )
+          </div>
+        )}
+        {currentUser && hasFollowed ? (
+          <div className='updates-container'>
+            <h2>Updates</h2>
+            <div className="org-posts-container">
+              {orgPosts.map(post => (
+                <PostCard key={post._id} post={post} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <></>
+        )
         }
-        
+
         {/* <input type="file" accept="image/*" onChange={handleOrgImgClick} />
         <input type="file" accept="image/*" onChange={handleBannerImgClick} /> */}
       </div>

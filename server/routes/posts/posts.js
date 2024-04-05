@@ -4,9 +4,11 @@ import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 import { allDataPresent } from "../../verif/endpoints.js";
 import { sendNewPostEmail } from "../../emails/newPostEmail.js";
+import { logEndpoint, logSuccess, logError } from "../../verif/logging.js"
 
 const router = express.Router();
 const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTemplate.json", "utf8");
+const newReplyTemplate = fs.readFileSync("./routes/posts/dbTemplates/newReplyTemplate.json", "utf8");
 
 /*  
     Description: Get all posts
@@ -20,7 +22,8 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -30,6 +33,8 @@ const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTempl
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
 */
 router.get('/', async (req, res) => {
+    await logEndpoint(req, "Get all posts.");
+
     const inputDataCheck = allDataPresent(
         [],
         [],
@@ -37,6 +42,7 @@ router.get('/', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -46,17 +52,21 @@ router.get('/', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    "name": 1,
                     "posts": 1
                 }
-            },
-            { $replaceWith: "$posts" }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
         ]).toArray();
 
+        await logSuccess("Returned all posts.");
         res.status(200).json(results);
 
     } catch (e) {
-        console.log("Get all posts error:");
         console.log(e);
+        await logError(500, "Error retrieving all posts.");
         res.status(500).send("Error retrieving all posts.");
     }
 });
@@ -74,7 +84,8 @@ router.get('/', async (req, res) => {
             "eventId": ObjectId,
             "postedDatetime": UTC Date,
             "likedBy": [ObjectId],
-            "replies": [Object]
+            "replies": [Object],
+            "name": string
         }
     On Success:
         - 200 : Post object -> Data will be sent following the Outgoing data structure.
@@ -84,6 +95,8 @@ router.get('/', async (req, res) => {
         - 500 : Error retrieving post. -> There was a db error when trying to retrieve the specific post.
 */
 router.get('/post/:postId', async (req, res) => {
+    await logEndpoint(req, "Get single post: " + (req.params.postId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["postId"],
         [],
@@ -91,30 +104,39 @@ router.get('/post/:postId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
     const postId = new ObjectId(req.params.postId);
 
     try {
-        const post = await db.collection("users").findOne(
-            { "posts.postId": postId },
-            { 
-                projection: { 
+        const post = await db.collection("users").aggregate([
+            { $unwind: "$posts" },
+            { $match: { "posts.postId": postId } },
+            {
+                $project: {
                     _id: 0,
-                    "posts.$": 1 
-                } 
-            }
-        );
+                    "name": 1,
+                    "posts": 1
+                }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
+        ]).toArray();
+
         if (!post) {
+            await logError(404, `Post '${req.params.postId}' not found.`);
             return res.status(404).send("Post not found.");
         }
 
-        res.status(200).json(post["posts"][0]);
+        await logSuccess("Returned post: " + req.params.postId);
+        res.status(200).json(post[0]);
 
     } catch (e) {
-        console.log("Get specific post error:");
         console.log(e);
+        await logError(500, "Error retrieving the specific post.");
         res.status(500).send("Error retrieving the specific post.");
     }
 });
@@ -134,7 +156,8 @@ router.get('/post/:postId', async (req, res) => {
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -144,6 +167,8 @@ router.get('/post/:postId', async (req, res) => {
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
 */
 router.get('/:userId', async (req, res) => {
+    await logEndpoint(req, "Get all posts by user: " + (req.params.userId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         [],
@@ -151,6 +176,7 @@ router.get('/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -163,17 +189,21 @@ router.get('/:userId', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    "name": 1,
                     "posts": 1
                 }
-            },
-            { $replaceWith: "$posts" }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
         ]).toArray();
 
+        await logSuccess("Returned all posts by user: " + req.params.userId);
         res.status(200).json(results)
 
     } catch (e) {
-        console.log("Get all posts error:");
         console.log(e);
+        await logError(500, "Error retrieving all posts.");
         res.status(500).send("Error retrieving all posts.");
     }
 });
@@ -198,6 +228,8 @@ router.get('/:userId', async (req, res) => {
         - 500 : Error publishing post. -> There was a db error when trying to insert the post.
 */
 router.post('/create/:userId', async (req, res) => {
+    await logEndpoint(req, "Create new post by user: " + (req.params.userId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         ["title", "content", "eventId"],
@@ -205,6 +237,7 @@ router.post('/create/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -232,6 +265,7 @@ router.post('/create/:userId', async (req, res) => {
         );
 
         if (results.matchedCount === 0) {
+            await logError(404, `User '${req.params.userID}' not found.`);
             return res.status(404).send("UserId does not match an existing user.");
         }
 
@@ -240,12 +274,14 @@ router.post('/create/:userId', async (req, res) => {
         }
 
         console.log("Post published with postId: " + newPostObj.postId);
+        await logSuccess("Post published with postId: " + newPostObj.postId);
         res.status(200).send('Post published successfully with id: ' + newPostObj.postId);
 
         sendNewPostEmail(newPostObj, userId);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error publishing post.");
         res.status(500).send('Error publishing post.');
     }
 });
@@ -273,6 +309,8 @@ router.patch('/update', async (req, res) => {
         - 500 : Error deleting post. -> There was a db error when trying to delete the post.
 */
 router.delete('/delete/:userId/:postId', async (req, res) => {
+    await logEndpoint(req, `Delete post '${req.params.postId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
         ["userId", "postId"],
         [],
@@ -280,6 +318,7 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -296,10 +335,12 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
             throw new Error('Post was not deleted.');
         }
 
+        await logSuccess(`Post '${req.params.postId}' by user '${req.params.userId}' was deleted.`)
         res.status(200).send('Post deleted successfully.');
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error deleting post.");
         res.status(500).send("Error deleting post.");
     }
 });
@@ -318,7 +359,8 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -329,6 +371,8 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
         - 500 : Error retrieving all posts. -> There was a db error when trying to retrieve all posts.
 */
 router.get('/orgPosts/:orgId', async (req, res) => {
+    await logEndpoint(req, "Get all posts by org: " + (req.params.orgId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["orgId"],
         [],
@@ -336,6 +380,7 @@ router.get('/orgPosts/:orgId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -346,31 +391,37 @@ router.get('/orgPosts/:orgId', async (req, res) => {
 
         if (!org) {
             console.log("Org not found.");
+            await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send("Org not found.");
         }
 
         var eventIds = org.events;
 
         const results = await db.collection("users").aggregate([
-                { $unwind: "$posts" },
-                {
-                    $match: {
-                        "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        "posts": 1
-                    }
-                },
-                { $replaceWith: "$posts" }
-            ]).toArray();
+            { $unwind: "$posts" },
+            {
+                $match: {
+                    "posts.eventId": { $in: eventIds } // Filters posts by eventIds in your list
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "name": 1,
+                    "posts": 1
+                }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
+        ]).toArray();
 
+        await logSuccess("Returned all posts by org: " + req.params.orgId);
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving all posts.");
         res.status(500).send("Error retrieving all posts.");
     }
 });
@@ -389,6 +440,8 @@ router.get('/orgPosts/:orgId', async (req, res) => {
         - 500 : Error liking/unliking the post. -> There was a db error when trying to like/unlike the specific post.
 */
 router.patch('/like/:postId/:userId', async (req, res) => {
+    await logEndpoint(req, `Like/unlike post '${req.params.postId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
         ["postId", "userId"],
         [],
@@ -396,6 +449,7 @@ router.patch('/like/:postId/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -405,14 +459,15 @@ router.patch('/like/:postId/:userId', async (req, res) => {
     try {
         const results = await db.collection("users").findOne(
             { "posts.postId": postId },
-            { 
-                projection: { 
+            {
+                projection: {
                     _id: 0,
-                    "posts.$": 1 
-                } 
+                    "posts.$": 1
+                }
             }
         );
         if (!results) {
+            await logError(404, `Post '${req.params.postId}' not found.`);
             return res.status(404).send("Post not found.");
         }
         const post = results["posts"][0];
@@ -427,9 +482,9 @@ router.patch('/like/:postId/:userId', async (req, res) => {
         const updatedResults = db.collection("users").updateOne(
             { "posts.postId": postId },
             {
-              $set: {
-                "posts.$.likedBy": post.likedBy
-              }
+                $set: {
+                    "posts.$.likedBy": post.likedBy
+                }
             }
         );
 
@@ -437,11 +492,133 @@ router.patch('/like/:postId/:userId', async (req, res) => {
             throw new Error('Post Update Failed')
         }
 
+        await logSuccess(`Post '${req.params.postId}' was liked/unliked by user: ${req.params.userId}`);
         res.status(200).json(post.likedBy);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error liking/unliking the post.");
         res.status(500).send("Error liking/unliking the post.");
+    }
+});
+
+/*  
+    Description: Add a comment to a post
+    Incoming data:
+        params:
+            postId: string | ObjectId
+            userId: string | ObjectId
+        body:
+            content: string 
+    Outgoing data:
+    On Success:
+        - 200 : Comment was added to the post successfully.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Post with id <id> not found. -> The post is not found in the db.
+        - 500 : Error adding comment to post. -> There was a db error when trying to add a comment.
+*/
+router.patch('/comment/:postId/:userId', async (req, res) => {
+    await logEndpoint(req, `Add a comment to post '${req.params.postId ?? ""}' by user: ${req.params.userId}`);
+
+    const inputDataCheck = allDataPresent(
+        ["postId", "userId"],
+        ["content"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const newComment = JSON.parse(newReplyTemplate);
+    newComment.replyId = new ObjectId();
+    newComment.postedDatetime = new Date();
+    newComment.content = req.body.content;
+    newComment.authorId = new ObjectId(req.params.userId);
+
+    const postId = new ObjectId(req.params.postId);
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.postId": postId },
+            {
+                $push: {
+                    "posts.$.replies": newComment
+                }
+            }
+        );
+        if (results.matchedCount === 0) {
+            await logError(404, `Post '${req.params.postId}' wnot found.`);
+            res.status(404).send("Post with id " + postId + " not found.");
+        } else {
+            console.log("Comment added successfully with replyId: " + newComment.replyId);
+            await logSuccess(`Comment by user '${req.params.userId}' was added to post '${req.params.postId}' with replyId: ${newComment.replyId}`);
+            res.status(200).send("Comment added successfully with id " + newComment.replyId);
+        }
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error adding a comment the post.");
+        res.status(500).send("Error adding a comment the post.");
+    }
+});
+
+/*  
+    Description: Remove a comment from a post
+    Incoming data:
+        params:
+            postId: string | ObjectId
+            replyId: string | ObjectId 
+    Outgoing data:
+    On Success:
+        - 200 : Comment was removed from the post successfully.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Post with id <id> not found. -> The post was not found in the db.
+        - 404 : Comment with replyId <id> was not found. -> The comment was not found in the db.
+        - 500 : Error removing comment from the post. -> There was a db error when trying to remove the comment.
+*/
+router.patch('/uncomment/:postId/:replyId', async (req, res) => {
+    await logEndpoint(req, `Remove comment on post '${req.params.postId ?? ""}' with replyId: ${req.params.replyId}`);
+
+    const inputDataCheck = allDataPresent(
+        ["postId", "replyId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const postId = new ObjectId(req.params.postId);
+    const replyId = new ObjectId(req.params.replyId);
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.postId": postId },
+            {
+                $pull: {
+                    "posts.$.replies": { replyId: replyId }
+                }
+            }
+        );
+        if (results.matchedCount === 0) {
+            await logError(404, `Post '${req.params.postId}' not found.`);
+            res.status(404).send("Post with id " + postId + " not found.");
+        } else if (results.modifiedCount === 0) {
+            await logError(404, `Comment '${req.params.replyId}' not found.`);
+            res.status(404).send("Comment with replyId " + replyId + " was not found.");
+        } else {
+            await logSuccess(`Comment '${req.params.replyId}' was removed from post: ${req.params.postId}`)
+            res.status(200).send("Comment removed successfully");
+        }
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error removing the comment from the post.");
+        res.status(500).send("Error removing the comment from the post.");
     }
 });
 

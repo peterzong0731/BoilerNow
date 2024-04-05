@@ -206,7 +206,7 @@ function Events() {
                         {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
                             <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
                                 {day && <div className="day-number">{day}</div>}
-                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status === 'public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
+                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.visibility === 'Public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
                                     <Link key={event._id} to={`/event/${event._id}`}>
                                         <div className={`event ${event.category}`}>
                                             {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
@@ -220,7 +220,8 @@ function Events() {
                 </div>
             ) : (
                 <div className="list-view">
-                    {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.status === 'public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
+                    {console.log(events[0])}
+                    {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.visibility === 'Public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
                         <EventCard key={event._id} event={event} />
                     )) : <div className='no-orgs-text'>There are no events to display.</div>}
                 </div>

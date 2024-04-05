@@ -146,9 +146,9 @@ function Events() {
     return (
         <div className="calendar-container">
             <div className='options-container'>    
-                <div class="filter">
+                <div className="filter">
                     <div className="filter-text">Filter:</div>
-                    <input type="text" class="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
+                    <input type="text" className="filterTerms" id="filterTerms" placeholder="keyword1; keyword2; ..." onKeyDown={(e) => handleEnterKeypress(e)}></input>
                     <button type="submit" class="filterButton" onClick={filterEvents}>
                         <FontAwesomeIcon icon={faSearch} />
                     </button>
@@ -204,9 +204,15 @@ function Events() {
                     <div className="days-grid">
                         {console.log(eventsData)}
                         {emptySlotsAtStart.concat(daySlots).concat(emptySlotsAtEnd).map((day, index) => (
-                            <div key={index} className={`day-cell ${day ? '' : 'empty'}`}>
+                            <div key={index} className={`day-cell ${(day === new Date().getDate() 
+                                                                 && (month === new Date().getMonth())
+                                                                 && (year === new Date().getFullYear())) ? "current-day" : ""}`}>
                                 {day && <div className="day-number">{day}</div>}
-                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.visibility === 'Public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
+                                {day && eventsData[day] && eventsData[day].filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) 
+                                                                                          && ((event.visibility === 'Public') || userStr)
+                                                                                          && (filterKeywords.some(keyword => event.title.toLowerCase().includes(keyword.toLowerCase())) || !filterKeywords.length)
+                                                                                          && (new Date(event.eventStartDatetime).getMonth() == month)
+                                                                                          && (new Date(event.eventStartDatetime).getFullYear() == year)).map((event, idx) => (
                                     <Link key={event._id} to={`/event/${event._id}`}>
                                         <div className={`event ${event.category}`}>
                                             {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}

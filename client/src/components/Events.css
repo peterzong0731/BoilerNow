@@ -77,6 +77,11 @@
     left: 5px;
     font-weight: bold;
   }
+
+  .current-day { 
+    -webkit-box-shadow: 0 0 1px 3px green inset;
+    box-shadow: 0 0 1px 3px green inset;
+  }
   
   .event {
     display: block;
@@ -186,7 +191,7 @@
   border: 3px solid #3182ce;
   border-right: none;
   padding: 5px;
-  height: 20px;
+  height: 21px;
   border-radius: 5px 0 0 5px;
   outline: none;
 }

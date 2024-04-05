@@ -110,8 +110,11 @@ router.get('/', async (req, res) => {
             "owner": string | ObjectId,
             "contributors": [ObjectId],
             "lastActive": UTC Date,
-            "followers": [ObjectId],
-            "events": [ObjectId],
+            "followers": [{
+                "userId": ObjectID,
+                "name": string
+            }],
+            "events": [Event Objects],
             "dateCreated": UTC Date
         }
     On Success:
@@ -138,13 +141,52 @@ router.get('/:orgId', async (req, res) => {
     const orgId = new ObjectId(req.params.orgId);
 
     try {
-        var results = await db.collection("orgs").findOne({ _id: orgId });
+        var results = await db.collection("orgs").aggregate([
+            { $match: { "_id": orgId } },
+            {
+                $lookup: {
+                    from: "events",
+                    localField: "events",
+                    foreignField: "_id",
+                    as: "events"
+                }
+            },
+            {
+                $addFields: {
+                    events: "$events"
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "followers",
+                    foreignField: "_id",
+                    as: "followers"
+                }
+            },
+            {
+                $addFields: {
+                    followers: {
+                        $map: {
+                            input: "$followers",
+                            as: "follower",
+                            in: {
+                                userId: "$$follower._id",
+                                name: "$$follower.name"
+                            }
+                        }
+                    }
+                }
+            }
+        ]).toArray();
 
-        if (!results) {
+        if (!results || results.length < 1) {
             console.log("Org not found.");
             await logError(404, `Org '${req.params.orgId}' not found.`);
             return res.status(404).send("Org not found.");
         }
+
+        results = results[0];
 
         if (results.orgImg != "") {
             results.orgImg = `http://localhost:8000/uploads/${results.orgImg.replace('uploads\\', '')}`

@@ -22,7 +22,8 @@ const newReplyTemplate = fs.readFileSync("./routes/posts/dbTemplates/newReplyTem
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -51,10 +52,13 @@ router.get('/', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    "name": 1,
                     "posts": 1
                 }
-            },
-            { $replaceWith: "$posts" }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts.");
@@ -80,7 +84,8 @@ router.get('/', async (req, res) => {
             "eventId": ObjectId,
             "postedDatetime": UTC Date,
             "likedBy": [ObjectId],
-            "replies": [Object]
+            "replies": [Object],
+            "name": string
         }
     On Success:
         - 200 : Post object -> Data will be sent following the Outgoing data structure.
@@ -106,22 +111,28 @@ router.get('/post/:postId', async (req, res) => {
     const postId = new ObjectId(req.params.postId);
 
     try {
-        const post = await db.collection("users").findOne(
-            { "posts.postId": postId },
+        const post = await db.collection("users").aggregate([
+            { $unwind: "$posts" },
+            { $match: { "posts.postId": postId } },
             {
-                projection: {
+                $project: {
                     _id: 0,
-                    "posts.$": 1
+                    "name": 1,
+                    "posts": 1
                 }
-            }
-        );
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
+        ]).toArray();
+
         if (!post) {
             await logError(404, `Post '${req.params.postId}' not found.`);
             return res.status(404).send("Post not found.");
         }
 
         await logSuccess("Returned post: " + req.params.postId);
-        res.status(200).json(post["posts"][0]);
+        res.status(200).json(post[0]);
 
     } catch (e) {
         console.log(e);
@@ -145,7 +156,8 @@ router.get('/post/:postId', async (req, res) => {
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -177,10 +189,13 @@ router.get('/:userId', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    "name": 1,
                     "posts": 1
                 }
-            },
-            { $replaceWith: "$posts" }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts by user: " + req.params.userId);
@@ -344,7 +359,8 @@ router.delete('/delete/:userId/:postId', async (req, res) => {
                 "eventId": ObjectId,
                 "postedDatetime": UTC Date,
                 "likedBy": [ObjectId],
-                "replies": [Object]
+                "replies": [Object],
+                "name": string
             }
         ]
     On Success:
@@ -391,10 +407,13 @@ router.get('/orgPosts/:orgId', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    "name": 1,
                     "posts": 1
                 }
-            },
-            { $replaceWith: "$posts" }
+             },
+             { $addFields: { "posts.name": "$name"} },
+             { $unset: "name" },
+             { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts by org: " + req.params.orgId);

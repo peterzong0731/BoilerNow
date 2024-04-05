@@ -7,7 +7,7 @@ function PostCard({ post }) {
   const formattedDate = formatDistanceToNow(new Date(post.postedDatetime), { addSuffix: true }).replace('about ', '');
 
   return (
-    <Link key={post._id} to={`/post/${post.postId}`}>
+    <Link className='post-link' key={post._id} to={`/post/${post.postId}`}>
       <div className="post-card-container">
         {/* <img className="post-pfp" src={post.profilePicture} alt="Profile" /> */}
         <div className="post-card-columns">

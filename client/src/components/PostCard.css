@@ -64,3 +64,8 @@
   color: #C6C6C6;
   font-size: 20px;
 }
+
+.post-link {
+  text-decoration: none;
+  color: inherit;
+}

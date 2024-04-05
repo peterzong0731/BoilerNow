@@ -8,6 +8,7 @@ import { logEndpoint, logSuccess, logError } from "../../verif/logging.js"
 
 const router = express.Router();
 const newPostTemplate = fs.readFileSync("./routes/posts/dbTemplates/newPostTemplate.json", "utf8");
+const newCommentTemplate = fs.readFileSync("./routes/posts/dbTemplates/newCommentTemplate.json", "utf8");
 const newReplyTemplate = fs.readFileSync("./routes/posts/dbTemplates/newReplyTemplate.json", "utf8");
 
 /*  
@@ -532,7 +533,7 @@ router.patch('/comment/:postId/:userId', async (req, res) => {
         return res.status(400).send(inputDataCheck.message);
     }
 
-    const newComment = JSON.parse(newReplyTemplate);
+    const newComment = JSON.parse(newCommentTemplate);
     newComment.replyId = new ObjectId();
     newComment.postedDatetime = new Date();
     newComment.content = req.body.content;
@@ -550,12 +551,12 @@ router.patch('/comment/:postId/:userId', async (req, res) => {
             }
         );
         if (results.matchedCount === 0) {
-            await logError(404, `Post '${req.params.postId}' wnot found.`);
+            await logError(404, `Post '${req.params.postId}' not found.`);
             res.status(404).send("Post with id " + postId + " not found.");
         } else {
             console.log("Comment added successfully with replyId: " + newComment.replyId);
             await logSuccess(`Comment by user '${req.params.userId}' was added to post '${req.params.postId}' with replyId: ${newComment.replyId}`);
-            res.status(200).send("Comment added successfully with id " + newComment.replyId);
+            res.status(200).send("Comment added successfully with id: " + newComment.replyId);
         }
     } catch (e) {
         console.log(e);
@@ -621,5 +622,143 @@ router.patch('/uncomment/:postId/:replyId', async (req, res) => {
         res.status(500).send("Error removing the comment from the post.");
     }
 });
+
+
+/*  
+    Description: Add a reply to a comment
+    Incoming data:
+        params:
+            replyId: string | ObjectId
+            userId: string | ObjectId
+        body:
+            content: string 
+    Outgoing data:
+    On Success:
+        - 200 : Reply added successfully with id: <commentReplyId> -> The reply was added to the comment.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Comment with id <replyId> not found. -> The comment is not found in the db.
+        - 500 : Error adding a reply to the comment. -> There was a db error when trying to add a reply.
+*/
+router.patch('/reply/:replyId/:userId', async (req, res) => {
+    await logEndpoint(req, `Add a reply to comment '${req.params.replyId ?? ""}' by user: ${req.params.userId}`);
+
+    const inputDataCheck = allDataPresent(
+        ["replyId", "userId"],
+        ["content"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const replyId = new ObjectId(req.params.replyId);
+    const userId = new ObjectId(req.params.userId);
+
+    const newReply = JSON.parse(newReplyTemplate);
+    newReply.commentReplyId = new ObjectId();
+    newReply.postedDatetime = new Date();
+    newReply.content = req.body.content;
+    newReply.authorId = userId;
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.replies.replyId": replyId },
+            { $push: { "posts.$[post].replies.$[reply].replies": newReply } },
+            {
+                arrayFilters: [
+                    { "post.replies.replyId": replyId },
+                    { "reply.replyId": replyId }       
+                ]
+            }
+        );
+
+        if (results.matchedCount === 0) {
+            await logError(404, `Comment '${req.params.replyId}' not found.`);
+            res.status(404).send("Comment with id " + replyId + " not found.");
+        } else {
+            console.log("Reply added successfully with commentReplyId: " + newReply.commentReplyId);
+            await logSuccess(`Reply by user '${req.params.userId}' was added to comment '${req.params.replyId}' with commentReplyId: ${newReply.commentReplyId}`);
+            res.status(200).send("Reply added successfully with id: " + newReply.commentReplyId);
+        }
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error adding a reply to the comment.");
+        res.status(500).send("Error adding a reply to the comment.");
+    }
+});
+
+
+/*  
+    Description: Remove a reply from a comment
+    Incoming data:
+        params:
+            replyId: string | ObjectId
+            commentReplyId: string | ObjectId 
+    Outgoing data:
+    On Success:
+        - 200 : Comment reply was removed from the comment successfully.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 404 : Comment with id <replyId> not found. -> The comment was not found in the db.
+        - 404 : Comment reply with id <commentReplyId> was not found. -> The reply was not found in the db.
+        - 500 : Error removing reply from the comment. -> There was a db error when trying to remove the reply.
+*/
+router.patch('/delete-comment-reply/:replyId/:commentReplyId', async (req, res) => {
+    await logEndpoint(req, `Remove reply on comment '${req.params.replyId ?? ""}' with commentReplyId: ${req.params.replyId}`);
+
+    const inputDataCheck = allDataPresent(
+        ["replyId", "commentReplyId"],
+        [],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const replyId = new ObjectId(req.params.replyId);
+    const commentReplyId = new ObjectId(req.params.commentReplyId);
+
+    try {
+        const results = await db.collection("users").updateOne(
+            { "posts.replies.replyId": replyId },
+            { $pull: { "posts.$[post].replies.$[reply].replies": { "commentReplyId": commentReplyId } } },
+            {
+                arrayFilters: [
+                    { "post.replies.replyId": replyId },
+                    { "reply.replyId": replyId }
+                ]
+            }
+        );
+
+        if (results.matchedCount === 0) {
+            await logError(404, `Comment '${req.params.replyId}' not found.`);
+            res.status(404).send("Comment with id " + replyId + " not found.");
+        } else if (results.modifiedCount === 0) {
+            await logError(404, `Comment reply '${req.params.commentReplyId}' not found.`);
+            res.status(404).send("Comment reply with commentReplyId " + commentReplyId + " was not found.");
+        } else {
+            await logSuccess(`Comment reply '${req.params.commentReplyId}' was removed from comment: ${req.params.replyId}`)
+            res.status(200).send("Comment reply was removed from the comment successfully.");
+        }
+
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error removing the reply from the comment.");
+        res.status(500).send("Error removing the reply from the comment.");
+    }
+});
+
+
+
+
+
+
+
+
 
 export default router;

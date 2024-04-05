@@ -126,11 +126,31 @@
                                 "postedDatetime": {
                                     "bsonType": "date"
                                 },
-                                "likedBy": {
+                                "replies": {
                                     "bsonType": "array",
                                     "items": {
-                                        "bsonType": "objectId"
-                                    }
+                                        "bsonType": "object",
+                                        "properties": {
+                                            "replyId": {
+                                                "bsonType": "objectId"
+                                            },
+                                            "content": {
+                                                "bsonType": "string"
+                                            },
+                                            "authorId": {
+                                                "bsonType": "objectId"
+                                            },
+                                            "postedDatetime": {
+                                                "bsonType": "date"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "replyId",
+                                        "content",
+                                        "authorId",
+                                        "postedDatetime"
+                                    ]
                                 }
                             },
                             "required": [
@@ -138,7 +158,7 @@
                                 "content",
                                 "authorId",
                                 "postedDatetime",
-                                "likedBy"
+                                "replies"
                             ]
                         }
                     }

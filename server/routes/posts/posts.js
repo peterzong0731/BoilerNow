@@ -56,10 +56,10 @@ router.get('/', async (req, res) => {
                     "name": 1,
                     "posts": 1
                 }
-             },
-             { $addFields: { "posts.name": "$name"} },
-             { $unset: "name" },
-             { $replaceWith: "$posts" }
+            },
+            { $addFields: { "posts.name": "$name" } },
+            { $unset: "name" },
+            { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts.");
@@ -85,8 +85,25 @@ router.get('/', async (req, res) => {
             "eventId": ObjectId,
             "postedDatetime": UTC Date,
             "likedBy": [ObjectId],
-            "replies": [Object],
-            "name": string
+            "replies": [
+                {
+                    "replyId": ObjectId,
+                    "content": string,
+                    "authorId": ObjectId,
+                    "postedDatetime": UTC Date,
+                    "replies": [
+                        {
+                            "commentReplyId": ObjectId,
+                            "content": string,
+                            "authorId": ObjectId,
+                            "postedDatetime": UTC Date,
+                            "authorName": string
+                        }
+                    ],
+                    "authorName": string
+                }
+            ],
+            "postAuthorName": string
         }
     On Success:
         - 200 : Post object -> Data will be sent following the Outgoing data structure.
@@ -121,10 +138,117 @@ router.get('/post/:postId', async (req, res) => {
                     "name": 1,
                     "posts": 1
                 }
-             },
-             { $addFields: { "posts.name": "$name"} },
-             { $unset: "name" },
-             { $replaceWith: "$posts" }
+            },
+            { $addFields: { "posts.postAuthorName": "$name" } },
+            { $unset: "name" },
+            { $replaceWith: "$posts" },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "replies.authorId",
+                    "foreignField": "_id",
+                    "as": "repliesWithUserInfo"
+                }
+            },
+            {
+                "$addFields": {
+                    "replies": {
+                        "$map": {
+                            "input": "$replies",
+                            "as": "reply",
+                            "in": {
+                                "$mergeObjects": [
+                                    "$$reply",
+                                    {
+                                        "authorName": {
+                                            "$let": {
+                                                "vars": {
+                                                    "user": {
+                                                        "$arrayElemAt": [
+                                                            {
+                                                                "$filter": {
+                                                                    "input": "$repliesWithUserInfo",
+                                                                    "as": "u",
+                                                                    "cond": { "$eq": ["$$u._id", "$$reply.authorId"] }
+                                                                }
+                                                            },
+                                                            0
+                                                        ]
+                                                    }
+                                                },
+                                                "in": "$$user.name"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "replies.replies.authorId",
+                    "foreignField": "_id",
+                    "as": "repliesWithUserInfo2"
+                }
+            },
+            {
+                "$addFields": {
+                    "replies": {
+                        "$map": {
+                            "input": "$replies",
+                            "as": "reply",
+                            "in": {
+                                "$mergeObjects": [
+                                    "$$reply",
+                                    {
+                                        "replies": {
+                                            "$map": {
+                                                "input": "$$reply.replies",
+                                                "as": "subReply",
+                                                "in": {
+                                                    "$mergeObjects": [
+                                                        "$$subReply",
+                                                        {
+                                                            "authorName": {
+                                                                "$let": {
+                                                                    "vars": {
+                                                                        "subUser": {
+                                                                            "$arrayElemAt": [
+                                                                                {
+                                                                                    "$filter": {
+                                                                                        "input": "$repliesWithUserInfo2",
+                                                                                        "as": "su",
+                                                                                        "cond": { "$eq": ["$$su._id", "$$subReply.authorId"] }
+                                                                                    }
+                                                                                },
+                                                                                0
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "in": "$$subUser.name"
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "repliesWithUserInfo": 0,
+                    "repliesWithUserInfo2": 0
+                }
+            },
         ]).toArray();
 
         if (!post) {
@@ -193,10 +317,10 @@ router.get('/:userId', async (req, res) => {
                     "name": 1,
                     "posts": 1
                 }
-             },
-             { $addFields: { "posts.name": "$name"} },
-             { $unset: "name" },
-             { $replaceWith: "$posts" }
+            },
+            { $addFields: { "posts.name": "$name" } },
+            { $unset: "name" },
+            { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts by user: " + req.params.userId);
@@ -411,10 +535,10 @@ router.get('/orgPosts/:orgId', async (req, res) => {
                     "name": 1,
                     "posts": 1
                 }
-             },
-             { $addFields: { "posts.name": "$name"} },
-             { $unset: "name" },
-             { $replaceWith: "$posts" }
+            },
+            { $addFields: { "posts.name": "$name" } },
+            { $unset: "name" },
+            { $replaceWith: "$posts" }
         ]).toArray();
 
         await logSuccess("Returned all posts by org: " + req.params.orgId);
@@ -670,7 +794,7 @@ router.patch('/reply/:replyId/:userId', async (req, res) => {
             {
                 arrayFilters: [
                     { "post.replies.replyId": replyId },
-                    { "reply.replyId": replyId }       
+                    { "reply.replyId": replyId }
                 ]
             }
         );

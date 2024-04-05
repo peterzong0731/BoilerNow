@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import multer from 'multer';
 import { allDataPresent } from "../../verif/endpoints.js";
 import { sendNewEventEmail } from "../../emails/newEventEmail.js";
+import { logEndpoint, logSuccess, logError } from "../../verif/logging.js";
 
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
@@ -47,6 +48,8 @@ const newEventTemplate = fs.readFileSync("./routes/events/dbTemplates/newEventTe
         - 500 : Error retrieving events. -> There was a db error when trying to retrieve all the events.
 */
 router.get('/', async (req, res) => {
+    await logEndpoint(req, "Get all events");
+
     const inputDataCheck = allDataPresent(
 		[],
 		[],
@@ -54,16 +57,19 @@ router.get('/', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
     try {
         var results = await db.collection("events").find({}).toArray();
 
+        await logSuccess("All events returned.")
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving events.");
         res.status(500).send("Error retrieving events.");
     }
 });
@@ -108,6 +114,8 @@ router.get('/', async (req, res) => {
         - 500 : Error creating new event. -> There was a db error when trying to create the new event.
 */
 router.post('/create', upload.array('images'), async (req, res) => {
+    await logEndpoint(req, "Create a new event. Created by: " + (req.body.createdBy ?? ""));
+
     const inputDataCheck = allDataPresent(
 		[],
 		["title", "description", "eventStartDatetime", "eventEndDatetime", "category", "location", "visibility", "ageRequirement", "belongsToOrg", "createdBy", "createdByName"],
@@ -115,6 +123,7 @@ router.post('/create', upload.array('images'), async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -168,17 +177,14 @@ router.post('/create', upload.array('images'), async (req, res) => {
         );
 
         console.log("Created new event with _id: " + results.insertedId);
+        await logSuccess("Created new event with _id: " + results.insertedId);
         res.status(201).send("Successfully created the new event with id: " + results.insertedId);
 
         sendNewEventEmail(newEventObj);
 
     } catch (e) {
-        if (e.name === "MongoServerError" && e.code === 121) {
-            console.log("Document failed validation:");
-            console.log(e.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied);
-        } else {
-            console.log(e);
-        }
+        console.log(e);
+        await logError(500, "Error creating new event.");
         res.status(500).send("Error creating new event.");
     }
 });
@@ -211,6 +217,8 @@ router.post('/create', upload.array('images'), async (req, res) => {
         - 500 : Error retrieving events. -> There was a db error when trying to retrieve the user's events.
 */
 router.get('/user-events/:userId', async (req, res) => {
+    await logEndpoint(req, "Get all events created by user: " + (req.params.userId ?? ""));
+
     const inputDataCheck = allDataPresent(
 		["userId"],
 		[],
@@ -218,6 +226,7 @@ router.get('/user-events/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -236,9 +245,11 @@ router.get('/user-events/:userId', async (req, res) => {
 			}
         ).toArray();
 
+        await logSuccess("Returned all events created by a user.");
         res.status(200).json(events);
     } catch (e) {
         console.error(e);
+        await logError(500, "Error retrieving events.");
         res.status(500).send('Error retrieving events.');
     }
 });
@@ -269,6 +280,8 @@ router.get('/user-events/:userId', async (req, res) => {
         - 500 : Error updating event. -> There was a db error when trying to update the event.
 */
 router.patch('/update/:eventId', async (req, res) => {
+    await logEndpoint(req, "Update specific event: " + (req.params.eventId ?? ""));
+
     const inputDataCheck = allDataPresent(
 		["eventId"],
 		["title", "description", "eventStartDatetime", "eventEndDatetime", "location", "capacity", "category", "visibility", "ageRequirement"],
@@ -276,6 +289,7 @@ router.patch('/update/:eventId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -310,6 +324,7 @@ router.patch('/update/:eventId', async (req, res) => {
         );
     
         if (updateResult.matchedCount === 0) {
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send('Event not found.');
         }
     
@@ -317,10 +332,12 @@ router.patch('/update/:eventId', async (req, res) => {
             throw new Error();
         }
     
+        await logSuccess(`Event '${req.params.eventId}' updated successfully.`);
         res.status(200).send('Event updated successfully.');
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error updating event.");
         res.status(500).send('Error updating event.');
     }
 });
@@ -340,6 +357,8 @@ router.patch('/update/:eventId', async (req, res) => {
         - 500 : Error deleting event. -> There was a db error when trying to delete the event.
 */
 router.delete('/delete/:eventId', async (req, res) => {
+    await logEndpoint(req, "Delete event: " + (req.params.eventId ?? ""));
+
     const inputDataCheck = allDataPresent(
 		["eventId"],
 		[],
@@ -347,6 +366,7 @@ router.delete('/delete/:eventId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
     
@@ -359,14 +379,17 @@ router.delete('/delete/:eventId', async (req, res) => {
 
         if (result.deletedCount === 1) {
             console.log("Event deleted.");
+            await logSuccess(`Event '${req.params.eventId}' deleted.`);
             return res.status(200).send("Event deleted.");
         } else {
             console.log("Couldn't find event to delete.");
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send("Event not found.");
         }
             
     } catch (e) {
         console.log(e);
+        await logError(500, "Error deleting event.");
         res.status(500).send("Error deleting event.");
     }    
 });
@@ -410,6 +433,8 @@ router.delete('/delete/:eventId', async (req, res) => {
         - 500 : Error retrieving event. -> There was a db error when trying to retrieve the event.
 */
 router.get('/:eventId', async (req, res) => {
+    await logEndpoint(req, "Get specific event: " + (req.params.eventId ?? ""));
+
     const inputDataCheck = allDataPresent(
 		["eventId"],
 		[],
@@ -417,6 +442,7 @@ router.get('/:eventId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -427,6 +453,7 @@ router.get('/:eventId', async (req, res) => {
 
         if (!results) {
             console.log("Event not found.");
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send("Event not found.");
         }
 
@@ -434,10 +461,12 @@ router.get('/:eventId', async (req, res) => {
             results.images.map(image => `http://localhost:8000/uploads/${image.replace('uploads\\', '')}`);
         }
         
+        await logSuccess("Returned event data for: " + req.params.eventId);
         res.status(200).json(results);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving event.");
         res.status(500).send("Error retrieving event.");
     }
 })
@@ -459,6 +488,8 @@ router.get('/:eventId', async (req, res) => {
         - 500 : Error following event. -> There was a db error when trying to follow the event.
 */
 router.patch('/follow/:eventId/:userId', async (req, res) => {
+    await logEndpoint(req, `Follow an event '${req.params.eventId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
 		["eventId", "userId"],
 		[],
@@ -466,6 +497,7 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -480,6 +512,7 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
 
         if (updateUser.matchedCount === 0) {
             console.log("User not found.");
+            await logError(404, `User '${req.params.userId}' not found.`);
             return res.status(404).send('User not found.');
         }
 
@@ -502,6 +535,7 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
 
         if (result.matchedCount === 0) {
             console.log("Event not found.");
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send('Event not found.');
         }
 
@@ -509,10 +543,12 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
             throw new Error("User is already following this event.");
         }
 
+        await logSuccess(`User '${req.params.userId}' is now following event: ${req.params.eventId}.`);
         res.status(200).send('User is now following the event.');
 
     } catch (e) {
         console.error(e);
+        await logError(500, "Error following event.");
         res.status(500).send('Error following event.');
     }
 });
@@ -534,6 +570,8 @@ router.patch('/follow/:eventId/:userId', async (req, res) => {
         - 500 : Error unfollowing from event. -> There was a db error when trying to unfollow the event.
 */
 router.patch('/unfollow/:eventId/:userId', async (req, res) => {
+    await logEndpoint(req, `Unfollow an event '${req.params.eventId ?? ""}' by user: ${req.params.userId ?? ""}`);
+
     const inputDataCheck = allDataPresent(
 		["eventId", "userId"],
 		[],
@@ -541,6 +579,7 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -555,6 +594,7 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
 
         if (updateUser.matchedCount === 0) {
             console.log("User not found.");
+            await logError(404, `User '${req.params.userId}' not found.`);
             return res.status(404).send('User not found.');
         }
 
@@ -565,6 +605,7 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
 
         if (result.matchedCount === 0) {
             console.log("Event not found.");
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send('Event not found.');
         }
 
@@ -572,10 +613,12 @@ router.patch('/unfollow/:eventId/:userId', async (req, res) => {
             throw new Error("User was not following the event.");
         }
 
+        await logSuccess(`User '${req.params.userId}' is no longer following event: ${req.params.eventId}.`);
         res.status(200).send('User is no longer following the event.');
 
     } catch (e) {
         console.error(e);
+        await logError(500, "Error unfollowing from event.");
         res.status(500).send('Error unfollowing from event.');
     }
 });

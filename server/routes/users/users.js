@@ -4,6 +4,7 @@ import fs from "fs";
 import md5 from "md5";
 import { ObjectId } from 'mongodb'
 import { allDataPresent } from "../../verif/endpoints.js";
+import { logEndpoint, logSuccess, logError } from "../../verif/logging.js";
 
 
 const router = express.Router();
@@ -41,6 +42,8 @@ const newUserTemplate = fs.readFileSync("./routes/users/dbTemplates/newUserTempl
         - 500 : Error fetching user. -> There was a db error when fetching the user data.
 */
 router.get('/user/:userId', async (req, res) => {
+    await logEndpoint(req, "Get user information for: " + (req.params.userId ?? ""));
+
 	const inputDataCheck = allDataPresent(
 		["userId"],
 		[],
@@ -48,6 +51,7 @@ router.get('/user/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -68,12 +72,15 @@ router.get('/user/:userId', async (req, res) => {
 		);
 
         if (user) {
+            await logSuccess("Returned user data for: " + req.params.userId);
             res.status(200).json(user);
         } else {
+            await logError(404, `User '${req.params.userId}' not found.`);
             res.status(404).send('User not found.');
         }
     } catch (error) {
         console.error(error);
+        await logError(500, "Error fetching user.");
         res.status(500).send('Error fetching user.');
     }
 });
@@ -102,6 +109,7 @@ router.get('/user/:userId', async (req, res) => {
         - 500 : Error creating new user. -> There was a db error when trying to create the new user.
 */
 router.post('/register', async function (req, res) {
+    await logEndpoint(req, "Register new user with email: " + (req.body.email ?? ""));
 	const inputDataCheck = allDataPresent(
 		[],
 		["email", "password", "name", "age"],
@@ -109,6 +117,7 @@ router.post('/register', async function (req, res) {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -119,6 +128,7 @@ router.post('/register', async function (req, res) {
 
 	if (password.length < 6) {
 		console.log("Password length is less than 6!");
+        await logError(500, 'Password length is less than 6!');
 		res.status(500).send('Password length is less than 6!');
 		return;
 	}
@@ -133,23 +143,23 @@ router.post('/register', async function (req, res) {
 	newUserObj.createdDatetime = new Date();
 
 	// Check if email already exists
-	try {
-		const user = await db
-			.collection("users")
-			.findOne({ "login.email": newUserObj.login.email });
-		if (user != null) {
-			console.log('User already exists');
-			res.status(500).send("User with that email already exists.");
-			return;
-		}
-	} catch (e) {
-		console.log(e);
-		res.status(500).send("Error fetching user.");
-	}
-	
-	if (email.endsWith('@purdue.edu')) {
-		newUserObj.isPurdueEmail = true
-	}
+    try {
+        const user = await db.collection("users").findOne({ "login.email": newUserObj.login.email });
+
+        if (user != null) {
+            console.log('User already exists');
+            await logError(500, `User with the email '${req.body.email}' already exists.`);
+            return res.status(500).send("User with that email already exists.");
+        }
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error fetching user.");
+        res.status(500).send("Error fetching user.");
+    }
+
+    if (email.endsWith('@purdue.edu')) {
+        newUserObj.isPurdueEmail = true
+    }
 
 	// If email is a purdue.edu email, send them an email verification
 	// if (email.endsWith('@purdue.edu')) {
@@ -175,22 +185,19 @@ router.post('/register', async function (req, res) {
 	try {
 		const result = await db.collection("users").insertOne(newUserObj);
 		console.log("Inserted new user with _id: " + result.insertedId);
+        await logSuccess("Registered new user with _id: " + result.insertedId);
 		res.status(201).json({ "userId": result.insertedId, "name": name });
 
 	} catch (e) {
-		if (e.name === "MongoServerError" && e.code === 121) {
-            console.log("Document failed validation:");
-            console.log(e.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied);
-        } else {
-		    console.log(e);
-        }
+		console.log(e);
+        await logError(500, "Error creating new user.");
 		res.status(500).send("Error creating new user.");
 	}
 });
 
 
 router.get("/verify-user/:name/:email/:password/:age", async function (req, res) {
-	console.log("User Successfully Verified!");
+    await logEndpoint(req, "Verify user with email: " + (req.params.email ?? ""));
 
 	const name = req.params.name;
 	const email = req.params.email.toLowerCase();
@@ -208,15 +215,16 @@ router.get("/verify-user/:name/:email/:password/:age", async function (req, res)
 
 	// Check if email already exists
 	try {
-		const user = await db
-			.collection("users")
-			.findOne({ "login.email": newUserObj.login.email });
+		const user = await db.collection("users").findOne({ "login.email": newUserObj.login.email });
+
 		if (user != null) {
 			console.log('User already exists');
-			return;
+            await logError(500, `User with email '${req.params.email}' already exists.`);
+			return res.status(500).send("User already exists.");
 		}
 	} catch (e) {
 		console.log(e);
+        await logError(500, "Error fetching user.");
 		res.status(500).send("Error fetching user");
 	}
 
@@ -224,17 +232,13 @@ router.get("/verify-user/:name/:email/:password/:age", async function (req, res)
 	try {
 		const result = await db.collection("users").insertOne(newUserObj);
 		console.log("Inserted new user with _id: " + result.insertedId);
+        await logSuccess("Registered new user with _id: " + result.insertedId);
 		res.status(201).json({ "userId": result.insertedId, "name": name });
 
 	} catch (e) {
-		if (e.name === "MongoServerError" && e.code === 121) {
-            console.log("Document failed validation.");
-            console.log(e.errInfo);
-            res.status(500).send("Document failed validation.");
-        } else {
-			console.log(e);
-			res.status(500).send("Error creating new user");
-		}
+		console.log(e);
+        await logError(500, "Error creating new user.");
+		res.status(500).send("Error creating new user");
 	}
 });
 
@@ -260,6 +264,8 @@ router.get("/verify-user/:name/:email/:password/:age", async function (req, res)
         - 500 : Error logging user in. -> There was a db error when trying to log the user in.
 */
 router.post('/login', async function (req, res) {
+    await logEndpoint(req, "Login user with email: " + (req.body.email ?? ""));
+
 	const inputDataCheck = allDataPresent(
 		[],
 		["email", "password"],
@@ -267,6 +273,7 @@ router.post('/login', async function (req, res) {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -278,19 +285,23 @@ router.post('/login', async function (req, res) {
 
 		if (!existingUser) {
 			console.log("User with email `" + email + "`Not Found");
+            await logError(404, `Email '${req.body.email}' not found.`);
 			return res.status(404).send("Email not found.");
 		}
 
 		if (existingUser.login.password !== md5(password)) {
 			console.log("Incorrect Password");
+            await logError(401, `The password for account with email '${req.body.email}' was entered incorrectly.`);
 			return res.status(401).send("Incorrect password.");
 		}
 
 		console.log("Successfully logged in to email: " + email);
-		//res.status(200).json({"user": existingUser})
+		await logSuccess(`User with email '${req.body.email}' was logged in.`);
 		res.status(200).json({ "userId": existingUser._id, "name": existingUser.name });
+
 	} catch (e) {
 		console.error(e);
+        await logError(500, "Error logging user in.");
 		res.status(500).send('Error logging user in.');
 	}
 });
@@ -334,6 +345,8 @@ router.get('/user', (req, res) => {
         - 500 : Error retrieving list of orgs user is in. -> There was a db error when trying to retrieve list of orgs user is following.
 */
 router.get('/user-orgs/:userId', async (req, res) => {
+    await logEndpoint(req, "Get list of orgs followed by user: " + (req.params.userId ?? ""));
+
 	const inputDataCheck = allDataPresent(
 		["userId"],
 		[],
@@ -341,6 +354,7 @@ router.get('/user-orgs/:userId', async (req, res) => {
 	);
 
 	if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
 		return res.status(400).send(inputDataCheck.message);
 	}
 
@@ -371,10 +385,12 @@ router.get('/user-orgs/:userId', async (req, res) => {
 			}
 		]).toArray();
 
+        await logSuccess("Returned list of orgs followed by user: " + req.params.userId);
 		res.status(200).json(result);
 
 	} catch (e) {
 		console.error(e);
+        await logError(500, "Error retrieving list of orgs user is following.");
 		res.status(500).send("Error retrieving list of orgs user is following.");
 	}
 });
@@ -398,6 +414,8 @@ router.get('/user-orgs/:userId', async (req, res) => {
         - 500 : Error updating notification preferences. -> There was an error when updating notification preferences.
 */
 router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
+    await logEndpoint(req, "Update email notification preferences for user: " + (req.params.userId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         ["newEventByOrg", "newPostForEvent", "upcomingEvents"],
@@ -405,6 +423,7 @@ router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -425,10 +444,12 @@ router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
             }
         );
 
+        await logSuccess("Email notification preferences updated for user: " + req.params.userId);
         res.status(200).send('Notification preferences updated.');
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error updating notification preferences.");
         res.status(500).send('Error updating notification preferences.');
     }
 });
@@ -455,6 +476,8 @@ router.patch('/update-user-notif-prefs/:userId', async (req, res) => {
         - 500 : Error retrieving events. -> There was a db error when trying to retrieve the user's events.
 */
 router.get('/user-attended-events/:userId', async (req, res) => {
+    await logEndpoint(req, "Get all events attended by user: " + (req.params.userId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["userId"],
         [],
@@ -462,6 +485,7 @@ router.get('/user-attended-events/:userId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -470,11 +494,13 @@ router.get('/user-attended-events/:userId', async (req, res) => {
     try {
         const user = await db.collection('users').findOne({ _id: userId });
         if (!user) {
+            await logError(404, `User '${req.params.userId}' not found.`);
             return res.status(404).send('User not found.');
         }
 
         const { interestedEventHistory } = user;
         if (!interestedEventHistory || interestedEventHistory.length === 0) {
+            await logSuccess("Returned list of events attended by user: " + req.params.userId);
             return res.status(200).json([]);
         }
 
@@ -491,9 +517,12 @@ router.get('/user-attended-events/:userId', async (req, res) => {
             }
         ).toArray();
 
+        await logSuccess("Returned list of events attended by user: " + req.params.userId);
         res.status(200).json(events);
+
     } catch (e) {
         console.error(e);
+        await logError(500, "Error retrieving events.");
         res.status(500).send('Error retrieving events.');
     }
 });

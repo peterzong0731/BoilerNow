@@ -2,6 +2,7 @@ import express from "express";
 import db from "../../conn.js";
 import { ObjectId } from "mongodb";
 import { allDataPresent } from "../../verif/endpoints.js";
+import { logEndpoint, logSuccess, logError } from "../../verif/logging.js";
 
 const router = express.Router();
 
@@ -49,6 +50,8 @@ const router = express.Router();
         - 500 : Error retrieving stats. -> There was a db error when trying to retrieve stats.
 */
 router.get('/', async (req, res) => {
+    await logEndpoint(req, "Get stats for users, events, and orgs.");
+
     const inputDataCheck = allDataPresent(
         [],
         [],
@@ -56,6 +59,7 @@ router.get('/', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -166,10 +170,12 @@ router.get('/', async (req, res) => {
             "orgs": orgStats
         };
 
+        await logSuccess("Returned stats for users, events, and orgs.");
         res.status(200).json(stats);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving stats.");
         res.status(500).send("Error retrieving stats.");
     }
 });
@@ -196,6 +202,8 @@ router.get('/', async (req, res) => {
         - 500 : Error retrieving stats. -> There was a db error when trying to retrieve stats.
 */
 router.get('/event/:eventId', async (req, res) => {
+    await logEndpoint(req, "Get stats for event: " + (req.params.eventId ?? ""));
+
     const inputDataCheck = allDataPresent(
         ["eventId"],
         [],
@@ -203,6 +211,7 @@ router.get('/event/:eventId', async (req, res) => {
     );
 
     if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
         return res.status(400).send(inputDataCheck.message);
     }
 
@@ -213,6 +222,7 @@ router.get('/event/:eventId', async (req, res) => {
 
         if (!event) {
             console.log("Event not found.");
+            await logError(404, `Event '${req.params.eventId}' not found.`);
             return res.status(404).send("Event not found.");
         }
 
@@ -232,10 +242,12 @@ router.get('/event/:eventId', async (req, res) => {
         eventStats.usersInterestedCnt += event.usersInterested.length;
         eventStats.commentCnt += event.comments.length;
 
+        await logSuccess("Returned stats for event: " + req.params.eventId);
         res.status(200).json(eventStats);
 
     } catch (e) {
         console.log(e);
+        await logError(500, "Error retrieving stats.");
         res.status(500).send("Error retrieving stats.");
     }
 });

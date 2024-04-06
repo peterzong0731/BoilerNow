@@ -42,6 +42,7 @@ function Events() {
     const [viewMode, setViewMode] = useState('calendar');
     const [filterKeywords, setFilterKeywords] = useState([]);
     const [sortOption, setSortOption] = useState('soon');
+    const [hidePastEvents, setHidePastEvents] = useState(false);
 
     const handleMonthNext = () => {
         if (month === 11) {
@@ -91,6 +92,10 @@ function Events() {
 
         let keywords = filterString.split(";").map(keyword => keyword.trim());
         setFilterKeywords(keywords);
+    };
+
+    const handleHidePastEvents = () => {
+        setHidePastEvents(!hidePastEvents);
     };
 
     useEffect(() => {
@@ -178,6 +183,15 @@ function Events() {
                         </select>
                     </div>
                 ) : (<></>)}
+                <div className="hide-past-events">
+                    <label>Hide Past Events:</label>
+                    <>
+                        <label className="switch" id="switch">
+                            <input type="checkbox" onClick={handleHidePastEvents}></input>
+                            <span className="slider"></span>
+                        </label>
+                    </>
+                </div>
                 <div className="view-mode-toggle">
                     <button className={`toggle-button ${viewMode === 'calendar' ? 'active' : ''}`} onClick={() => setViewMode('calendar')} >
                         <FontAwesomeIcon icon={faCalendar} />
@@ -212,9 +226,10 @@ function Events() {
                                                                                           && ((event.visibility === 'Public') || userStr)
                                                                                           && (filterKeywords.some(keyword => event.title.toLowerCase().includes(keyword.toLowerCase())) || !filterKeywords.length)
                                                                                           && (new Date(event.eventStartDatetime).getMonth() == month)
-                                                                                          && (new Date(event.eventStartDatetime).getFullYear() == year)).map((event, idx) => (
+                                                                                          && (new Date(event.eventStartDatetime).getFullYear() == year)
+                                                                                          && (!hidePastEvents || new Date(event.eventStartDatetime) >= new Date())).map((event, idx) => (
                                     <Link key={event._id} to={`/event/${event._id}`}>
-                                        <div className={`event ${event.category}`}>
+                                        <div className={`event ${event.category} ${new Date(event.eventStartDatetime) < new Date() ? "pastEvent" : "futureEvent"}`}>
                                             {isNewEvent(event.createdDatetime) && <span className="new-event-indicator">🔥</span>}
                                             {event.title}
                                         </div>
@@ -227,7 +242,10 @@ function Events() {
             ) : (
                 <div className="list-view">
                     {console.log(events)}
-                    {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) && ((event.visibility === 'Public') || userStr) && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)).map((event, idx) => (
+                    {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) 
+                                                           && ((event.visibility === 'Public') || userStr) 
+                                                           && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)
+                                                           && (!hidePastEvents || new Date(event.eventStartDatetime) >= new Date())).map((event, idx) => (
                         <EventCard key={event._id} event={event} />
                     )) : <div className='no-orgs-text'>There are no events to display.</div>}
                 </div>

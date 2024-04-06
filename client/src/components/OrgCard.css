@@ -52,7 +52,7 @@
 }
   
 .org-bio {
-    margin: 0 0 16px 0;
+    margin: 0;
     font-size: 1rem;
     color: #333;
 }
@@ -71,4 +71,26 @@
 .org-followers-count {
     font-weight: bold;
 }
+
+.bio-rating-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.average-container-card {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-left: 10px;
+  }
   
+.average-container-card span {
+    font-weight: bold;
+}
+
+.average-container-card .star {
+    height: 16px;
+    width: 16px;
+}

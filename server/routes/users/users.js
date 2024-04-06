@@ -527,5 +527,70 @@ router.get('/user-attended-events/:userId', async (req, res) => {
     }
 });
 
+/*
+    Description: Update user's name and age
+    Incoming data:
+        params:
+            userId: string | ObjectId
+        body: {
+            "name": string,
+            "age": int
+        }
+    Outgoing data: None
+    On Success:
+        - 200 : Name and Age Updated -> The user's profile params age and name have been updated.
+    On Error:
+        - 400 : <message> -> The incoming request does not contain the required data fields.
+        - 500 : Error updating profile. -> There was an error when updating profile.
+*/
+router.patch('/edit/:userId', async (req, res) => {
+    await logEndpoint(req, "Update name and age for user: " + (req.params.userId ?? ""));
+
+    const inputDataCheck = allDataPresent(
+        ["userId"],
+        ["name", "age"],
+        req
+    );
+
+    if (!inputDataCheck.correct) {
+        await logError(400, inputDataCheck.message);
+        return res.status(400).send(inputDataCheck.message);
+    }
+
+    const userId = new ObjectId(req.params.userId);
+    const newName = req.body.name;
+    const newAge = parseInt(req.body.age);
+
+    if (newAge < 1 || newAge > 100) {
+        await logError(400, `Age for user '${req.params.userId}' is out of bounds.`);
+        return res.status(500).json('Age out of bound');
+    }
+
+    if (newName === "") {
+        await logError(400, `Name for user '${req.params.userId}' is empty.`);
+        return res.status(500).json('Name is empty');
+    }
+
+    try {
+        await db.collection('users').updateOne(
+            { _id: userId },
+            {
+                $set: { 
+                    "name": newName,
+                    "age": newAge,
+                } 
+            }
+        );
+
+        await logSuccess("Profile updated for user: " + req.params.userId);
+        res.status(200).send('Profile updated for user.');
+
+    } catch (e) {
+        console.log(e);
+        await logError(500, "Error updating user profile.");
+        res.status(500).send('Error updating user profile.');
+    }
+});
+
 
 export default router;

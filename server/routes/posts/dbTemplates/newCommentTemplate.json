@@ -1,7 +1,7 @@
 {
+    "replyId": null,
     "content": "",
     "authorId": null,
-    "datetime": null,
-    "likedBy": [],
+    "postedDatetime": null,
     "replies": []
 }

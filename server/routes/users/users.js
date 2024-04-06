@@ -561,8 +561,15 @@ router.patch('/edit/:userId', async (req, res) => {
     const newName = req.body.name;
     const newAge = parseInt(req.body.age);
 
-    if (newAge < 1 || newAge > 100)
+    if (newAge < 1 || newAge > 100) {
+        await logError(400, 'Age out of bound');
         return res.status(500).json('Age out of bound');
+    }
+
+    if (newName === "") {
+        await logError(400, 'Name is empty');
+        return res.status(500).json('Name is empty');
+    }
 
     try {
         await db.collection('users').updateOne(

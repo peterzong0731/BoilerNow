@@ -94,3 +94,24 @@
     height: 16px;
     width: 16px;
 }
+
+.partialStarCard {
+    display: inline-block;
+    position: relative;
+    height: 16px;
+    width: 16px;
+    z-index: 0;
+  }
+  
+.partialStarCard:before {
+    font-size: 20px;
+    content: "★";
+    position: absolute;
+    margin-top: -7px;
+    left: 0;
+    top: 0;
+    width: var(--rating);
+    overflow: hidden;
+    color: rgb(255, 179, 14);
+    z-index: -1;
+}

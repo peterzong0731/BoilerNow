@@ -15,7 +15,7 @@ function OrgCard({ org }) {
 
     if (org.ratings.length > 0) {
         const totalRating = org.ratings.reduce((acc, curr) => acc + curr.value, 0);
-        averageRating = totalRating / org.ratings.length; 
+        averageRating = totalRating / org.ratings.length;
     } else {
         averageRating = 0
     }
@@ -31,10 +31,13 @@ function OrgCard({ org }) {
                 <div className='bio-rating-container'>
                     <p className="org-bio">{org.bio}</p>
                     <div className='average-container-card'>
-                        {[...Array(Math.round(averageRating))].map((_, index) => (
+                        {[...Array(Number.isInteger(averageRating) ? Math.round(averageRating) : Math.max(0, Math.floor(averageRating)))].map((_, index) => (
                             <FontAwesomeIcon key={index} icon={solidStar} className="star filled" />
                         ))}
-                        {[...Array(5 - Math.round(averageRating))].map((_, index) => (
+                        {!Number.isInteger(averageRating) && <div className="partialStarCard" style={{"--rating": (((averageRating % 1) * 62) + 19) + "%"}}>
+                            <FontAwesomeIcon icon={regularStar} className="star"/>
+                        </div>}
+                        {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
                             <FontAwesomeIcon key={index} icon={regularStar} className="star" />
                         ))}
                         <span className="average-rating">({averageRating.toFixed(1)})</span>

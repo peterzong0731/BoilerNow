@@ -218,10 +218,13 @@ function Org() {
             <div className='name-average-container'>
               <span id='org-name'>{orgData.name}</span>
               <div className='average-container'>
-                {[...Array(Math.round(averageRating))].map((_, index) => (
+                {[...Array(Number.isInteger(averageRating) ? Math.round(averageRating) : Math.max(0, Math.floor(averageRating)))].map((_, index) => (
                   <FontAwesomeIcon key={index} icon={solidStar} className="star filled" />
                 ))}
-                {[...Array(5 - Math.round(averageRating))].map((_, index) => (
+                {!Number.isInteger(averageRating) && <div className="partialStar" style={{"--rating": (((averageRating % 1) * 66) + 17) + "%"}}>
+                  <FontAwesomeIcon icon={regularStar} className="star"/>
+                </div>}
+                {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
                   <FontAwesomeIcon key={index} icon={regularStar} className="star" />
                 ))}
                 <span className="average-rating">({averageRating.toFixed(1)})</span>

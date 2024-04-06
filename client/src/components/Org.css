@@ -171,3 +171,24 @@
 .user-rating-container button {
   margin-top: 3px;
 }
+
+.partialStar {
+  display: inline-block;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  
+}
+
+.partialStar:after {
+  font-size: 29.5px;
+  content: "★";
+  position: absolute;
+  margin-top: -10px;
+  left: 0;
+  top: 0;
+  width: var(--rating);
+  overflow: hidden;
+  color: rgb(255, 179, 14);
+  z-index: -1;
+}

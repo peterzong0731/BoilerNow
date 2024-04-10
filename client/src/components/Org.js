@@ -5,6 +5,9 @@ import './Org.css'
 import { Toaster, toast } from 'sonner'
 import PostCard from './PostCard';
 import EventCard from './EventCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 
 function Org() {
   const { id } = useParams();
@@ -20,25 +23,40 @@ function Org() {
   const [showReportBox, setShowReportBox] = useState(false);
   const [reportContent, setReportContent] = useState('');
   const [orgEvents, setOrgEvents] = useState([])
+  const [ratings, setRatings] = useState([])
+  const [rating, setRating] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
   const fetchOrg = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/orgs/${id}`);
+      console.log(response.data)
 
-      const { followers, events } = response.data;
+      const { followers, events, ratings } = response.data;
 
       setOrgData(response.data);
       setUsersFollowed(followers)
       setOrgEvents(events)
+      setRatings(ratings)
 
-      console.log(followers)
-      console.log(currentUser)
+      if (ratings.length > 0) {
+        const totalRating = ratings.reduce((acc, curr) => acc + curr.value, 0);
+        const average = totalRating / ratings.length;
+        setAverageRating(average);
+      } else {
+        setAverageRating(0)
+      }
+
+
+      const userRating = ratings.find(rating => rating.ratedBy === currentUser);
+      if (userRating) {
+        setRating(userRating.value);
+      }
+
       const isFollowing = followers.some(user => user.userId === currentUser);
-      console.log(isFollowing)
       setHasFollowed(isFollowing);
 
       const postsResponse = await axios.get(`http://localhost:8000/posts/orgPosts/${id}`);
-      console.log(postsResponse.data)
       setOrgPosts(postsResponse.data)
 
       setIsLoading(false);
@@ -64,7 +82,6 @@ function Org() {
         }
       });
       console.log("Org Image added successfully", response.data);
-      // Fetch the updated organization data again
       fetchOrg();
     } catch (error) {
       console.error("Error adding Org Image:", error);
@@ -83,7 +100,6 @@ function Org() {
         }
       });
       console.log("Banner Image added successfully", response.data);
-      // Fetch the updated organization data again
       fetchOrg();
     } catch (error) {
       console.error("Error adding Banner Image:", error);
@@ -93,7 +109,6 @@ function Org() {
   const handleFollow = async () => {
     try {
       const response = await axios.patch(`http://localhost:8000/orgs/follow/${id}/${currentUser}`);
-      console.log(response.data)
 
       setUsersFollowed(prevUsers => [...prevUsers, { userId: currentUser, name: currentUserName }]);
       setHasFollowed(true);
@@ -141,6 +156,51 @@ function Org() {
     }
   };
 
+  const handleRateOrg = async (value) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/orgs/rate/${id}/${currentUser}`, { value: value });
+      const currentUserRatingIndex = orgData.ratings.findIndex((rating) => rating.ratedBy === currentUser);
+      if (currentUserRatingIndex !== -1) {
+        orgData.ratings[currentUserRatingIndex].value = value;
+      }
+  
+      let newAverageRating = 0;
+      if (orgData.ratings.length > 0) {
+        const newTotalRating = orgData.ratings.reduce((sum, rating) => sum + rating.value, 0);
+        newAverageRating = newTotalRating / orgData.ratings.length;
+      } else {
+        newAverageRating = value
+      }
+  
+      setAverageRating(newAverageRating);
+      setRating(value);
+
+      toast.success("Successfully rated!")
+    } catch (error) {
+      console.error('Error rating org:', error);
+    }
+  };
+
+  const handleUnrateOrg = async () => {
+    try {
+      await axios.patch(`http://localhost:8000/orgs/unrate/${id}/${currentUser}`);
+      setRating(0);
+  
+      const updatedRatings = ratings.filter(rating => rating.ratedBy !== currentUser);
+
+      const totalRatings = updatedRatings.length;
+      const sumOfRatings = updatedRatings.reduce((acc, rating) => acc + rating.value, 0);
+      const newAverageRating = totalRatings > 0 ? sumOfRatings / totalRatings : 0;
+
+      setAverageRating(newAverageRating);
+  
+      toast.success("Successfully unrated!")
+    } catch (error) {
+      console.error('Error unrated organization:', error);
+    }
+  };
+  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -155,7 +215,21 @@ function Org() {
         </div>
         <div className='org-text-container'>
           <div className='org-text'>
-            <span id='org-name'>{orgData.name}</span>
+            <div className='name-average-container'>
+              <span id='org-name'>{orgData.name}</span>
+              <div className='average-container'>
+                {[...Array(Number.isInteger(averageRating) ? Math.round(averageRating) : Math.max(0, Math.floor(averageRating)))].map((_, index) => (
+                  <FontAwesomeIcon key={index} icon={solidStar} className="star filled" />
+                ))}
+                {!Number.isInteger(averageRating) && <div className="partialStar" style={{"--rating": (((averageRating % 1) * 66) + 17) + "%"}}>
+                  <FontAwesomeIcon icon={regularStar} className="star"/>
+                </div>}
+                {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
+                  <FontAwesomeIcon key={index} icon={regularStar} className="star" />
+                ))}
+                <span className="average-rating">({averageRating.toFixed(1)})</span>
+              </div>
+            </div>
             <span id='org-bio'>{orgData.bio}</span>
           </div>
           <div>
@@ -170,11 +244,22 @@ function Org() {
                   <button className="event-join-button" onClick={handleFollow}>Follow</button>
                 )}
                 <button className="org-report-button" onClick={handleReport}>Report</button>
-                
+                <div className='user-rating-container'>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <FontAwesomeIcon
+                      key={value}
+                      icon={value <= rating ? solidStar : regularStar}
+                      className={value <= rating ? "star filled" : "star"}
+                      onClick={() => handleRateOrg(value)}
+                    />
+                  ))}
+                  <button className="unrate-button" onClick={handleUnrateOrg}>Unrate</button>
+                </div>
               </>
             ) : (
               <button className="event-join-button-disabled" disabled>Log in to follow</button>
             )}
+            
           </div>
         </div>
         {showReportBox && (

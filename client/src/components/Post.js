@@ -15,6 +15,8 @@ function Post() {
   const [likedBy, setLikedBy] = useState([]);
   const [replies, setReplies] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [commentContent, setCommentContent] = useState('');
 
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
@@ -25,6 +27,32 @@ function Post() {
   const [postCreator, setPostCreator] = useState("");
   const navigate = useNavigate();
 
+  async function fetchPost() {
+    try {
+      const response = await axios.get(`http://localhost:8000/posts/post/${id}`);
+      const { postId, title, content, eventId, likedBy, replies, name } = response.data;
+
+      setPostId(postId);
+      setTitle(title);
+      setContent(content);
+      setEventId(eventId);
+      setLikedBy(likedBy);
+      setReplies(replies);
+      setPostCreator(name)
+      setIsLiked(likedBy.includes(currentUser));
+
+      const eventResponse = await axios.get(`http://localhost:8000/events/${eventId}`);
+      console.log(eventResponse);
+      setEvent(eventResponse.data);
+      setEventName(eventResponse.data.title);
+
+      const orgResponse = await axios.get(`http://localhost:8000/orgs/${eventResponse.data.belongsToOrg}`);
+      setOrgName(orgResponse.data.name);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -68,12 +96,10 @@ function Post() {
   const handleLike = async () => {
     try {
       if (isLiked) {
-        console.log("hello")
         const updatedLikedBy = likedBy.filter(userId => userId !== currentUser);
         setLikedBy(updatedLikedBy);
-        await axios.delete(`http://localhost:8000/posts/like/${postId}/${currentUser}`);
+        await axios.patch(`http://localhost:8000/posts/like/${postId}/${currentUser}`);
       } else {
-        console.log("hello")
         const updatedLikedBy = [...likedBy, currentUser];
         setLikedBy(updatedLikedBy);
         await axios.patch(`http://localhost:8000/posts/like/${postId}/${currentUser}`);
@@ -92,6 +118,32 @@ function Post() {
     return hoursAgo;
   };
 
+  const handleComment = async () => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/posts/comment/${postId}/${currentUser}`, {
+        content: commentContent
+      });
+      console.log(response.data);
+      setShowCommentInput(false);
+      setCommentContent('');
+
+      fetchPost();
+      } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteComment = async (postId, replyId) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/posts/uncomment/${postId}/${replyId}`);
+      console.log(response.data);
+
+      fetchPost();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="post-page-container">
       <h1 className="event-title">{title}</h1>
@@ -101,18 +153,35 @@ function Post() {
         <div className="posts-event">{'\u{1F4C5}'} {eventName}</div>
       </Link>
       <div className={replies.length > 0 ? 'post-icon-row-border': 'post-icon-row'}>
-        <p className="post-comment"> &#x1F4AC; {replies.length} </p>
-        <p className={isLiked ? "post-liked" : "post-not-liked"} onClick={handleLike}> &#x2764; {likedBy.length} </p>
+        <div className='post-icon-row-container'>
+          <p className="post-comment" onClick={() => setShowCommentInput(!showCommentInput)}> &#x1F4AC; {replies.length} </p>
+          <p className={isLiked ? "post-liked" : "post-not-liked"} onClick={handleLike}> &#x2764; {likedBy.length} </p>
+        </div>
+        <div className='make-reply-container'>
+          {showCommentInput && (
+            <div>
+              <input
+                type="text"
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder="Enter your reply"
+              />
+              <button onClick={handleComment}>Submit</button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="replies-container">
         {replies.map((reply, index) => (
           <div key={index} className="reply">
             <div className='reply-top-row'>
-              <p className="reply-author">{reply.authorId}</p>
+              <p className="reply-author">{reply.authorName}</p>
               <p className="reply-time">{calculateHoursAgo(reply.postedDatetime)} hours ago</p>
             </div>
             <p className="reply-content">{reply.content}</p>
-            <p className={"reply-not-liked"}> &#x2764; {reply.likedBy.length} </p>
+            {reply.authorId === currentUser && (
+              <button onClick={() => handleDeleteComment(postId, reply.replyId)}>Delete</button>
+            )}
           </div>
         ))}
       </div>

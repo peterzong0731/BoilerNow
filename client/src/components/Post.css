@@ -69,6 +69,7 @@
 
 .post-icon-row {
   display: flex;
+  flex-direction: column;
 }
 
 .reply {
@@ -77,7 +78,12 @@
 
 .post-icon-row-border {
   display: flex;
+  flex-direction: column;
   border-bottom: 2px solid rgb(82, 82, 82);
+}
+
+.post-icon-row-container {
+  display: flex;
 }
 
 .reply-top-row {
@@ -110,4 +116,8 @@
   color: white;
   background-color: #FF7C7C;
   cursor: pointer;
+}
+
+.make-reply-container input {
+  border-bottom: 20px;
 }

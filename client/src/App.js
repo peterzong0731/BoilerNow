@@ -18,6 +18,7 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword'
 import About from './components/About';
 import EventAnalytics from './components/EventAnalytics';
+import Post from './components/Post'
 
 const App = () => {
   return (
@@ -26,10 +27,10 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Posts />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/post/:id" element={<Post />} />
         <Route path="/create-post" element={<CreatePostForm />} />
         <Route path="/events" element={<Events />} />
         <Route path="/create-event" element={<CreateEventForm />} />
-        <Route path="/event" element={<Event />}/>
         <Route path="/create-org" element={<CreateOrgForm />} />
         <Route path="/orgs" element={<Orgs />} />
         <Route path="/org/:id" element={<Org />} />

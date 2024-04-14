@@ -5,22 +5,34 @@ import axios from 'axios';
 
 function EditUserForm() {
     const userId = localStorage.getItem('user');
-    const [formData, setFormData] = useState({
-        name: '',
-        age: 0
-    })
+    const [dob, setDob] = useState()
+    const [name, setName] = useState()
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    }
+    function parseAge(dob) {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear()-birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        return age;
+      }
     
 
     const handleSubmit = async(e) => {
         e.preventDefault();
+
+        if (isNaN(Date.parse(dob))) {
+            alert('Invalid DOB');
+            return;
+        }
+
+        const age = parseAge(dob);
         
         try {
-          const response = await axios.patch(`http://localhost:8000/edit/${userId}`, formData);
+          const response = await axios.patch(`http://localhost:8000/edit/${userId}`, {
+            name: name,
+            age: age
+          });
 
           console.log('Successfully edited the user!', response.data);
 
@@ -35,7 +47,7 @@ function EditUserForm() {
         async function fetchUserData() {
             try {
                 const response = await axios.get(`http://localhost:8000/user/${userId}`);
-                setFormData({name: response.data.name, age: response.data.age})
+                setName(response.data.name);
             } catch (error) {
                 console.error(error);
             }
@@ -50,11 +62,11 @@ function EditUserForm() {
           <form onSubmit={handleSubmit}>
             <label>
                 Name
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange}></input>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)}></input>
             </label>
             <label>
-                Age
-                <input type="number" name="age" value={formData.age} onChange={handleInputChange}></input>
+                Date of birth (mm/dd/yy)
+                <input type="text" value={dob} onChange={(e) => setDob(e.target.value)}></input>
             </label>
             <button type="submit" className="submit-button">submit</button>
           </form>

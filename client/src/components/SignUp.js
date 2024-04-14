@@ -20,7 +20,7 @@ function Signup() {
       alert('Passwords do not match');
       return;
     }
-    if (Date.parse(dob) == NaN) {
+    if (isNaN(parseAge(dob))) {
       alert('Invalid DOB');
       return;
     }

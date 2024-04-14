@@ -98,6 +98,10 @@ function Profile() {
         navigate('/');
     };
 
+    const handleEditProfile = () => {
+        
+    };
+
     const handleDeleteEvent = (eventId) => {
         Swal.fire({
           title: 'Are you sure?',
@@ -399,6 +403,11 @@ function Profile() {
                       </div>
                       <button type="submit">Update Preferences</button>
                     </form>
+                    <div className="edit-profile">
+                      <Link to={`/edit/${userId}`} style={{ marginRight: '10px' }}>       
+                        <button onClick={() => handleEditProfile()}>Edit Profile</button>
+                      </Link>
+                    </div>
                 </div>
             )}   
             <div className='profile-sign-out' onClick={() => handleSignOut()}>Sign Out</div>

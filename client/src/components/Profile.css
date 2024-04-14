@@ -224,4 +224,7 @@
 .notification-preferences-container button:hover {
     background-color: #1a7abf;
 }
-  
+
+.edit-profile button {
+    width:100%;
+}

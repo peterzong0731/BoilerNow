@@ -67,6 +67,19 @@
   flex-direction: column;
 }
 
+.org-share-button {
+  font-family: 'Calistoga', sans-serif;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 10px 0 0 5px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
 .org-report-button {
   font-family: 'Calistoga', sans-serif;
   background-color: #f01a0b;

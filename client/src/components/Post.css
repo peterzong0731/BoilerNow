@@ -121,3 +121,15 @@
 .make-reply-container input {
   border-bottom: 20px;
 }
+
+.reply-delete {
+  margin-left: 8px;
+}
+
+.trash-icon {
+  color: rgb(255, 39, 39);
+}
+
+.trash-icon:hover {
+  cursor: pointer;
+}

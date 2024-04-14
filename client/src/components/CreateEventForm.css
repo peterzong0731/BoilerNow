@@ -63,3 +63,8 @@
   .last-row-container {
     display: flex;
   }
+
+  .required-icon {
+    color: rgba(255, 38, 0, 0.637);
+    font-size: 16px;
+  }

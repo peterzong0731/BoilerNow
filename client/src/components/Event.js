@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import checkmark from './images/yellow_checkmark.png'
 import { Toaster, toast } from 'sonner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { google, outlook } from "calendar-link";
 
@@ -122,6 +123,18 @@ function Event() {
         toast.error('Error joining event.');
     }
   }
+
+  const copyUrlToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        toast.success("URL copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error('Failed to copy URL to clipboard:', error);
+        toast.error('Failed to copy URL to clipboard.');
+      });
+  };
 
   const handleUnregister = async () => {  
     try {
@@ -265,6 +278,7 @@ function Event() {
                   <button className="share-box-button" onClick={handleShare}>Send</button>
                 </div>
               )}
+              <button className="org-share-button" onClick={copyUrlToClipboard}><FontAwesomeIcon icon={faLink}/></button>
             </>
           ) : (
             <button className="event-join-button-disabled" disabled>Log in to share</button>

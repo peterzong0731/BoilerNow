@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 function CreatePostForm() {
   const [postData, setPostData] = useState({
@@ -51,11 +53,12 @@ function CreatePostForm() {
       <h1>Create Post</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          event
+          event <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <select
             name="eventId"
             value={postData.eventId}
             onChange={handleInputChange}
+            required
           >
             <option value="">Select an event</option>
             {userEvents.map((event) => (
@@ -66,20 +69,22 @@ function CreatePostForm() {
           </select>
         </label>
         <label>
-          title
+          title <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="title"
             value={postData.title}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
-          content
+          content <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <textarea
             name="content"
             value={postData.content}
             onChange={handleInputChange}
+            required
           />
         </label>
         <button type="submit" className="submit-button">Post</button>

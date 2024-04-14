@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 function CreateEventForm() {
   const userId = localStorage.getItem('user');
@@ -91,20 +93,22 @@ function CreateEventForm() {
       <h1>Create Event</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Event Title
+          Event Title <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="title"
             value={eventData.title}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
-          Description
+          Description <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <textarea
             name="description"
             value={eventData.description}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
@@ -119,31 +123,34 @@ function CreateEventForm() {
           />
         </label>
         <label>
-          Start Date
+          Start Date <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="datetime-local"
             name="eventStartDatetime"
             value={eventData.eventStartDatetime}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
-          End Date
+          End Date <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="datetime-local"
             name="eventEndDatetime"
             value={eventData.eventEndDatetime}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
-          Location
+          Location <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="location"
             autocomplete="off"
             value={eventData.location}
             onChange={handleInputChange}
+            required
           />
         </label>
         <label>
@@ -226,11 +233,12 @@ function CreateEventForm() {
             </label>
           </div>
           <label>
-            Assign to Organization:
+            Assign to Organization: <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
             <select
               name="belongsToOrg"
               value={eventData.belongsToOrg}
               onChange={handleInputChange}
+              required
             >
               <option value="">Select an Organization</option>
               {orgs.map((org) => (

@@ -7,6 +7,7 @@ import PostCard from './PostCard';
 import EventCard from './EventCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 
 function Org() {
@@ -70,40 +71,16 @@ function Org() {
     fetchOrg();
   }, [id]);
 
-  const handleOrgImgClick = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await axios.post(`http://localhost:8000/upload/orgImg/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+  const copyUrlToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        toast.success("URL copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error('Failed to copy URL to clipboard:', error);
+        toast.error('Failed to copy URL to clipboard.');
       });
-      console.log("Org Image added successfully", response.data);
-      fetchOrg();
-    } catch (error) {
-      console.error("Error adding Org Image:", error);
-    }
-  };
-
-  const handleBannerImgClick = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await axios.post(`http://localhost:8000/upload/bannerImg/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log("Banner Image added successfully", response.data);
-      fetchOrg();
-    } catch (error) {
-      console.error("Error adding Banner Image:", error);
-    }
   };
 
   const handleFollow = async () => {
@@ -243,6 +220,7 @@ function Org() {
                 ) : (
                   <button className="event-join-button" onClick={handleFollow}>Follow</button>
                 )}
+                <button className="org-share-button" onClick={copyUrlToClipboard}><FontAwesomeIcon icon={faLink}/></button>
                 <button className="org-report-button" onClick={handleReport}>Report</button>
                 <div className='user-rating-container'>
                   {[1, 2, 3, 4, 5].map((value) => (

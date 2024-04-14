@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './CreateEventForm.css';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 function CreateOrgForm() {
   const userId = localStorage.getItem('user');
@@ -63,7 +65,7 @@ function CreateOrgForm() {
       <h1>Create Organization</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          organization name
+          organization name <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="name"
@@ -73,7 +75,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          shorthand
+          shorthand <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="shorthand"
@@ -83,7 +85,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          bio
+          bio <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <textarea
             name="bio"
             value={orgData.bio}
@@ -92,7 +94,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          email
+          email <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="text"
             name="email"
@@ -129,7 +131,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          organization picture
+          organization picture <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="file"
             name="orgImg"
@@ -138,7 +140,7 @@ function CreateOrgForm() {
           />
         </label>
         <label>
-          organization banner
+          organization banner <FontAwesomeIcon icon={faCircleExclamation} className='required-icon'/>
           <input
             type="file"
             name="bannerImg"

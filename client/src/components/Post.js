@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Event.css';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import checkmark from './images/yellow_checkmark.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom';
 import './Post.css';
 
@@ -177,11 +178,13 @@ function Post() {
             <div className='reply-top-row'>
               <p className="reply-author">{reply.authorName}</p>
               <p className="reply-time">{calculateHoursAgo(reply.postedDatetime)} hours ago</p>
+              <p className="reply-delete">
+                {reply.authorId === currentUser && (
+                  <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDeleteComment(postId, reply.replyId)} className='trash-icon'/>
+                )}
+              </p>
             </div>
             <p className="reply-content">{reply.content}</p>
-            {reply.authorId === currentUser && (
-              <button onClick={() => handleDeleteComment(postId, reply.replyId)}>Delete</button>
-            )}
           </div>
         ))}
       </div>

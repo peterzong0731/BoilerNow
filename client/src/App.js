@@ -14,6 +14,7 @@ import SignUp from './components/SignUp'
 import Profile from './components/Profile';
 import EditEventForm from './components/EditEventForm';
 import EditOrgForm from './components/EditOrgForm';
+import EditUserForm from './components/EditUserForm'
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword'
 import About from './components/About';
@@ -37,6 +38,7 @@ const App = () => {
         <Route exact path="/event/:id" element={<Event />} />
         <Route exact path="/edit-event/:id" element={<EditEventForm />} />
         <Route exact path="/edit-org/:id" element={<EditOrgForm />} />
+        <Route exact path="/edit/:id" element={<EditUserForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Event.css';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faTrashCan, faReply } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom';
 import './Post.css';
 
@@ -18,6 +18,8 @@ function Post() {
   const [isLiked, setIsLiked] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentContent, setCommentContent] = useState('');
+  const [replyContent, setReplyContent] = useState('');
+  const [showReplyInput, setShowReplyInput] = useState(false);
 
   const currentUserFromStorage = localStorage.getItem('user');
   const currentUser = currentUserFromStorage ? localStorage.getItem('user') : null;
@@ -26,8 +28,8 @@ function Post() {
   const [eventName, setEventName] = useState("Event");
   const [orgName, setOrgName] = useState("Org");
   const [postCreator, setPostCreator] = useState("");
-  const navigate = useNavigate();
-
+  const [replyIndex, setReplyIndex] = useState(-1);
+  
   async function fetchPost() {
     try {
       const response = await axios.get(`http://localhost:8000/posts/post/${id}`);
@@ -111,13 +113,12 @@ function Post() {
     }
   };
 
-  const calculateHoursAgo = (postedDatetime) => {
+  const calculateDateTime = (postedDatetime) => {
     const postedTime = new Date(postedDatetime);
-    const currentTime = new Date();
-    const timeDifference = Math.abs(currentTime - postedTime);
-    const hoursAgo = Math.floor(timeDifference / (1000 * 60 * 60));
-    return hoursAgo;
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+    return postedTime.toLocaleDateString('en-US', options);
   };
+  
 
   const handleComment = async () => {
     try {
@@ -142,6 +143,40 @@ function Post() {
       fetchPost();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleDeleteCommentReply = async (replyId, commentReplyId) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/posts/delete-comment-reply/${replyId}/${commentReplyId}`);
+      console.log(response.data);
+  
+      fetchPost();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleReplySubmit = async (replyId) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/posts/reply/${replyId}/${currentUser}`, {
+        content: replyContent
+      });
+      console.log(response.data);
+      setShowReplyInput(false);
+      setReplyContent('');
+      setReplyIndex(-1);
+      fetchPost();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleReplyClick = (index) => {
+    if (replyIndex === index) {
+      setReplyIndex(-1);
+    } else {
+      setReplyIndex(index);
     }
   };
 
@@ -177,14 +212,44 @@ function Post() {
           <div key={index} className="reply">
             <div className='reply-top-row'>
               <p className="reply-author">{reply.authorName}</p>
-              <p className="reply-time">{calculateHoursAgo(reply.postedDatetime)} hours ago</p>
+              <p className="reply-time">{calculateDateTime(reply.postedDatetime)}</p>
               <p className="reply-delete">
                 {reply.authorId === currentUser && (
                   <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDeleteComment(postId, reply.replyId)} className='trash-icon'/>
                 )}
               </p>
             </div>
-            <p className="reply-content">{reply.content}</p>
+            <div className='reply-last-row'>
+              <p className="reply-content">{reply.content} </p>
+              <FontAwesomeIcon icon={faReply} className='reply-icon' onClick={() => handleReplyClick(index)} />
+            </div>
+            {replyIndex === index && (
+              <div className="reply-input-container">
+                <input
+                  type="text"
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  placeholder="Enter your reply"
+                />
+                <button onClick={() => handleReplySubmit(reply.replyId)}>Submit</button>
+              </div>
+            )}
+            {reply.replies.map((nestedReply) => (
+              <div className='replies-replies-container' key={nestedReply.commentReplyId}>
+                <div className='reply-reply-top-row'>
+                  <p className="reply-reply-author">{nestedReply.authorName}</p>
+                  <p className="reply-reply-time">{calculateDateTime(nestedReply.postedDatetime)}</p>
+                  <p className="reply-reply-delete">
+                    {nestedReply.authorId === currentUser && (
+                      <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDeleteCommentReply(reply.replyId, nestedReply.commentReplyId)} className='trash-icon'/>
+                    )}
+                  </p>
+                </div>
+                <div className='reply-last-row'>
+                  <p className="reply-reply-content">{nestedReply.content} </p>
+                </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>

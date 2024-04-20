@@ -136,22 +136,22 @@ function Org() {
   const handleRateOrg = async (value) => {
     try {
       const response = await axios.patch(`http://localhost:8000/orgs/rate/${id}/${currentUser}`, { value: value });
-      const currentUserRatingIndex = orgData.ratings.findIndex((rating) => rating.ratedBy === currentUser);
+  
+      const updatedRatings = [...ratings];
+      const currentUserRatingIndex = updatedRatings.findIndex((rating) => rating.ratedBy === currentUser);
       if (currentUserRatingIndex !== -1) {
-        orgData.ratings[currentUserRatingIndex].value = value;
-      }
-  
-      let newAverageRating = 0;
-      if (orgData.ratings.length > 0) {
-        const newTotalRating = orgData.ratings.reduce((sum, rating) => sum + rating.value, 0);
-        newAverageRating = newTotalRating / orgData.ratings.length;
+        updatedRatings[currentUserRatingIndex].value = value;
       } else {
-        newAverageRating = value
+        updatedRatings.push({ ratedBy: currentUser, value: value });
       }
   
+      const newTotalRating = updatedRatings.reduce((sum, rating) => sum + rating.value, 0);
+      const newAverageRating = updatedRatings.length > 0 ? newTotalRating / updatedRatings.length : 0;
+  
+      setRatings(updatedRatings);
       setAverageRating(newAverageRating);
       setRating(value);
-
+  
       toast.success("Successfully rated!")
     } catch (error) {
       console.error('Error rating org:', error);

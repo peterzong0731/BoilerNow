@@ -244,7 +244,7 @@ function Events() {
                     {console.log(events)}
                     {events.length ? events.filter((event) => (selectedCategory === 'all' || event.category === selectedCategory) 
                                                            && ((event.visibility === 'Public') || userStr) 
-                                                           && ((filterKeywords.some(keyword => event.title.includes(keyword))) || !filterKeywords.length)
+                                                           && ((filterKeywords.some(keyword => event.title.toLowerCase().includes(keyword.toLowerCase()))) || !filterKeywords.length)
                                                            && (!hidePastEvents || new Date(event.eventStartDatetime) >= new Date())).map((event, idx) => (
                         <EventCard key={event._id} event={event} />
                     )) : <div className='no-orgs-text'>There are no events to display.</div>}
